@@ -1,0 +1,51 @@
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
+<body>
+<h1>Voting Admin List</h1>
+<hr>
+
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Organization</th>
+        <th scope="col">Organization Code</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if vote_admins %}
+
+        {% for Voting_admin in vote_admins %}
+        <tr>
+            <td> {{ Voting_admin.id }}</td>
+            <td> {{ Voting_admin.first_name }}</td>
+            <td> {{ Voting_admin.last_name }}</td>
+            <td> {{ Voting_admin.emaill }}</td>
+            <td> {{ Voting_admin.orgz }}</td>
+            <td> {{ Voting_admin.org_code }}</td>
+         
+            <td><a href="{% url 'generate_admin_account' Voting_admin.id %}"> Generate Admin Account </a></td>
+            
+        </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+
+</table>
+</body>

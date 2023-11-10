@@ -1,0 +1,48 @@
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
+<body>
+<h1>Manage Voters</h1>
+<hr>
+
+{% if csv_data %}
+        <table>
+            <thead>
+                <tr>
+                    {% for field in csv_data.0.keys %}
+                        <th>{{ field }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in csv_data %}
+                    <tr>
+                        {% for field, value in row.items %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% endif %}
+    <div>
+        <button>Add Voter</button>
+        <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
+            {% csrf_token %}
+            <label for="file">Import CSV File:</label>
+            <input type="file" name="file" id="file" accept=".csv" required>
+            <button type="submit">Upload CSV</button>
+        </form>
+    </div>
+</body>

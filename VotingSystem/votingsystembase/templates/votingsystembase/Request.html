@@ -1,0 +1,27 @@
+{% extends 'votingsystembase/main.html'%}
+{% load static %}
+{% block content %}
+<body>
+    <center>
+    <h1>Request for Use Form</h1>
+    <br><br><br>
+    {% if submitted %}
+
+        Your Request is submitted.
+        Wait for email confirmation.
+
+    {% else %}
+ 
+        <form action="" method="post">
+            {% csrf_token %}
+            
+            {{form.as_p}}
+
+            <input type="submit" class="btn btn-primary">
+        </form>
+    
+    {% endif %}
+    </center>
+</body>
+
+{% endblock %}

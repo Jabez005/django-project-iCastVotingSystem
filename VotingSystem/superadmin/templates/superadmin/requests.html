@@ -1,0 +1,55 @@
+
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
+<body>
+<h1>Request form List</h1>
+<hr>
+
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Organization</th>
+        <th scope="col">Details</th>
+        <th scope="col">Status</th>
+        <th scope="col">Date Submitted</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% if Requestform %}
+
+        {% for Requestforms in Requestform %}
+        <tr>
+            <td> {{ Requestforms.id }}</td>
+            <td> {{ Requestforms.f_name }}</td>
+            <td> {{ Requestforms.l_name }}</td>
+            <td> {{ Requestforms.email }}</td>
+            <td> {{ Requestforms.organization }}</td>
+            <td> {{ Requestforms.details }}</td>
+            <td> {{ Requestforms.status }}</td>
+            <td> {{ Requestforms.created }}</td> 
+            <td><a href="{% url 'view' Requestforms.id %}"> View Request </a></td>
+            
+        </tr>
+        {% endfor %}
+    {% endif %}
+    </tbody>
+
+</table>
+</body>

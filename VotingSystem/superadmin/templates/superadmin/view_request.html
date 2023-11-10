@@ -1,0 +1,32 @@
+
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
+
+<div class="card">
+    <strong>
+        {{ Requestform.f_name }}
+        {{ Requestform.l_name }}
+    </strong>
+    <div class="card-body">
+      <p> ID: {{ Requestform.id }}</p>
+      <p> Email: {{ Requestform.email }}</p>
+      <p> Organization: {{ Requestform.organization }}</p>
+      <p> Details: {{ Requestform.details }}</p>
+      <p> Status: {{ Requestform.status }}</p>
+      <p> Date Submitted: {{ Requestform.created }}</p>
+      <a href="{% url 'approve_request' Requestform.id %}" class="card-link">Approve</a>
+      <a href="{% url 'reject_request' Requestform.id %}" class="card-link">Reject</a>
+    </div>
+  </div>

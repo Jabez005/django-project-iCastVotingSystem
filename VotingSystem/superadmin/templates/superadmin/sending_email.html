@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ subject }}</title>
+</head>
+<body>
+    <p>
+        <strong>{{ subject }}</strong>
+    </p>
+    <p>
+        Dear {{ vote_admins.first_name }},
+    </p>
+    <p>
+        Your voting admin account has been created with the following details:
+    </p>
+    <ul>
+        <li><strong>Username:</strong> {{ vote_admins.email }}</li>
+        <li><strong>Password:</strong> {{ password }}</li>
+    </ul>
+    <p>
+        Please log in to the system using these credentials. You can change your password after logging in.
+    </p>
+    <p>
+        Thank you.
+    </p>
+</body>
+</html>
