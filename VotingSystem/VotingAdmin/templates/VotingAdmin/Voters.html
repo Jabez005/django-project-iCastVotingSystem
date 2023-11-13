@@ -37,7 +37,7 @@
         </table>
 {% endif %}
     <div>
-        <button>Add Voter</button>
+       
         <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
             {% csrf_token %}
             <label for="file">Import CSV File:</label>

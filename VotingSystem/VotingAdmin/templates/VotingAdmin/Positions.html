@@ -1,0 +1,21 @@
+{% block content %}
+<h1>Positions</h1>
+
+<a href="{% url 'add_position' %}">Add Position</a>
+
+<table border="1">
+    <tr>
+        <th>Position Name</th>
+        <th>Number of Candidates</th>
+        <th>Total Votes</th>
+    </tr>
+
+    {% for position in positions %}
+        <tr>
+            <td>{{ position.Pos_name }}</td>
+            <td>{{ position.Num_candidates.count }}</td>
+            <td>{{ position.Total_votes.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
