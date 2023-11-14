@@ -3,7 +3,7 @@
 
 <form action="{% url 'add_position' %}" method="post">
     {% csrf_token %}
-
+    {{form.as_p}}
     <input type="text" name="position_name" placeholder="Position Name">
 
     <button type="submit">Submit</button>

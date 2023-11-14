@@ -89,12 +89,15 @@ def ManagePositions(request):
 
 def add_position_view(request, ):
     if request.method == 'POST':
-        position_name = request.POST['Pos_name']
+        position_name = request.POST.get('Pos_name', '')
+        if position_name:
+            position = Positions.objects.create(position_name=position_name)
+            position.save()
 
-        add_position_view(request, position_name)
+            messages.success(request, 'Position added successfully.')
 
-        messages.success(request, 'Position added successfully.')
-
-        return redirect('voting_admin:positions')
+            return redirect('voting_admin:positions')
+        else:
+            messages.error(request, 'Pos_name is required.')
 
     return render(request, 'VotingAdmin/add_positions.html')
