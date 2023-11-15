@@ -125,3 +125,4 @@ EMAIL_USE_TLS = True  # Use TLS for secure connection
 EMAIL_HOST_USER = 'jabezvictor05@gmail.com'  # Your SMTP username
 EMAIL_HOST_PASSWORD = 'fapi cxzs sway pzbe'  # Your SMTP password
 
+APPEND_SLASH = False

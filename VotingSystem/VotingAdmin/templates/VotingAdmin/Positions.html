@@ -1,21 +1,41 @@
+{% load static %}
 {% block content %}
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
 <h1>Positions</h1>
 
 <a href="{% url 'add_position' %}">Add Position</a>
 
-<table border="1">
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
     <tr>
+        <th>Id</th>
         <th>Position Name</th>
         <th>Number of Candidates</th>
         <th>Total Votes</th>
     </tr>
-
-    {% for position in positions %}
+    </thead>
+{% if Positions %}
+    {% for position in Positions %}
         <tr>
+            <td>{{ position.id }}</td>
             <td>{{ position.Pos_name }}</td>
-            <td>{{ position.Num_candidates.count }}</td>
-            <td>{{ position.Total_votes.count }}</td>
+            <td>{{ position.Num_Candidates }}</td>
+            <td>{{ position.Total_votes }}</td>
         </tr>
     {% endfor %}
+{% endif %}
 </table>
 {% endblock %}

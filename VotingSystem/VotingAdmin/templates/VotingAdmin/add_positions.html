@@ -1,10 +1,26 @@
+{% load static %}
 {% block content %}
+
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
 <h1>Add Position</h1>
 
 <form action="{% url 'add_position' %}" method="post">
     {% csrf_token %}
     {{form.as_p}}
-    <input type="text" name="position_name" placeholder="Position Name">
+    <input type="text" name="Pos_name" placeholder="Position Name">
 
     <button type="submit">Submit</button>
 </form>
