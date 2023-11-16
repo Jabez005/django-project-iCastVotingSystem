@@ -1,3 +1,4 @@
+#from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.apps import apps
 from django.contrib.auth import authenticate, login
@@ -5,9 +6,10 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.management import call_command
-from django.db import models
+#from django.db import models
 from .models import Positions
 from django.apps import apps
+from .models import CSVUpload
 import csv
 import io
 # Create your views here.
@@ -25,7 +27,7 @@ def Adminlogin(request):
             messages.error(request, 'Invalid login credentials.')
             return redirect('Adminlogin')
 
-    return render(request, 'authentication:Voting_adminlogin.html', {})
+    return render(request, 'authentication/Voting_adminlogin.html', {})
 
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
@@ -33,7 +35,7 @@ def Votingadmin(request):
 def Voters(request):
     return render(request, 'VotingAdmin/Voters.html')
 
-def create_dynamic_model(field_names):
+#def create_dynamic_model(field_names):
     model_name = 'MyDynamicModel'
     fields = {'__module__': 'VotingAdmin.models'}  
 
@@ -44,65 +46,57 @@ def create_dynamic_model(field_names):
     return model
 
 def upload_csv(request):
-    model_class = None
-
+ 
     if request.method == 'POST':
         csv_file = request.FILES.get('file')
         if not csv_file or not csv_file.name.endswith('.csv'):
-            return HttpResponseRedirect(reverse('home'))
+            return redirect('home')
 
-        # Decode the uploaded file and read its contents
         decoded_file = csv_file.read().decode('utf-8')
         io_string = io.StringIO(decoded_file)
-        reader = csv.reader(io_string, delimiter=',')
+        reader = csv.DictReader(io_string)
 
-        # Read the header row from the CSV file
-        header = next(reader)
+        # Read the entire CSV into a list of dictionaries
+        csv_data = list(reader)
 
-        # Define the dynamic model with the specified header row
-        dynamic_model = create_dynamic_model(header)
+        # Capture the header order from the DictReader
+        header_order = reader.fieldnames
 
-        # Perform migration to create the database table for the dynamic model
-        call_command('makemigrations')
-        call_command('migrate')
+        # Clear previous CSV data and save the new data along with header order
+        CSVUpload.objects.all().delete()  # This will remove all previous data!
+        CSVUpload.objects.create(data=csv_data)
 
-        # Read the rest of the CSV file and save each row as an instance of the dynamic model
-        for column in reader:
-            instance = dynamic_model()
-            for i, value in enumerate(column):
-                setattr(instance, header[i], value)
-            instance.save()
+        # Save the header order in the session
+        request.session['header_order'] = header_order
 
-        # Store the dynamic model class name in the session for the display view to use
-        request.session['dynamic_model_name'] = dynamic_model._meta.model_name
+        return redirect('Display_data')
 
-        # Redirect to the display view
-        return HttpResponseRedirect(reverse('display_csv_data'))
-
-    return render(request, 'VotingAdmin/upload_csv.html')
+    return render(request, 'VotingAdmin/Voters.html')
 
 def display_csv_data(request):
-    model_class = None
-    csv_data = None
-    field_names = None
+    last_upload = CSVUpload.objects.last()
+    if last_upload:
+        voters_data = last_upload.data
+        # Retrieve the header order from the session
+        field_names = request.session.get('header_order', [])
+        
+        # If there's no header order in the session, default to keys from the first item
+        if not field_names and voters_data:
+            field_names = list(voters_data[0].keys())
+        
+        # Ensure each voter dict has all the keys, even if empty
+        for voter in voters_data:
+            for field in field_names:
+                voter.setdefault(field, '')
 
-    # Retrieve the dynamic model class name from the session
-    dynamic_model_name = request.session.get('dynamic_model_name')
+    else:
+        voters_data = []
+        field_names = []
 
-    if dynamic_model_name:
-        # Fetch the dynamic model class from the app registry
-        model_class = apps.get_model('your_app_label', dynamic_model_name)
-        csv_data = model_class.objects.all()
-        # Get the field names from the model
-        if csv_data:
-            field_names = [field.name for field in model_class._meta.fields if not field.auto_created]
-
-    context = {
-        'csv_data': csv_data,
-        'field_names': field_names,  # Pass field names instead of model_class
-    }
-    return render(request, 'VotingAdmin/display_csv_data.html', context)
-
+    return render(request, 'VotingAdmin/Voters.html', {
+        'voters_data': voters_data,
+        'field_names': field_names,
+    })
 
 def ManagePositions(request):
     positions = Positions.objects.all()
