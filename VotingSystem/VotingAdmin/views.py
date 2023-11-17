@@ -1,4 +1,3 @@
-#from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.apps import apps
 from django.contrib.auth import authenticate, login
@@ -6,9 +5,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.management import call_command
-#from django.db import models
 from .models import Positions
-from django.apps import apps
 from .models import CSVUpload
 import csv
 import io
@@ -32,9 +29,6 @@ def Adminlogin(request):
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
 
-def Voters(request):
-    return render(request, 'VotingAdmin/Voters.html')
-
 #def create_dynamic_model(field_names):
     model_name = 'MyDynamicModel'
     fields = {'__module__': 'VotingAdmin.models'}  
@@ -46,10 +40,10 @@ def Voters(request):
     return model
 
 def upload_csv(request):
- 
     if request.method == 'POST':
         csv_file = request.FILES.get('file')
         if not csv_file or not csv_file.name.endswith('.csv'):
+            messages.error(request, 'Invalid file type.')  # You should display this message in your template
             return redirect('home')
 
         decoded_file = csv_file.read().decode('utf-8')
@@ -57,19 +51,29 @@ def upload_csv(request):
         reader = csv.DictReader(io_string)
 
         # Read the entire CSV into a list of dictionaries
-        csv_data = list(reader)
+        next_id = 1
+        if CSVUpload.objects.exists():
+            # If previous uploads exist, get the last used ID and increment by 1
+            last_upload = CSVUpload.objects.last()
+            last_data = last_upload.data
+            if last_data:
+                last_id = max(item.get('id', 0) for item in last_data)
+                next_id = last_id + 1
 
-        # Capture the header order from the DictReader
-        header_order = reader.fieldnames
+        csv_data = []
+        for row in reader:
+            row['id'] = next_id
+            csv_data.append(row)
+            next_id += 1
 
+        # Capture the header order from the DictReader and include the 'id'
+        header_order = ['id'] + reader.fieldnames
         # Clear previous CSV data and save the new data along with header order
-        CSVUpload.objects.all().delete()  # This will remove all previous data!
-        CSVUpload.objects.create(data=csv_data)
+        CSVUpload.objects.all().delete()  # Be cautious with this!
+        CSVUpload.objects.create(data=csv_data, header_order=header_order)
 
-        # Save the header order in the session
-        request.session['header_order'] = header_order
-
-        return redirect('Display_data')
+        # No need to save the header order in the session
+        return redirect('Display_data')  # Ensure this is the correct view name
 
     return render(request, 'VotingAdmin/Voters.html')
 
@@ -77,22 +81,12 @@ def display_csv_data(request):
     last_upload = CSVUpload.objects.last()
     if last_upload:
         voters_data = last_upload.data
-        # Retrieve the header order from the session
-        field_names = request.session.get('header_order', [])
-        
-        # If there's no header order in the session, default to keys from the first item
-        if not field_names and voters_data:
-            field_names = list(voters_data[0].keys())
-        
-        # Ensure each voter dict has all the keys, even if empty
-        for voter in voters_data:
-            for field in field_names:
-                voter.setdefault(field, '')
-
+        field_names = last_upload.header_order
     else:
         voters_data = []
         field_names = []
 
+    # For debugging: Return the context as a JSON response
     return render(request, 'VotingAdmin/Voters.html', {
         'voters_data': voters_data,
         'field_names': field_names,
@@ -119,7 +113,7 @@ def add_position_view(request):
             else:
                 messages.info(request, 'Position already exists.')
             
-            return redirect('VotingAdmin/add_position')  # Replace with your actual URL name for positions list
+            return redirect('ManagePositions')  # Replace with your actual URL name for positions list
         else:
             messages.error(request, 'Position name is required.')
 

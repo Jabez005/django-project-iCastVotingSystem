@@ -20,26 +20,30 @@
 
 <!-- Your existing table structure -->
 <table class="table table-hover table-bordered">
-    <thead class="table-light">
-      <tr>
+  <thead>
+    <tr>
+        <th><input type="checkbox" id="select-all"/></th>
         {% for field_name in field_names %}
-          <th>{{ field_name|capfirst }}</th>
+            <th>{{ field_name }}</th>
         {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for voter in voters_data %}
+    </tr>
+  </thead>
+  <tbody>
+  </tr>
+    {% for voter in voters_data %}
         <tr>
-          {% for field_name in field_names %}
-            <!-- Use the custom get_item filter to safely access the value -->
-            <td>{{ voter|get_item:field_name }}</td>
-          {% endfor %}
+            <td><input type="checkbox"/></td>
+            {% for field_name in field_names %}
+                <td>{{ voter|get_item:field_name }}</td>
+            {% endfor %}
+            <td><a href="#"> Generate Voter Account </a></td>
         </tr>
-      {% endfor %}
-    </tbody>
+        <tr></tr>
+    {% endfor %}
+  </tbody>
 </table>
     <div>
-       
+        <a href="#"> Generate Voter Account </a>
         <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
             {% csrf_token %}
             <label for="file">Import CSV File:</label>
@@ -47,4 +51,13 @@
             <button type="submit">Upload CSV</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('select-all').onclick = function() {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var checkbox of checkboxes) {
+             checkbox.checked = this.checked;
+            }
+        }   
+    </script>
 </body>
