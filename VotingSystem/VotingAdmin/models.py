@@ -4,6 +4,7 @@ from superadmin.models import vote_admins
 
 # Create your models here.
 class CSVUpload(models.Model):
+    voting_admins=models.ForeignKey(vote_admins, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     data = JSONField()  # Use JSONField here
     header_order = JSONField()

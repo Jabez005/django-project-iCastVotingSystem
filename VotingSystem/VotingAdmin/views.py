@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.management import call_command
 from .models import Positions
 from .models import CSVUpload
+from superadmin.models import vote_admins
 import csv
 import io
 # Create your views here.
@@ -45,6 +46,12 @@ def upload_csv(request):
         if not csv_file or not csv_file.name.endswith('.csv'):
             messages.error(request, 'Invalid file type.')  # You should display this message in your template
             return redirect('home')
+        
+        try:
+            voting_admin_instance = vote_admins.objects.get(emaill=request.user.email)
+        except vote_admins.DoesNotExist:
+            messages.error(request, "Voting admin not found.")
+            return redirect('home')  # Redirect appropriately
 
         decoded_file = csv_file.read().decode('utf-8')
         io_string = io.StringIO(decoded_file)
@@ -69,13 +76,12 @@ def upload_csv(request):
         # Capture the header order from the DictReader and include the 'id'
         header_order = ['id'] + reader.fieldnames
         # Clear previous CSV data and save the new data along with header order
-        CSVUpload.objects.all().delete()  # Be cautious with this!
-        CSVUpload.objects.create(data=csv_data, header_order=header_order)
+        CSVUpload.objects.create(voting_admin=voting_admin_instance, data=csv_data, header_order=header_order)
 
-        # No need to save the header order in the session
         return redirect('Display_data')  # Ensure this is the correct view name
 
     return render(request, 'VotingAdmin/Voters.html')
+
 
 def display_csv_data(request):
     last_upload = CSVUpload.objects.last()

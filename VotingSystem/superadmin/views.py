@@ -110,6 +110,10 @@ def generate_admin_account(request, admin_id):
     user.is_staff = True
     user.save()
 
+    # Link the User instance to the vote_admins instance
+    admin_record.user = user
+    admin_record.save()
+
     # Send an email to the voting admin with the password
     subject = "Your Voting Admin Account"
     message = f"Dear {admin_record.first_name},\n\nYour voting admin account has been created with the following details:\n\nUsername: {admin_record.emaill}\nPassword: {password}\n\nPlease log in to the system using these credentials. You can change your password after logging in.\n\nThank you."
