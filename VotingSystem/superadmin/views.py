@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 import random
 import uuid
 from django.core.mail import send_mail
@@ -61,21 +62,34 @@ def generate_organization_code():
 
 
 def approve_request(request, request_id):
-    request = Requestform.objects.get(id=request_id)
-    request.approved = True
-    request.status = "Approved"
-    request.save()
+    # Start a transaction
+    with transaction.atomic():
+        # Get the request or return a 404 error if it doesn't exist
+        request_form = get_object_or_404(Requestform, id=request_id)
 
-    organization_code = generate_organization_code()
+        # Check if the request is already approved to avoid duplicating vote_admins entries
+        if request_form.status== 'approved':
+            messages.error(request, "This request has already been approved.")
+            return redirect('requests')
 
-    admins = vote_admins()
-    admins.first_name =  request.f_name
-    admins.last_name = request.l_name
-    admins.emaill = request.email
-    admins.orgz = request.organization
-    admins.org_code = organization_code
-    admins.save()
+        # Approve the request
+        request_form.status = True
+        request_form.status = "approved"
+        request_form.save()
 
+        # Generate an organization code
+        organization_code = generate_organization_code()
+
+        # Create a new vote_admins instance
+        admins = vote_admins()
+        admins.first_name =  request_form.f_name
+        admins.last_name = request_form.l_name
+        admins.emaill = request_form.email
+        admins.orgz = request_form.organization
+        admins.org_code = organization_code
+        admins.save()
+
+    # Redirect to the list of requests
     return redirect('requests')
 
 def reject_request(request, request_id):

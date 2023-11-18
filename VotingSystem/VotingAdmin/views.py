@@ -1,13 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.apps import apps
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.management import call_command
-from .models import Positions
+from .models import Positions, VoterProfile, Partylist
 from .models import CSVUpload
 from superadmin.models import vote_admins
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import AddPartyForm
+import uuid
 import csv
 import io
 # Create your views here.
@@ -29,16 +34,6 @@ def Adminlogin(request):
 
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
-
-#def create_dynamic_model(field_names):
-    model_name = 'MyDynamicModel'
-    fields = {'__module__': 'VotingAdmin.models'}  
-
-    for field_name in field_names:
-        fields[field_name] = models.CharField(max_length=255)
-
-    model = type(model_name, (models.Model,), fields)
-    return model
 
 def upload_csv(request):
     if request.method == 'POST':
@@ -76,7 +71,7 @@ def upload_csv(request):
         # Capture the header order from the DictReader and include the 'id'
         header_order = ['id'] + reader.fieldnames
         # Clear previous CSV data and save the new data along with header order
-        CSVUpload.objects.create(voting_admin=voting_admin_instance, data=csv_data, header_order=header_order)
+        CSVUpload.objects.create(voting_admins=voting_admin_instance, data=csv_data, header_order=header_order)
 
         return redirect('Display_data')  # Ensure this is the correct view name
 
@@ -88,14 +83,17 @@ def display_csv_data(request):
     if last_upload:
         voters_data = last_upload.data
         field_names = last_upload.header_order
+        upload_id = last_upload.id
     else:
         voters_data = []
         field_names = []
+        upload_id = None
 
     # For debugging: Return the context as a JSON response
     return render(request, 'VotingAdmin/Voters.html', {
         'voters_data': voters_data,
         'field_names': field_names,
+        'upload_id': upload_id,
     })
 
 def ManagePositions(request):
@@ -124,3 +122,56 @@ def add_position_view(request):
             messages.error(request, 'Position name is required.')
 
     return render(request, 'VotingAdmin/add_positions.html')
+
+def generate_voter_accounts(request, upload_id):
+    try:
+        csv_upload = CSVUpload.objects.get(id=upload_id)
+    except CSVUpload.DoesNotExist:
+        messages.error(request, "CSV upload record not found.")
+        return redirect('Display_data')  # Redirect to an appropriate view
+
+    # Assuming a method to retrieve voters for this admin
+    admin_record = csv_upload.voting_admins
+    voters_data = csv_upload.data
+
+    for voter in voters_data:
+        email = voter['Email']
+        username = email  # Assuming email is unique and used as username
+        password = uuid.uuid4().hex[:6]  # Generate a secure password
+
+        if not User.objects.filter(username=username).exists():
+            user = User.objects.create_user(username=username, email=email, password=password)
+            VoterProfile.objects.create(user=user, org_code=admin_record.org_code)
+
+            subject = "Your Voter Account Details"
+            message = f"Dear Voter,\n\nYour account has been created. Please use the following details to log in:\n\nUsername: {username}\nPassword: {password}\n\nPlease change your password upon first login."
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+
+    messages.success(request, "Voter accounts generated successfully.")
+    return HttpResponseRedirect(reverse('Display_data'))
+
+
+def add_party(request, admin_id):
+    voting_admin = get_object_or_404(vote_admins, id=admin_id)  # Ensure the admin exists
+
+    if request.method == 'POST':
+        form = AddPartyForm(request.POST, request.FILES)
+        if form.is_valid():
+            partylist = form.save(commit=False)
+            partylist.voting_admins = voting_admin  # Set the foreign key relation
+            partylist.save()
+            return redirect('Manage_Partylist')  # Redirect to a success page or the list
+    else:
+        form = AddPartyForm()
+
+    return render(request, 'VotingAdmin/add_partylist.html', {'form': form})
+
+def ManageParty(request, admin_id):
+    voting_admin_instance = vote_admins.objects.get(id=admin_id)
+    partylist = voting_admin_instance.Partylist.all()  # Using the correct related_name
+
+    context = {'Partylist': partylist}
+    return render(request, 'VotingAdmin/Party.html', context=context)
+
+
+

@@ -1,0 +1,28 @@
+{% extends 'votingsystembase/main.html'%}
+{% load static %}
+{% block content %}
+<body>
+    <center>
+    <h1>Voter Login</h1>
+    <br><br><br>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Username">
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput2" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Password">
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput2" class="form-label">Organization Code</label>
+                <input type="text" class="form-control" name="org_code" placeholder="Organization Code">
+              </div>
+
+            <input type="submit" class="btn btn-primary">
+        </form>
+    </center>
+</body>
+
+{% endblock %}

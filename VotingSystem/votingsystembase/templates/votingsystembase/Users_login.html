@@ -38,7 +38,7 @@
 <body>
     <div class="card">
         <h1>E-Voting System</h1>
-        <button id="">Voter Login</button>
+        <button id="voter-login">Voter Login</button>
         <button id="votingadmin-login">Voting Admin</button>
         <button id="systemadmin-login">System Admin</button>
     </div>
@@ -49,6 +49,9 @@
         };
         document.getElementById('votingadmin-login').onclick = function () {
             window.location.href = "{% url 'Adminlogin' %}";
+        };
+        document.getElementById('voter-login').onclick = function () {
+            window.location.href = "{% url 'login_voter' %}";
         };
     </script>
 </body>

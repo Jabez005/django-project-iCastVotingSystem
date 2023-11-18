@@ -8,4 +8,6 @@ urlpatterns = [
     path('superadmin/', include('superadmin.urls')),
     path('VotingAdmin/', include('django.contrib.auth.urls')),
     path('VotingAdmin/', include('VotingAdmin.urls')),
+    path('Voters/', include('Voters.urls')),
+    path('Voters/', include('django.contrib.auth.urls')),
 ]

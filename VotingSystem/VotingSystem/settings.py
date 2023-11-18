@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'votingsystembase',
     'superadmin',
     'VotingAdmin',
+    'Voters',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,8 @@ EMAIL_HOST_USER = 'jabezvictor05@gmail.com'  # Your SMTP username
 EMAIL_HOST_PASSWORD = 'fapi cxzs sway pzbe'  # Your SMTP password
 
 APPEND_SLASH = False
+
+AUTHENTICATION_BACKENDS = [
+    'Voters.backends.VoterAuthenticationBackend',  
+    'django.contrib.auth.backends.ModelBackend',  
+]

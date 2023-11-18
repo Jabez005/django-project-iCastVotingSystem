@@ -1,0 +1,41 @@
+{% load static %}
+{% block content %}
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+
+<h1>Positions</h1>
+
+<a href="{% url 'add_party' %}">Add Position</a>
+
+<table class="table table-hover table-bordered">
+    <thead class="table-light">
+    <tr>
+        <th>Id</th>
+        <th>Partylist</th>
+        <th>Logo</th>
+        <th>Description</th>
+    </tr>
+    </thead>
+{% if Positions %}
+    {% for partylist in Partylist %}
+        <tr>
+            <td>{{ partylist.id }}</td>
+            <td>{{ partylist.Party_name }}</td>
+            <td>{{ partylist.Logo }}</td>
+            <td>{{ partylist.Description }}</td>
+        </tr>
+    {% endfor %}
+{% endif %}
+</table>
+{% endblock %}
