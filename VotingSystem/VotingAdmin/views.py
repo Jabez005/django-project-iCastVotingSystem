@@ -6,13 +6,13 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
 from django.core.management import call_command
-from .models import Positions, VoterProfile, Partylist
+from .models import Positions, VoterProfile, Partylist, DynamicField, Candidate
 from .models import CSVUpload
 from superadmin.models import vote_admins
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import AddPartyForm
+from .forms import AddPartyForm, get_dynamic_form
 import uuid
 import csv
 import io
@@ -36,6 +36,7 @@ def Adminlogin(request):
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
 
+@login_required
 def upload_csv(request):
     if request.method == 'POST':
         csv_file = request.FILES.get('file')
@@ -78,7 +79,7 @@ def upload_csv(request):
 
     return render(request, 'VotingAdmin/Voters.html')
 
-
+@login_required
 def display_csv_data(request):
     last_upload = CSVUpload.objects.last()
     if last_upload:
@@ -131,29 +132,30 @@ def add_position_view(request):
 
     return render(request, 'VotingAdmin/add_positions.html')
 
-def generate_voter_accounts(request, upload_id):
-    try:
-        csv_upload = CSVUpload.objects.get(id=upload_id)
-    except CSVUpload.DoesNotExist:
-        messages.error(request, "CSV upload record not found.")
-        return redirect('Display_data')  # Redirect to an appropriate view
+@login_required
+def generate_voter_accounts(request):
+    # Get the voting admin associated with the current user
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
 
-    # Assuming a method to retrieve voters for this admin
-    admin_record = csv_upload.voting_admins
-    voters_data = csv_upload.data
+    # Retrieve all CSV uploads for this admin
+    csv_uploads = CSVUpload.objects.filter(voting_admins=voting_admin)
 
-    for voter in voters_data:
-        email = voter['Email']
-        username = email  # Assuming email is unique and used as username
-        password = uuid.uuid4().hex[:6]  # Generate a secure password
+    for csv_upload in csv_uploads:
+        voters_data = csv_upload.data
 
-        if not User.objects.filter(username=username).exists():
-            user = User.objects.create_user(username=username, email=email, password=password)
-            VoterProfile.objects.create(user=user, org_code=admin_record.org_code)
+        for voter in voters_data:
+            email = voter['Email']
+            username = email  # Assuming email is unique and used as username
+            password = User.objects.make_random_password()  # Generate a secure password
 
-            subject = "Your Voter Account Details"
-            message = f"Dear Voter,\n\nYour account has been created. Please use the following details to log in:\n\nUsername: {username}\nPassword: {password}\n\nPlease change your password upon first login."
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+            if not User.objects.filter(username=username).exists():
+                user = User.objects.create_user(username=username, email=email, password=password)
+                VoterProfile.objects.create(user=user, org_code=voting_admin.org_code)
+
+                subject = "Your Voter Account Details"
+                subject = "Your Voter Account Details"
+                message = f"Dear Voter,\n\nYour account has been created. Please use the following details to log in:\n\nUsername: {username}\nPassword: {password}\n\nPlease change your password upon first login."
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
 
     messages.success(request, "Voter accounts generated successfully.")
     return HttpResponseRedirect(reverse('Display_data'))
@@ -183,6 +185,51 @@ def add_party(request):
         form = AddPartyForm()
 
     return render(request, 'VotingAdmin/add_party.html', {'form': form})
+
+
+@login_required
+def field_list(request):
+    # Ensure the user is a voting admin
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    fields = DynamicField.objects.filter(voting_admins=voting_admin)
+    return render(request, 'field_list.html', {'fields': fields})
+
+@login_required
+def field_create(request):
+    # Ensure the user is a voting admin
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    if request.method == 'POST':
+        form = DynamicFieldForm(request.POST)
+        if form.is_valid():
+            field = form.save(commit=False)
+            field.voting_admins = voting_admin
+            field.save()
+            return redirect('field_list')
+    else:
+        form = DynamicFieldForm()
+    return render(request, 'field_form.html', {'form': form})
+
+@login_required
+def field_update(request, field_id):
+    # Ensure the user is a voting admin
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    field = get_object_or_404(DynamicField, id=field_id, voting_admins=voting_admin)
+    if request.method == 'POST':
+        form = DynamicFieldForm(request.POST, instance=field)
+        if form.is_valid():
+            form.save()
+            return redirect('field_list')
+    else:
+        form = DynamicFieldForm(instance=field)
+    return render(request, 'field_form.html', {'form': form})
+
+@login_required
+def field_delete(request, field_id):
+    # Ensure the user is a voting admin
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    field = get_object_or_404(DynamicField, id=field_id, voting_admins=voting_admin)
+    field.delete()
+    return redirect('field_list')
 
 
 

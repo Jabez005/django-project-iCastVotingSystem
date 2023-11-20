@@ -19,7 +19,7 @@
 <hr>
 
 <!-- Your existing table structure -->
-<form method="post" action="{% url 'generate_voter_accounts' upload_id=upload_id %}">
+<form method="post" action="{% url 'generate_voter_accounts' %}">
     {% csrf_token %}
     <table class="table table-hover table-bordered">
         <thead>
