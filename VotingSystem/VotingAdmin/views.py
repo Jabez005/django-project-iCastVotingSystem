@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import login_required
 from django.apps import apps
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
@@ -96,20 +97,27 @@ def display_csv_data(request):
         'upload_id': upload_id,
     })
 
+@login_required
 def ManagePositions(request):
-    positions = Positions.objects.all()
+    # Get the voting admin associated with the current user
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    # Filter positions by the current voting admin
+    positions = Positions.objects.filter(voting_admins=voting_admin)
 
-    context ={'Positions' : positions}
+    context = {'Positions': positions}
     return render(request, 'VotingAdmin/Positions.html', context=context)
-    
 
+@login_required
 def add_position_view(request):
     if request.method == 'POST':
         position_name = request.POST.get('Pos_name', '').strip()
         if position_name:
-            # The Num_candidates and Num_votes will be set to their default values of 0
+            # Get the voting admin associated with the current user
+            voting_admin = get_object_or_404(vote_admins, user=request.user)
+            # Create the position and associate it with the current voting admin
             position_name, created = Positions.objects.get_or_create(
                 Pos_name=position_name,
+                voting_admins=voting_admin,
                 defaults={'Num_Candidates': 0, 'Total_votes': 0}
             )
             if created:
@@ -150,9 +158,19 @@ def generate_voter_accounts(request, upload_id):
     messages.success(request, "Voter accounts generated successfully.")
     return HttpResponseRedirect(reverse('Display_data'))
 
+@login_required
+def ManageParty(request):
+    # Get the voting admin associated with the current user
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    partylist = voting_admin.partylist_set.all()  
 
-def add_party(request, admin_id):
-    voting_admin = get_object_or_404(vote_admins, id=admin_id)  # Ensure the admin exists
+    context = {'partylist': partylist}
+    return render(request, 'VotingAdmin/Party.html', context=context)
+
+@login_required
+def add_party(request):
+    # Get the voting admin associated with the current user
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
 
     if request.method == 'POST':
         form = AddPartyForm(request.POST, request.FILES)
@@ -160,18 +178,11 @@ def add_party(request, admin_id):
             partylist = form.save(commit=False)
             partylist.voting_admins = voting_admin  # Set the foreign key relation
             partylist.save()
-            return redirect('Manage_Partylist')  # Redirect to a success page or the list
+            return redirect('ManageParty')  # Redirect to the party list view
     else:
         form = AddPartyForm()
 
-    return render(request, 'VotingAdmin/add_partylist.html', {'form': form})
-
-def ManageParty(request, admin_id):
-    voting_admin_instance = vote_admins.objects.get(id=admin_id)
-    partylist = voting_admin_instance.Partylist.all()  # Using the correct related_name
-
-    context = {'Partylist': partylist}
-    return render(request, 'VotingAdmin/Party.html', context=context)
+    return render(request, 'VotingAdmin/add_party.html', {'form': form})
 
 
 

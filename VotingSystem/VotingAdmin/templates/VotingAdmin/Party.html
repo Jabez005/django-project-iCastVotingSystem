@@ -14,9 +14,9 @@
     <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
 </head>
 
-<h1>Positions</h1>
+<h1>Partylist</h1>
 
-<a href="{% url 'add_party' %}">Add Position</a>
+<a href="{% url 'add_party' %}">Add Partylist</a>
 
 <table class="table table-hover table-bordered">
     <thead class="table-light">
@@ -27,13 +27,13 @@
         <th>Description</th>
     </tr>
     </thead>
-{% if Positions %}
-    {% for partylist in Partylist %}
+{% if partylist %}
+    {% for party in partylist %}
         <tr>
-            <td>{{ partylist.id }}</td>
-            <td>{{ partylist.Party_name }}</td>
-            <td>{{ partylist.Logo }}</td>
-            <td>{{ partylist.Description }}</td>
+            <td>{{ party.id }}</td>
+            <td>{{ party.Party_name }}</td>
+            <td>{{ party.Logo }}</td>
+            <td>{{ party.Description }}</td>
         </tr>
     {% endfor %}
 {% endif %}

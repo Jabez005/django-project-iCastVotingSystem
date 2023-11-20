@@ -1,0 +1,27 @@
+{% load static %}
+{% block content %}
+
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+</head>
+<body>
+    <div class="container">
+        <h1>Add Party</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+{% endblock %}

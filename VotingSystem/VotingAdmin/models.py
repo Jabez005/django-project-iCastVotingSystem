@@ -11,6 +11,7 @@ class CSVUpload(models.Model):
     header_order = JSONField()
 
 class Positions(models.Model):
+    voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
     Pos_name=models.CharField(max_length=100)
     Num_Candidates=models.IntegerField(default=0)
     Total_votes=models.IntegerField(default=0)
