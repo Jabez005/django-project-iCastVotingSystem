@@ -5,14 +5,13 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from django.core.management import call_command
 from .models import Positions, VoterProfile, Partylist, DynamicField, Candidate
 from .models import CSVUpload
 from superadmin.models import vote_admins
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import AddPartyForm, get_dynamic_form
+from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset
 import uuid
 import csv
 import io
@@ -192,22 +191,23 @@ def field_list(request):
     # Ensure the user is a voting admin
     voting_admin = get_object_or_404(vote_admins, user=request.user)
     fields = DynamicField.objects.filter(voting_admins=voting_admin)
-    return render(request, 'field_list.html', {'fields': fields})
+    return render(request, 'VotingAdmin/Candidate_app.html', {'fields': fields})
 
 @login_required
 def field_create(request):
     # Ensure the user is a voting admin
     voting_admin = get_object_or_404(vote_admins, user=request.user)
+    formset = DynamicFieldFormset(queryset=DynamicField.objects.none())  # Empty queryset as we don't want to edit existing objects here
+
     if request.method == 'POST':
-        form = DynamicFieldForm(request.POST)
-        if form.is_valid():
-            field = form.save(commit=False)
-            field.voting_admins = voting_admin
-            field.save()
+        formset = DynamicFieldFormset(request.POST)
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.voting_admins = voting_admin
+                instance.save()
             return redirect('field_list')
-    else:
-        form = DynamicFieldForm()
-    return render(request, 'field_form.html', {'form': form})
+    return render(request, 'VotingAdmin/candidate_form.html', {'formset': formset})
 
 @login_required
 def field_update(request, field_id):
@@ -221,7 +221,7 @@ def field_update(request, field_id):
             return redirect('field_list')
     else:
         form = DynamicFieldForm(instance=field)
-    return render(request, 'field_form.html', {'form': form})
+    return render(request, 'VotingAdmin/candidate_form.html', {'form': form})
 
 @login_required
 def field_delete(request, field_id):

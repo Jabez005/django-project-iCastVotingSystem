@@ -1,0 +1,60 @@
+{% load static %}
+<html>
+
+    <head>
+
+        <meta charset ="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <title> iCast </title> 
+
+        <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+        <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+
+        <style type=""text/css">
+            .sidebar{
+             height: 100%;
+             width: 200px;
+             position: fixed;
+             top: 95;
+             left: 0;
+             background-color: maroon;
+             overflow-x: hidden;
+            }
+            .sidebar a{
+                padding: 6px 8px 6px 16px;
+                text-decoration: none;
+                font-size: 25px;
+                color: whitesmoke;
+                display: block;
+            }
+            .sidebar a:hover{
+                color: teal;
+            }
+    
+        </style>
+
+    </head>
+
+  <h2>Manage Candidate Application Form</h2>
+  
+  <!-- Check if there are any fields -->
+  {% if fields.exists %}
+    <!-- If fields exist, list them -->
+    <ul>
+      {% for field in fields %}
+        <li>
+          {{ field.field_name }} ({{ field.field_type }})
+          <a href="{% url 'field_update' field.id %}">Edit</a>
+          <a href="{% url 'field_delete' field.id %}" onclick="return confirm('Are you sure?');">Delete</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <!-- If no fields exist, show the button to create them -->
+    <a href="{% url 'field_create' %}" class="btn btn-primary">Create Candidate Application Form</a>
+  {% endif %}
+

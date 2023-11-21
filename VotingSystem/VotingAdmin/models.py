@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 from django.db.models import JSONField
 from superadmin.models import vote_admins
 from django.conf import settings
@@ -62,10 +62,6 @@ class Candidate(models.Model):
     application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     votes = models.IntegerField(default=0)
-    # Other fields like 'rejected_reason', 'approved_by' etc.
-    # ...
-
-    # Link to the dynamic application form submission
     application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
 
     def __str__(self):

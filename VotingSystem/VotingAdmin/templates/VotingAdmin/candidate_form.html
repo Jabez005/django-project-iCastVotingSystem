@@ -1,0 +1,114 @@
+{% load static %}
+<html>
+
+    <head>
+
+        <meta charset ="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <title> iCast </title> 
+
+        <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+        <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+
+        <style type=""text/css">
+            .sidebar{
+             height: 100%;
+             width: 200px;
+             position: fixed;
+             top: 95;
+             left: 0;
+             background-color: maroon;
+             overflow-x: hidden;
+            }
+            .sidebar a{
+                padding: 6px 8px 6px 16px;
+                text-decoration: none;
+                font-size: 25px;
+                color: whitesmoke;
+                display: block;
+            }
+            .sidebar a:hover{
+                color: teal;
+            }
+    
+        </style>
+
+    </head>
+<body>
+    <h2>Create Candidate Application Form Fields</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ formset.management_form }} <!-- Include the management form -->
+        <div id="formset-container">
+            {% for form in formset %}
+            <div class="dynamic-form">
+                {{ form.as_p }}
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-form-button">Add More</button>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'field_list' %}">Back to field list</a>
+
+  <script>
+    const formsetPrefix = '{{ formset.prefix }}'; // Use the prefix from the formset
+    document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-form-button');
+    const formsetContainer = document.getElementById('formset-container');
+    const totalForms = document.getElementById('id_' + formsetPrefix + '-TOTAL_FORMS');
+
+  // Function to clear form values
+  function clearFormFields(form) {
+    [...form.elements].forEach(element => {
+      switch(element.type) {
+        case 'text':
+        case 'email':
+        case 'number':
+        case 'textarea':
+          element.value = '';
+          break;
+        case 'checkbox':
+        case 'radio':
+          element.checked = false;
+          break;
+        // Add more cases for other input types if needed
+      }
+    });
+  }
+
+  // Function to handle adding a new form
+  function addForm(e) {
+    e.preventDefault();
+
+    // Assume the last form in the container is the template
+    let formTemplate = formsetContainer.querySelector('.dynamic-form:last-child');
+    let newForm = formTemplate.cloneNode(true); // Clone the template form
+
+    // Update the total form count
+    let formCount = parseInt(totalForms.value);
+    totalForms.value = formCount + 1;
+
+    // Clear the cloned form fields
+    clearFormFields(newForm);
+
+    // Replace the form index
+    newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, formCount);
+
+    // Hide the current form and append the new form
+    formTemplate.style.display = 'none';
+    formsetContainer.appendChild(newForm);
+  }
+
+  // Add event listener to the Add button
+  addButton.addEventListener('click', addForm);
+});
+  </script>
+
+
+</body>
+</html>
