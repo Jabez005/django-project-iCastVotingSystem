@@ -1,6 +1,8 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
 from .models import Positions, Partylist, DynamicField
+from django.core.exceptions import ValidationError
+import json
 
 class AddPositionForm(forms.ModelForm):
     class Meta:
@@ -35,54 +37,47 @@ DynamicFieldFormset = modelformset_factory(
     extra=1,  # Specifies the number of empty forms to display
     can_delete=True  # Adds a boolean field to each form to mark it for deletion
 )
-    
-    
-def get_dynamic_form(dynamic_fields_queryset):
-    class DynamicForm(forms.Form):
-        # Dynamically add a choice field for positions
+
+class DynamicForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        dynamic_fields_queryset = kwargs.pop('dynamic_fields_queryset', None)
+        super(DynamicForm, self).__init__(*args, **kwargs)
+
+        for field in dynamic_fields_queryset:
+            field_kwargs = {'required': field.is_required}
+            if field.choices:
+                field_kwargs['choices'] = [(choice, choice) for choice in field.choices]  # Assuming field.choices is a list
+
+            # Add a field of the appropriate type to the form
+            if field.field_type == 'text':
+                self.fields[field.field_name] = forms.CharField(**field_kwargs)
+            elif field.field_type == 'email':
+                self.fields[field.field_name] = forms.EmailField(**field_kwargs)
+            elif field.field_type == 'number':
+                self.fields[field.field_name] = forms.IntegerField(**field_kwargs)
+            elif field.field_type == 'date':
+                self.fields[field.field_name] = forms.DateField(**field_kwargs)
+            elif field.field_type == 'datetime':
+                self.fields[field.field_name] = forms.DateTimeField(**field_kwargs)
+            elif field.field_type == 'file':
+                self.fields[field.field_name] = forms.FileField(**field_kwargs)
+            elif field.field_type == 'image':
+                self.fields[field.field_name] = forms.ImageField(**field_kwargs)
+            elif field.field_type == 'textarea':
+                self.fields[field.field_name] = forms.CharField(widget=forms.Textarea, **field_kwargs)
+        
+        # Add choice fields for positions and party lists
         position_choices = [(pos.id, pos.Pos_name) for pos in Positions.objects.all()]
-        position = forms.ChoiceField(choices=position_choices, required=True)
-
-        # Dynamically add a choice field for party lists
+        self.fields['position'] = forms.ChoiceField(choices=position_choices, required=True)
+        
         partylist_choices = [(party.id, party.Party_name) for party in Partylist.objects.all()]
-        partylist = forms.ChoiceField(choices=partylist_choices, required=True)
+        self.fields['partylist'] = forms.ChoiceField(choices=partylist_choices, required=True)
 
-        def __init__(self, *args, **kwargs):
-            super(DynamicForm, self).__init__(*args, **kwargs)
-            for field in dynamic_fields_queryset:
-                field_kwargs = {'required': field.is_required}
-                if field.choices:
-                    field_kwargs['choices'] = [(choice, choice) for choice in field.choices]  # Assuming field.choices is a list
 
-                # Add a field of the appropriate type to the form
-                if field.field_type == 'text':
-                    self.fields[field.field_name] = forms.CharField(**field_kwargs)
-                elif field.field_type == 'email':
-                    self.fields[field.field_name] = forms.EmailField(**field_kwargs)
-                elif field.field_type == 'number':
-                    self.fields[field.field_name] = forms.DecimalField(**field_kwargs)
-                elif field.field_type == 'integer':
-                    self.fields[field.field_name] = forms.IntegerField(**field_kwargs)
-                elif field.field_type == 'date':
-                    self.fields[field.field_name] = forms.DateField(**field_kwargs)
-                elif field.field_type == 'datetime':
-                    self.fields[field.field_name] = forms.DateTimeField(**field_kwargs)
-                elif field.field_type == 'time':
-                    self.fields[field.field_name] = forms.TimeField(**field_kwargs)
-                elif field.field_type == 'choice':
-                    self.fields[field.field_name] = forms.ChoiceField(**field_kwargs)
-                elif field.field_type == 'multichoice':
-                    self.fields[field.field_name] = forms.MultipleChoiceField(**field_kwargs)
-                elif field.field_type == 'file':
-                    self.fields[field.field_name] = forms.FileField(**field_kwargs)
-                elif field.field_type == 'image':
-                    self.fields[field.field_name] = forms.ImageField(**field_kwargs)
-                elif field.field_type == 'boolean':
-                    self.fields[field.field_name] = forms.BooleanField(**field_kwargs)
-                elif field.field_type == 'textarea':
-                    self.fields[field.field_name] = forms.CharField(widget=forms.Textarea, **field_kwargs)
-                elif field.field_type == 'url':
-                    self.fields[field.field_name] = forms.URLField(**field_kwargs)
-                
-                
-    return DynamicForm
+    def clean_data(self):
+        data = self.cleaned_data.get('data', '')
+        try:
+        # Try to load the JSON to ensure it's valid
+            return json.loads(data)
+        except json.JSONDecodeError:
+            raise ValidationError('Invalid JSON format')

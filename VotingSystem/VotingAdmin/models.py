@@ -63,7 +63,6 @@ class Candidate(models.Model):
     application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     votes = models.IntegerField(default=0)
-    application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
 
     def __str__(self):
         return f"Candidate: {self.user.username}"

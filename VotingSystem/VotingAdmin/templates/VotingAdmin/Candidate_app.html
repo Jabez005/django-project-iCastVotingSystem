@@ -51,8 +51,25 @@
             {% for field in fields %}
             <th>{{ field.field_name }}</th>
             {% endfor %}
+            <th>Position</th>
+            <th>Partylist</th>
+            <th>Status</th>
+            <th>Votes</th>
         </tr>
     </thead>
+    <tbody>
+        {% for application in applications %}
+        <tr>
+            {% for field in fields %}
+            <td>{{ application.data|get_dynamic_field:field.field_name }}</td>
+            {% endfor %}
+            <td>{{ application.positions.Pos_name }}</td> <!-- Replace 'name' with the actual field name in your Position model -->
+            <td>{{ application.partylist.Party_name}}</td> <!-- Replace 'name' with the actual field name in your Partylist model -->
+            <td>{{ application.candidate.status }}</td>
+            <td>{{ application.candidate.votes }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 <a href="{% url 'edit_candidate_form' %}" class="btn btn-secondary">Edit Form</a> <!-- Link to edit the form -->
 

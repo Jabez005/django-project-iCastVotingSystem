@@ -1,0 +1,31 @@
+{% extends 'Voters/Home.html' %}
+{% load static %}
+
+{% block content %}
+<body>
+    <center>
+    <h1>Application Form</h1>
+    <!-- The form action should point to the URL that is mapped to dynamic_form_view -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %} <!-- CSRF token for security -->
+        
+        <!-- Render dynamic fields -->
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                <!-- Display errors for each field -->
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <!-- You can add additional static fields here if necessary -->
+        <!-- Submit button -->
+        <button type="submit" name="save">Submit Application</button>
+    </form>
+    </center>
+</body>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Positions, VoterProfile, Partylist, DynamicField, Candidate
+from .models import Positions, VoterProfile, Partylist, DynamicField, CandidateApplication
 from .models import CSVUpload
 from superadmin.models import vote_admins
 from django.contrib.auth.models import User
@@ -193,11 +193,14 @@ def add_party(request):
 def manage_fields(request):
     # Get all DynamicField objects
     fields = DynamicField.objects.all()
+    applications = CandidateApplication.objects.select_related('positions', 'partylist')
 
-    # Pass fields to the context
+    # Pass fields and applications to the context
     context = {
         'fields': fields,
+        'applications': applications,
     }
+
     return render(request, 'VotingAdmin/Candidate_app.html', context)
 
 @login_required
