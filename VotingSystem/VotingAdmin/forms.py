@@ -17,7 +17,7 @@ class DynamicFieldForm(ModelForm):
         ('text', 'Text'),
         ('email', 'Email'),
         ('number', 'Number'),
-        # Add other field types here
+        ('image', 'Image'),
         ('date', 'Date'),
         ('datetime', 'DateTime'),
         ('time', 'Time'),
@@ -27,7 +27,7 @@ class DynamicFieldForm(ModelForm):
     field_type = forms.ChoiceField(choices=FIELD_TYPE_CHOICES)
     class Meta:
         model = DynamicField
-        fields = ['field_name', 'field_type', 'is_required', 'choices']
+        fields = ['field_name', 'field_type', 'is_required']
 
 DynamicFieldFormset = modelformset_factory(
     DynamicField,
@@ -36,7 +36,7 @@ DynamicFieldFormset = modelformset_factory(
     can_delete=True  # Adds a boolean field to each form to mark it for deletion
 )
     
-
+    
 def get_dynamic_form(dynamic_fields_queryset):
     class DynamicForm(forms.Form):
         # Dynamically add a choice field for positions

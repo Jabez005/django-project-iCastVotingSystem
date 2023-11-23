@@ -48,7 +48,8 @@ class DynamicField(models.Model):
 class CandidateApplication(models.Model):
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
     data = JSONField()  # Stores the data for each dynamic field
-    # Other necessary fields...
+    positions = models.ForeignKey('Positions', on_delete=models.CASCADE)
+    partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE)
 
 class Candidate(models.Model):
     STATUS_CHOICES = (

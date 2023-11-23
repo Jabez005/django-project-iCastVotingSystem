@@ -1,0 +1,93 @@
+{% load static %}
+
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+
+    <style type=""text/css">
+        .sidebar{
+         height: 100%;
+         width: 200px;
+         position: fixed;
+         top: 95;
+         left: 0;
+         background-color: maroon;
+         overflow-x: hidden;
+        }
+        .sidebar a{
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: whitesmoke;
+            display: block;
+        }
+        .sidebar a:hover{
+            color: teal;
+        }
+
+    </style>
+
+</head>
+<body>
+<h2>Edit Candidate Application Form</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formset.management_form }} <!-- Management form is needed to manage the formset -->
+    <div id="formset-container" >
+        {% for form in formset %}
+        <div class="dynamic-form">
+            {{ form.field_name }}
+            {{ form.field_type }}
+            {{ form.is_required }}
+            {{ form.DELETE }} 
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" id="add-form-button">Add More</button>
+    <input type="submit" value="Save Changes">
+</form>
+
+<a href="{% url 'manage_fields' %}">Back to Canidate Table</a>
+
+<script>
+// This script will handle the "Add More" button functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-form-button');
+    const formsetContainer = document.getElementById('formset-container');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+    const formsetPrefix = "{{ formset.prefix }}";
+
+    addButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        let formNum = formsetContainer.getElementsByClassName('dynamic-form').length;
+        let newForm = formsetContainer.querySelector('.dynamic-form:last-child').cloneNode(true);
+        
+        // Update the new form's index and clear its content
+        let formRegex = RegExp(`id_${formsetPrefix}-(\\d+)-`, 'g');
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, (match, number) => `id_${formsetPrefix}-${formNum}-`);
+        newForm.querySelectorAll('input, select, textarea').forEach(element => {
+            if (element.tagName === 'INPUT' && element.type !== 'checkbox') {
+                element.value = '';
+            }
+            if (element.tagName === 'INPUT' && element.type === 'checkbox') {
+                element.checked = false;
+            }
+        });
+        
+        formsetContainer.appendChild(newForm);
+        totalForms.setAttribute('value', `${formNum + 1}`);
+    });
+});
+</script>
+
+</body>
