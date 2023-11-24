@@ -100,7 +100,7 @@ def dynamic_form_view(request):
                 candidate.save()
 
             # Redirect to a success page
-            return redirect('home')  # Replace with your actual URL name
+            return redirect('Home')  # Replace with your actual URL name
     
     # Render the form template for both GET requests and invalid form submissions
     return render(request, 'Voters/Candidate_application.html', {'form': form})
