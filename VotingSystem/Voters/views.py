@@ -15,6 +15,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db import transaction
 
 # Create your views here.
 
@@ -53,7 +54,10 @@ def dynamic_form_view(request):
     if request.method == 'POST':
         form = DynamicForm(request.POST, request.FILES, dynamic_fields_queryset=dynamic_fields_queryset)
         if form.is_valid():
-            candidate_application = CandidateApplication(user=request.user)  # Set the user here
+            candidate_application = CandidateApplication(
+                user=request.user,
+                status='pending'  # Assuming 'status' is now part of CandidateApplication
+            )
             dynamic_data = {}
             # Populate dynamic fields and collect data for JSON
             for field in dynamic_fields_queryset:
@@ -76,12 +80,12 @@ def dynamic_form_view(request):
             if voting_admin:
                 candidate_application.voting_admins = voting_admin
 
-            candidate_application.save()  # Save after all fields are set
+            candidate_application.save()  # Save the CandidateApplication instance after setting all fields
 
+            # Create or update the Candidate without the status field
             candidate, created = Candidate.objects.get_or_create(
-                user=request.user,  # Here the user is set to the logged-in user
+                user=request.user,
                 defaults={
-                    'status': 'pending',
                     'votes': 0,
                     'application': candidate_application,  # Link the candidate_application
                     'voting_admins': voting_admin,
@@ -89,13 +93,12 @@ def dynamic_form_view(request):
             )
 
             if not created:
-                candidate.status = 'pending'
                 candidate.votes = 0
                 candidate.application = candidate_application
                 candidate.voting_admin = voting_admin
                 candidate.save()
 
-            return redirect('Home')  # Replace with your actual URL name
+            return redirect('Home')  # Replace with your actual URL name for redirect
 
     return render(request, 'Voters/Candidate_application.html', {'form': form})
 

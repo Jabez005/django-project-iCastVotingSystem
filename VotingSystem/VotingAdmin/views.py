@@ -38,6 +38,7 @@ def Adminlogin(request):
 
     return render(request, 'authentication/Voting_adminlogin.html', {})
 
+@login_required
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
 
@@ -313,17 +314,15 @@ def view_application(request, pk):
 @login_required
 def approve_application(request, pk):
     application = get_object_or_404(CandidateApplication, pk=pk)
-    candidate = application.candidates
-    candidate.status = 'approved'
-    candidate.save()
-
+    application.status = 'approved'  # Assuming 'status' is now part of CandidateApplication
+    application.save()
 
     # Retrieve email from the JSONField data
     application_data = application.data
     if isinstance(application_data, str):
         application_data = json.loads(application_data)
-    email = application_data.get('Email')
-        
+    email = application_data.get('Email')  # Make sure 'email' key is correct
+
     if email:
         send_mail(
             'Application Approved',

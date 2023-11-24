@@ -65,7 +65,7 @@
             {% endfor %}
             <td>{{ application.positions.Pos_name }}</td> 
             <td>{{ application.partylist.Party_name}}</td> 
-            <td>{{ application.candidate.status }}</td>
+            <td>{{ application.status }}</td>
             <td>{{ application.candidate.votes }}</td>
             <td><a href="{% url 'generate_view' application.id %}" class="btn btn-primary">View Details</a></td>
         </tr>

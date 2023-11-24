@@ -14,6 +14,29 @@
 
         <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
 
+        <style type=""text/css">
+            .sidebar{
+             height: 100%;
+             width: 200px;
+             position: fixed;
+             top: 95;
+             left: 0;
+             background-color: maroon;
+             overflow-x: hidden;
+            }
+            .sidebar a{
+                padding: 6px 8px 6px 16px;
+                text-decoration: none;
+                font-size: 25px;
+                color: whitesmoke;
+                display: block;
+            }
+            .sidebar a:hover{
+                color: teal;
+            }
+    
+        </style>
+
     </head>
 
     <body>
@@ -34,6 +57,7 @@
                                 <a href="{% url 'ManagePositions' %}"> Positions</a>
                                 <a href="{% url 'ManageParty'%}">Partylist</a>
                                 <a href="{% url 'manage_fields' %}"> Candidates</a>
+                                <a href="#"> Elections</a>
                                 <a href="#"> Results</a>
         
                             
