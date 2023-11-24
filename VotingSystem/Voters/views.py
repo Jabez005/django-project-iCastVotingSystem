@@ -1,4 +1,5 @@
 import json
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
@@ -6,7 +7,7 @@ from django.contrib.auth import login
 from .forms import VoterLoginForm
 from django.contrib.auth.decorators import login_required
 from Voters.backends import VoterAuthenticationBackend
-from VotingAdmin.models import DynamicField, CandidateApplication, VoterProfile, Partylist, Positions, CSVUpload, Candidate
+from VotingAdmin.models import DynamicField, CandidateApplication, VoterProfile, Partylist, Positions, CSVUpload, Candidate, Election
 from superadmin.models import vote_admins
 from VotingAdmin.forms import DynamicForm
 from django.urls import reverse
@@ -16,6 +17,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import transaction
+from django.db.models import F 
 
 # Create your views here.
 
@@ -43,62 +45,64 @@ def home(request):
 
 @login_required
 def dynamic_form_view(request):
-    
     if CandidateApplication.objects.filter(user=request.user).exists():
-        # Redirect to an 'already submitted' message or page
-        return redirect('Home')  # Adjust the redirect as necessary
+        messages.error(request, 'You have already submitted an application.')
+        return redirect('Home')
 
     dynamic_fields_queryset = DynamicField.objects.all()
-    form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)  
+    form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)
 
     if request.method == 'POST':
         form = DynamicForm(request.POST, request.FILES, dynamic_fields_queryset=dynamic_fields_queryset)
         if form.is_valid():
-            candidate_application = CandidateApplication(
-                user=request.user,
-                status='pending'  # Assuming 'status' is now part of CandidateApplication
-            )
-            dynamic_data = {}
-            # Populate dynamic fields and collect data for JSON
-            for field in dynamic_fields_queryset:
-                field_name = field.field_name
-                field_value = form.cleaned_data.get(field_name)
+            with transaction.atomic():
+                candidate_application = CandidateApplication(
+                    user=request.user,
+                    status='pending'
+                )
 
-                if isinstance(field_value, InMemoryUploadedFile):
-                    # Save the file and store the path in the dynamic_data
-                    file_path = default_storage.save(field_value.name, ContentFile(field_value.read()))
-                    field_value = file_path
+                dynamic_data = {}
+                for field in dynamic_fields_queryset:
+                    field_name = field.field_name
+                    field_value = form.cleaned_data.get(field_name)
 
-                dynamic_data[field_name] = field_value
-            
-            # Handle 'positions' and 'partylist' fields
-            candidate_application.positions_id = form.cleaned_data.get('position')
-            candidate_application.partylist_id = form.cleaned_data.get('partylist')
-            candidate_application.data = json.dumps(dynamic_data)
+                    if isinstance(field_value, InMemoryUploadedFile):
+                        file_path = default_storage.save(field_value.name, ContentFile(field_value.read()))
+                        field_value = file_path
 
-            voting_admin = get_voting_admin_for_user(request.user)
-            if voting_admin:
-                candidate_application.voting_admins = voting_admin
+                    dynamic_data[field_name] = field_value
 
-            candidate_application.save()  # Save the CandidateApplication instance after setting all fields
+                candidate_application.data = json.dumps(dynamic_data)
+                candidate_application.positions_id = form.cleaned_data.get('position')
+                candidate_application.partylist_id = form.cleaned_data.get('partylist')
+                candidate_application.voting_admins = get_voting_admin_for_user(request.user)
 
-            # Create or update the Candidate without the status field
-            candidate, created = Candidate.objects.get_or_create(
-                user=request.user,
-                defaults={
-                    'votes': 0,
-                    'application': candidate_application,  # Link the candidate_application
-                    'voting_admins': voting_admin,
-                }
-            )
+                candidate_application.save()
 
-            if not created:
-                candidate.votes = 0
-                candidate.application = candidate_application
-                candidate.voting_admin = voting_admin
-                candidate.save()
+                # Update the number of candidates for the chosen position
+                position = Positions.objects.get(pk=candidate_application.positions_id)
+                position.num_candidates = F('Num_Candidates') + 1
+                position.save(update_fields=['Num_Candidates'])
 
-            return redirect('Home')  # Replace with your actual URL name for redirect
+                # Assuming get_current_election() retrieves the current active election
+              
+
+                candidate, created = Candidate.objects.get_or_create(
+                    user=request.user,
+                    defaults={
+                        'votes': 0,
+                        'application': candidate_application,
+                        'voting_admins': candidate_application.voting_admins,
+                    }
+                   )
+
+                if not created:
+                    candidate.application = candidate_application
+                    candidate.save()
+
+                messages.success(request, 'Your application has been submitted successfully.')
+
+            return redirect('Home')
 
     return render(request, 'Voters/Candidate_application.html', {'form': form})
 
@@ -114,3 +118,4 @@ def get_voting_admin_for_user(user):
     except vote_admins.DoesNotExist:
         # If a VotingAdmin with the given org_code does not exist, handle this case appropriately.
         return None
+

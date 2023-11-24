@@ -66,11 +66,13 @@ class Candidate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Assuming each candidate is a user
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
     application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
-    election =models.ForeignKey('Election', on_delete=models.CASCADE, related_name='candidates')
+    election =models.ForeignKey('Election', on_delete=models.SET_NULL, null=True, blank=True, related_name='candidates')
     votes = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Candidate: {self.user.username}"
+    
+
 
 class Election(models.Model):
     name = models.CharField(max_length=100)

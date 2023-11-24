@@ -19,9 +19,9 @@
 
 <form action="{% url 'add_position' %}" method="post">
     {% csrf_token %}
-    {{form.as_p}}
-    <input type="text" name="Pos_name" placeholder="Position Name">
-
+    {{ form.as_p }}
+    <input type="text" name="Pos_name" placeholder="Position Name" required>
+    <input type="number" name="max_candidates_elected" placeholder="Max Candidates Elected" required min="1">
     <button type="submit">Submit</button>
 </form>
 {% endblock %}

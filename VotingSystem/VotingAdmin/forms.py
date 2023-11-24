@@ -7,7 +7,7 @@ import json
 class AddPositionForm(forms.ModelForm):
     class Meta:
         model = Positions
-        fields = ['Pos_name']
+        fields = ['Pos_name', 'max_candidates_elected']
 
 class AddPartyForm(forms.ModelForm):
     class Meta:

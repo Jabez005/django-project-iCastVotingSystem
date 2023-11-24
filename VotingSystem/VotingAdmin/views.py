@@ -118,14 +118,23 @@ def ManagePositions(request):
 def add_position_view(request):
     if request.method == 'POST':
         position_name = request.POST.get('Pos_name', '').strip()
-        if position_name:
+        max_candidates = request.POST.get('max_candidates_elected')
+        
+        if position_name and max_candidates:
+            # Convert max_candidates to an integer
+            try:
+                max_candidates = int(max_candidates)
+            except ValueError:
+                messages.error(request, 'Invalid number for max candidates elected.')
+                return render(request, 'VotingAdmin/add_positions.html')
+
             # Get the voting admin associated with the current user
             voting_admin = get_object_or_404(vote_admins, user=request.user)
             # Create the position and associate it with the current voting admin
-            position_name, created = Positions.objects.get_or_create(
+            position, created = Positions.objects.get_or_create(
                 Pos_name=position_name,
                 voting_admins=voting_admin,
-                defaults={'Num_Candidates': 0, 'Total_votes': 0}
+                defaults={'Num_Candidates': 0, 'Total_votes': 0, 'max_candidates_elected': max_candidates}
             )
             if created:
                 messages.success(request, 'Position added successfully.')
@@ -134,7 +143,7 @@ def add_position_view(request):
             
             return redirect('ManagePositions')  # Replace with your actual URL name for positions list
         else:
-            messages.error(request, 'Position name is required.')
+            messages.error(request, 'Position name and max candidates are required.')
 
     return render(request, 'VotingAdmin/add_positions.html')
 
