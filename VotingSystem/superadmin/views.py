@@ -27,7 +27,8 @@ def login_superuser(request):
             return redirect('login_superuser')
     else:
         return render(request, 'authentication/adminlogin.html', {})
-    
+
+   
 def Superadmin(request):
     return render(request, 'superadmin/Superadmin.html')
 

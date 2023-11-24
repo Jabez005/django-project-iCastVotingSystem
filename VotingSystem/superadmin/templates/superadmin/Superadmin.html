@@ -48,16 +48,16 @@
                 <div class="sidebar-sticky pt-3">
                     <div class="text-center mb-4">
                         <img src="https://via.placeholder.com/50" alt="Admin" class="rounded-circle mb-2">
-                        <h3>{{user}}</h3>
+                        <h3>{{vote_admins.user.first_name}}</h3>
                         </div>
                         <ul>
-                            <li>
+                           
                                 <a href="#"> Dashboard</a>
                                 <a href="{% url 'requests' %}"> Requests</a>
                                 <a href="{% url 'VotingAdmins' %}"> Admins</a>
                                 <a href="#"> Users</a>
         
-                            </li>
+                            
                         </ul>
                      </div>
             

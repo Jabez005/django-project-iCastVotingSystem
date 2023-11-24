@@ -22,6 +22,7 @@ class Positions(models.Model):
     
 class VoterProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    voting_admin = models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
     org_code = models.CharField(max_length=100)
 
     def __str__(self):
@@ -47,13 +48,7 @@ class DynamicField(models.Model):
 
 class CandidateApplication(models.Model):
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,  # This is a best practice to reference the User model
-        on_delete=models.SET_NULL,
-        null=True,  # Allows the ForeignKey to be saved as NULL in the database if no user is associated
-        blank=True,  # Allows the field to be blank in forms and admin
-        default=None  # Explicitly sets the default value to None
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     data = JSONField()  # Stores the data for each dynamic field
     positions = models.ForeignKey('Positions', on_delete=models.CASCADE)
     partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE)
