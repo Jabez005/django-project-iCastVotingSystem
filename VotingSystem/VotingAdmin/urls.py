@@ -17,6 +17,9 @@ urlpatterns = [
     path('field_create', views.field_create, name="field_create"),
     path('field_update/<int:field_id>', views.field_update, name="field_update"),
     path('field_delete/<int:field_id>', views.field_delete, name="field_delete"), 
+    path('view_application/<int:pk>', views.view_application, name="generate_view"),
+    path('approve_application/<int:pk>', views.approve_application, name="approved"),
+    path('reject_application/<int:pk>', views.reject_application, name="reject"),
 ]
     
 

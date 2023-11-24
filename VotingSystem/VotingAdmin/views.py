@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.apps import apps
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib import messages
 from .models import Positions, VoterProfile, Partylist, DynamicField, CandidateApplication
@@ -14,10 +15,12 @@ from django.conf import settings
 from django.forms import modelformset_factory
 from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset
 from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 import uuid
 import csv
 import io
 import logging
+import json
 # Create your views here.
 
 def Adminlogin(request):
@@ -137,30 +140,41 @@ def add_position_view(request):
 @login_required
 def generate_voter_accounts(request):
     # Get the voting admin associated with the current user
-    voting_admin = get_object_or_404(vote_admins, user=request.user)
+    voting_admin = get_object_or_404(vote_admins, user=request.user)  # Ensure 'VotingAdmin' is the correct model
 
     # Retrieve all CSV uploads for this admin
-    csv_uploads = CSVUpload.objects.filter(voting_admins=voting_admin)
+    csv_uploads = CSVUpload.objects.filter(voting_admins=voting_admin)  # Ensure 'CSVUpload' model is related to 'VotingAdmin' via 'voting_admin' field
 
     for csv_upload in csv_uploads:
-        voters_data = csv_upload.data
+        voters_data = csv_upload.data  # Ensure 'data' is the correct field containing voters' information
 
         for voter in voters_data:
             email = voter['Email']
             username = email  # Assuming email is unique and used as username
-            password = User.objects.make_random_password()  # Generate a secure password
+            password = User.objects.make_random_password()  # Generate a secure random password
+
+            # Ensure 'org_code' is retrieved from the 'voting_admin' instance
+            org_code = voting_admin.org_code
 
             if not User.objects.filter(username=username).exists():
+                # Create a new user
                 user = User.objects.create_user(username=username, email=email, password=password)
-                VoterProfile.objects.create(user=user, org_code=voting_admin.org_code)
 
+                # Create a VoterProfile for the user
+                VoterProfile.objects.create(user=user, org_code=org_code, voting_admin=voting_admin)
+
+                # Email subject and message
                 subject = "Your Voter Account Details"
-                subject = "Your Voter Account Details"
-                message = f"Dear Voter,\n\nYour account has been created. Please use the following details to log in:\n\nUsername: {username}\nPassword: {password}\n\nPlease change your password upon first login."
+                message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\nPlease change your password upon first login."
+
+                # Send the email
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
 
+    # Display a success message
     messages.success(request, "Voter accounts generated successfully.")
-    return HttpResponseRedirect(reverse('Display_data'))
+
+    # Redirect to a success page
+    return HttpResponseRedirect(reverse('Display_data'))  # Replace 'Display_data' with your success URL name
 
 @login_required
 def ManageParty(request):
@@ -284,6 +298,75 @@ def field_delete(request, field_id):
     field = get_object_or_404(DynamicField, id=field_id, voting_admins=voting_admin)
     field.delete()
     return redirect('edit_candidate_form')
+
+
+@login_required(login_url='adminlogin')
+def view_application(request, pk):
+    application = get_object_or_404(CandidateApplication, id=pk)
+    # Ensure the data is in dict format, as JSONField can be a string or dict
+    application_data = application.data
+    if isinstance(application_data, str):
+        application_data = json.loads(application_data)
+    context = {'application': application, 'data': application_data}
+    return render(request, 'VotingAdmin/Candidate_details.html', context)
+
+@login_required
+def approve_application(request, pk):
+    application = get_object_or_404(CandidateApplication, pk=pk)
+    candidate = application.candidates
+    candidate.status = 'approved'
+    candidate.save()
+
+
+    # Retrieve email from the JSONField data
+    application_data = application.data
+    if isinstance(application_data, str):
+        application_data = json.loads(application_data)
+    email = application_data.get('Email')
+        
+    if email:
+        send_mail(
+            'Application Approved',
+            'Your application has been approved.',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        messages.success(request, "Application approved successfully.")
+    else:
+        messages.error(request, "No email found. Unable to send approval notification.")
+
+    return redirect('manage_fields')  # Redirect to the desired page
+
+  
+
+@login_required
+def reject_application(request, pk):
+    application = get_object_or_404(CandidateApplication, pk=pk)
+    candidate = application.candidates
+    candidate.status = 'rejected'
+    candidate.save()
+
+
+    # Retrieve email from the JSONField data
+    application_data = application.data
+    if isinstance(application_data, str):
+        application_data = json.loads(application_data)
+    email = application_data.get('Email')
+        
+    if email:
+        send_mail(
+            'Application Approved',
+            'Your application has been rejected.',
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=False,
+        )
+        messages.success(request, "Application approved successfully.")
+    else:
+        messages.error(request, "No email found. Unable to send approval notification.")
+
+    return redirect('manage_fields')  # Redirect to the desired page
 
 
 

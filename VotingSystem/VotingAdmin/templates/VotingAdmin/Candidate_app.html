@@ -39,7 +39,7 @@
         </style>
 
     </head>
-
+<body>
   <h2>Manage Candidate Application </h2>
   
   <!-- Check if there are any fields -->
@@ -63,10 +63,11 @@
             {% for field in fields %}
             <td>{{ application.data|get_dynamic_field:field.field_name }}</td>
             {% endfor %}
-            <td>{{ application.positions.Pos_name }}</td> <!-- Replace 'name' with the actual field name in your Position model -->
-            <td>{{ application.partylist.Party_name}}</td> <!-- Replace 'name' with the actual field name in your Partylist model -->
+            <td>{{ application.positions.Pos_name }}</td> 
+            <td>{{ application.partylist.Party_name}}</td> 
             <td>{{ application.candidate.status }}</td>
             <td>{{ application.candidate.votes }}</td>
+            <td><a href="{% url 'generate_view' application.id %}" class="btn btn-primary">View Details</a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -79,4 +80,5 @@
 {% endif %}
 
 
+</body>
 

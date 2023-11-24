@@ -1,0 +1,60 @@
+{% load static %}
+<head>
+
+    <meta charset ="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title> iCast </title> 
+
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+
+    <style type=""text/css">
+        .sidebar{
+         height: 100%;
+         width: 200px;
+         position: fixed;
+         top: 95;
+         left: 0;
+         background-color: maroon;
+         overflow-x: hidden;
+        }
+        .sidebar a{
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: whitesmoke;
+            display: block;
+        }
+        .sidebar a:hover{
+            color: teal;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Candidate Application Details</h5>
+        <!-- Dynamically display data from the JSONField -->
+        {% for key, value in data.items %}
+            {% if key != 'Picture' %}
+                <p class="card-text">{{ key|title }}: {{ value }}</p>
+            {% else %}
+                <!-- Assuming 'picture' is a key in your JSONField that contains an image URL -->
+                <img src="{{ value }}" alt="Candidate picture" style="width: 200px; height: auto;">
+            {% endif %}
+        {% endfor %}
+        <br><br><br>
+        <a href="{% url 'approved' application.id %}" class="card-link">Approve</a>
+        <a href="{% url 'reject' application.id}" class="card-link">Reject</a>
+      </div>
+    </div>
+    
+    </body>
+    </html>

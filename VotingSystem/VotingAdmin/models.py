@@ -52,6 +52,7 @@ class CandidateApplication(models.Model):
     data = JSONField()  # Stores the data for each dynamic field
     positions = models.ForeignKey('Positions', on_delete=models.CASCADE)
     partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE)
+    candidates = models.ForeignKey('Candidate', on_delete=models.CASCADE)
 
 class Candidate(models.Model):
     STATUS_CHOICES = (
