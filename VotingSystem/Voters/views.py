@@ -41,6 +41,11 @@ def home(request):
     return render(request, 'Voters/Home.html')
 
 def dynamic_form_view(request):
+    
+    if CandidateApplication.objects.filter(user=request.user).exists():
+        # Redirect to an 'already submitted' message or page
+        return redirect('already_submitted')  # Adjust the redirect as necessary
+
     dynamic_fields_queryset = DynamicField.objects.all()
     # Initialize the form outside of the if statement
     form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)  
@@ -70,7 +75,7 @@ def dynamic_form_view(request):
             # Save the dynamic data as JSON
             candidate_application.data = json.dumps(dynamic_data)
 
-            voting_admin = get_voting_admin_for_csv_upload(request.user)
+            voting_admin = get_voting_admin_for_user(request.user)
             if voting_admin:
                 candidate_application.voting_admins = voting_admin
 
@@ -108,10 +113,18 @@ def dynamic_form_view(request):
 
 User = get_user_model()
 
-def get_voting_admin_for_csv_upload(org_code):
+def get_voting_admin_for_user(user):
     try:
-        # Get the most recent CSV upload for the given org_code
-        last_upload = CSVUpload.objects.filter(voting_admins__org_code=org_code).latest('uploaded_at')
-        return last_upload.voting_admin
-    except CSVUpload.DoesNotExist:
-        return vote_admins.objects.first()  # Fallback to the first admin if none are found
+        # Get the voter's profile which includes the org_code
+        voter_profile = VoterProfile.objects.get(user=user)
+        
+        # Use the org_code to find the corresponding VotingAdmin from the superadmin app
+        # You might need to adjust 'superadmin.VotingAdmin' if your model reference is different
+        voting_admin = vote_admins.objects.get(org_code=voter_profile.org_code)
+        return voting_admin
+    except VoterProfile.DoesNotExist:
+        # If the VoterProfile does not exist, handle this case appropriately.
+        return None
+    except vote_admins.DoesNotExist:
+        # If a VotingAdmin with the given org_code does not exist, handle this case appropriately.
+        return None
