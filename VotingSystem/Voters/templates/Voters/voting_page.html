@@ -1,0 +1,82 @@
+{% extends 'Voters/Home.html' %}
+{% load custom_filters %}
+{%load static %}
+{% block content %}
+<head>
+<style>
+.candidates-container {
+    margin: 0 auto;
+    width: 90%; /* Adjust as necessary */
+}
+
+.candidates-row {
+    display: flex;
+    justify-content: space-around; /* This will space out your candidates evenly */
+    flex-wrap: wrap; /* Allows candidates to wrap to next line if space is insufficient */
+}
+
+.candidate-card {
+    text-align: center; /* Center the text and image within the card */
+    flex-basis: 20%; /* Adjust this to change the width of the candidate card */
+    margin-bottom: 20px; /* Space between rows of candidates */
+}
+
+.candidate-image {
+    width: 100%; /* Make image fill the card */
+    height: auto; /* Maintain aspect ratio */
+    border: 3px solid #ddd; /* Optional border */
+    border-radius: 4px; /* Optional rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    margin-bottom: 10px; /* Space between the image and the text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .candidate-card {
+        flex-basis: 45%; /* Increase the width of the card on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .candidate-card {
+        flex-basis: 90%; /* Full width cards on very small screens */
+    }
+}
+</style>
+</head>
+<body>
+    <center>
+    <div id="election-info">
+        <h1>{{ current_election.name }}</h1><br><br>
+    </div>
+
+    <form method="post" action="#">
+        {% csrf_token %}
+        
+        <div class="candidates-container">
+            {% for position, candidates_info in positions_with_candidates.items %}
+            <h2>{{ candidates_info.name }}</h2>
+            {% if candidates_info.candidates %}
+                <div class="candidates-row">
+                    {% for candidate in candidates_info.candidates %}
+                        <div class="candidate-card">
+                            <img class="candidate-image" src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}">
+                            <h3>{{ candidate.name }}</h3>
+                            <p>{{ candidate.party }}</p>
+                            <!-- Add other candidate details here -->
+                            <input type="radio" name="position_{{ position }}" value="{{ candidate.id }}" required>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No candidates</p>
+            {% endif %}
+        {% endfor %}
+        </div>
+        <button type="submit">Submit Vote</button>
+    </form>
+
+   
+</body>
+</center>
+{% endblock %}

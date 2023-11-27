@@ -1,84 +1,50 @@
+{% extends '../base/Admin_base.html' %}
 {% load custom_filters %}
 {% load static %}
-<html>
-
-    <head>
-
-        <meta charset ="UTF-8">
-
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-        <title> iCast </title> 
-
-        <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-        <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-
-        <style type=""text/css">
-            .sidebar{
-             height: 100%;
-             width: 200px;
-             position: fixed;
-             top: 95;
-             left: 0;
-             background-color: maroon;
-             overflow-x: hidden;
-            }
-            .sidebar a{
-                padding: 6px 8px 6px 16px;
-                text-decoration: none;
-                font-size: 25px;
-                color: whitesmoke;
-                display: block;
-            }
-            .sidebar a:hover{
-                color: teal;
-            }
-    
-        </style>
-
-    </head>
+{% block content %}  
 <body>
-  <h2>Manage Candidate Application </h2>
-  
-  <!-- Check if there are any fields -->
-  {% if fields %}
-<!-- If fields exist, show the table with field names as headers -->
-<table class="table table-hover table-bordered">
-    <thead class="table-light">
-        <tr>
-            {% for field in fields %}
-            <th>{{ field.field_name }}</th>
+    {% if fields %}
+  <!-- main -->
+  <main class="main-container">
+    <div class="main-title">
+        <h2>Manage Candidates</h2>
+    </div>
+
+    <div class="main-cards" style="grid-template-columns: none;">
+        <table id="example" class="table table-striped " style="width:100%">
+            <thead>
+                <tr>
+                    {% for field in fields %}
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">{{ field.field_name }}</th>
+                    {% endfor %}
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Position</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Partylist</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Candidate Status</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Votes</th>
+                </tr>
+            </thead>
+            <tbody id="dynamicTableBody">
+                {% for application in applications %}
+                    <tr>
+                    {% for field in fields %}
+                    <td>{{ application.data|get_dynamic_field:field.field_name }}</td>
+                    {% endfor %}
+                    <td>{{ application.positions.Pos_name }}</td> 
+                    <td>{{ application.partylist.Party_name}}</td> 
+                    <td>{{ application.status }}</td>
+                    <td>{{ application.candidate.votes }}</td>
+                    <td><a href="{% url 'generate_view' application.id %}" class="btn btn-primary">View Details</a></td>
+                    </tr>
             {% endfor %}
-            <th>Position</th>
-            <th>Partylist</th>
-            <th>Status</th>
-            <th>Votes</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr>
-            {% for field in fields %}
-            <td>{{ application.data|get_dynamic_field:field.field_name }}</td>
-            {% endfor %}
-            <td>{{ application.positions.Pos_name }}</td> 
-            <td>{{ application.partylist.Party_name}}</td> 
-            <td>{{ application.status }}</td>
-            <td>{{ application.candidate.votes }}</td>
-            <td><a href="{% url 'generate_view' application.id %}" class="btn btn-primary">View Details</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
 <a href="{% url 'edit_candidate_form' %}" class="btn btn-secondary">Edit Form</a> <!-- Link to edit the form -->
 
 {% else %}
 <!-- If no fields exist, show the button to create the form -->
 <a href="{% url 'field_create' %}" class="btn btn-primary">Create Candidate Application Form</a>
 {% endif %}
-
-
 </body>
-
+{% endblock %}

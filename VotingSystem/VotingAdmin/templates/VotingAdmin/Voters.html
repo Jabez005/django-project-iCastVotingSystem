@@ -1,58 +1,126 @@
+{% extends '../base/Admin_base.html' %}
 {% load custom_filters %}
 {% load static %}
-<head>
 
-    <meta charset ="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <title> iCast </title> 
-
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-</head>
-
+{% block content %}
 <body>
-<h1>Manage Voters</h1>
-<hr>
-
-<!-- Your existing table structure -->
-<form method="post" action="{% url 'generate_voter_accounts' %}">
-    {% csrf_token %}
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th><input type="checkbox" id="select-all" /></th>
-                {% for field_name in field_names %}
-                    <th>{{ field_name }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for voter in voters_data %}
-                <tr>
-                    <!-- Make sure to assign a name and value to your checkbox -->
-                    <td><input type="checkbox" name="voter_ids" value="{{ voter.id }}" /></td>
-                    {% for field_name in field_names %}
-                        <td>{{ voter|get_item:field_name }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <input type="submit" value="Generate Voter Account"/>
-</form>
-    <div>
-        <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
+     <!-- main -->
+     <main class="main-container">
+        <div class="main-title">
+            <h2>Manage Voters</h2>
+        </div>
+        <div class="main-cards" style="grid-template-columns: none;">
             {% csrf_token %}
-            <label for="file">Import CSV File:</label>
-            <input type="file" name="file" id="file" accept=".csv" required>
-            <button type="submit">Upload CSV</button>
-        </form>
-    </div>
+            <table id="example" class="table table-striped " style="width:100%">
+                <thead>
+                    <tr>
 
+                        <th style="background-color:#2B2A4C;color:#FFF;text-align:center;"><input type="checkbox" id="select-all" /></th>
+                        {% for field_name in field_names %}
+                        <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">{{ field_name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="dynamicTableBody">
+                    {% for voter in voters_data %}
+                    <tr>
+                        <!-- Make sure to assign a name and value to your checkbox -->
+                        <td><input type="checkbox" name="voter_ids" value="{{ voter.id }}" /></td>
+                        {% for field_name in field_names %}
+                            <td>{{ voter|get_item:field_name }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <input type="submit" value="Generate Voter Account"/>
+        </form>
+        <div>
+            <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
+                {% csrf_token %}
+                <label for="file">Import CSV File:</label>
+                <input type="file" name="file" id="file" accept=".csv" required>
+                <button type="submit">Upload CSV</button>
+            </form>
+        </div>
+
+            <div class="addButton" style="text-align: right;">
+                <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color:#21BF21;border:none;">Add Voter</button>
+                <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#importModal" style="background-color:#FFC220;border:none;">Import User Database</button>
+            </div>
+            <hr style="border:1px solid black;">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog  modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#2B2A4C;">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Voter</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="userID" class="form-label" style="color:black">User ID</label>
+                            <input type="text" style="width:30%;"class="form-control" id="userID" name="userID" required readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastname" class="form-label" style="color:black">Last Name</label>
+                            <input type="text" class="form-control" id="lastname" name="lastname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="firstname" class="form-label" style="color:black">First Name</label>
+                            <input type="text" class="form-control" id="firstname" name="firstname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label" style="color:black">Email</label>
+                            <input type="text" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog  modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#2B2A4C;">
+                    <h5 class="modal-title" id="exampleModalLabel">Upload CSV File</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="csv" class="form-label" style="color:black">Upload CSV File</label>
+                            <input type="file" class="form-control" id="csv" name="csv" accept="image/*" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts">
+
+            <div class="charts-cart">
+                <h2 class="chart-title"></h2>
+                <div id="bar-chart"></div>
+            </div>
+
+            <div class="charts-cart">
+                <h2 class="chart-title"></h2>
+                <div id="area-chart"></div>
+            </div>
+        </div>
+    </main>
+    <!-- end main -->
+
+    <script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+    <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+    <script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+    <script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('select-all').onclick = function() {
@@ -62,5 +130,35 @@
                 }
             }
         });
+
+        $(document).ready(function() {
+             $('#example').DataTable({        
+                 //disable sorting on last column
+                 "columnDefs": [
+                     { "orderable": false, "targets": 6 }
+                 ],
+                 language: {
+                     //customize pagination prev and next buttons: use arrows instead of words
+                     'paginate': {
+                         'previous': '<span class="fa fa-chevron-left"></span>',
+                         'next': '<span class="fa fa-chevron-right"></span>'
+                     },
+                     //customize number of elements to be displayed
+                     "lengthMenu": 'Display <select class="form-control input-sm">' +
+                         '<option value="10">10</option>' +
+                         '<option value="20">20</option>' +
+                         '<option value="30">30</option>' +
+                         '<option value="40">40</option>' +
+                         '<option value="50">50</option>' +
+                         '<option value="-1">All</option>' +
+                         '</select> results'
+                 }
+             })
+         });
     </script>
+    <!-- APEX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+    <!-- CUSTOM JS -->
+    <script src="js/scripts.js"></script>
 </body>
+{% endblock %}

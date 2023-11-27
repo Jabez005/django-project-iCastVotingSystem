@@ -1,19 +1,7 @@
+{%extends '../base/Sys_base.html' %}
+{% load static %}
 
-<head>
-
-    <meta charset ="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <title> iCast </title> 
-
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-</head>
-
-
+{% block content %}
 <div class="card">
     <strong>
         {{ Requestform.f_name }}
@@ -30,3 +18,4 @@
       <a href="{% url 'reject_request' Requestform.id %}" class="card-link">Reject</a>
     </div>
   </div>
+{% endblock %}

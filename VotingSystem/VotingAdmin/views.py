@@ -1,26 +1,35 @@
+import os
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.apps import apps
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.contrib import messages
-from .models import Positions, VoterProfile, Partylist, DynamicField, CandidateApplication
+from VotingSystem.settings import MEDIA_URL
+from .models import Positions, VoteLog, VoterProfile, Partylist, DynamicField, CandidateApplication, Election, Candidate
 from .models import CSVUpload
 from superadmin.models import vote_admins
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from django.forms import modelformset_factory
-from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset
+from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset, ElectionForm
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
 import uuid
 import csv
 import io
 import logging
 import json
+from django.db.models import F
 # Create your views here.
 
 def Adminlogin(request):
@@ -326,6 +335,9 @@ def approve_application(request, pk):
     application.status = 'approved'  # Assuming 'status' is now part of CandidateApplication
     application.save()
 
+    if application.positions:  # Assuming there is a 'position' FK in CandidateApplication model
+        Positions.objects.filter(pk=application.positions.pk).update(Num_Candidates=F('Num_Candidates') + 1)
+
     # Retrieve email from the JSONField data
     application_data = application.data
     if isinstance(application_data, str):
@@ -376,5 +388,124 @@ def reject_application(request, pk):
 
     return redirect('manage_fields')  # Redirect to the desired page
 
+@login_required
+def manage_election(request):
+    if request.method == 'POST':
+        form = ElectionForm(request.POST)
+        if form.is_valid():
+            election = form.save(commit=False)
+            election.is_active = True  # Start the election immediately
+            election.save()
+            election.associate_positions() 
+            election.associate_candidates()
+            messages.success(request, 'Election started successfully.')
+            return redirect('manage_election')  # Redirect to the manage page or dashboard
+    else:
+        form = ElectionForm()
+        current_election = Election.objects.filter(is_active=True).first()  # Get the current active election if any
+    return render(request, 'VotingAdmin/StartElection.html', {'form': form, 'current_election': current_election})
+
+@login_required
+def stop_election(request, election_id):
+    election = get_object_or_404(Election, pk=election_id)
+    election.end_election()
+    # Redirect to the admin panel or some confirmation page
+    return redirect('manage_election')
+
+@login_required
+def voting_page(request):
+    # Get the currently active election
+    current_election = get_object_or_404(Election, is_active=True)
+    
+    positions = Positions.objects.filter(election=current_election)
+    positions_with_candidates = {}
+
+    for position in positions:
+        candidate_applications = CandidateApplication.objects.filter(
+            positions=position, status='approved'
+        )
+
+        candidates = []
+        for application in candidate_applications:
+            candidate_data = json.loads(application.data)
+            first_name = candidate_data.get('First Name')
+            last_name = candidate_data.get('Last Name')
+            picture_path = candidate_data.get('Picture', None)
+            picture_url = request.build_absolute_uri(
+                settings.MEDIA_URL + picture_path
+            ) if picture_path else None
+
+            candidate_info = {
+                'id': application.id,
+                'name': f"{first_name} {last_name}",
+                'party': application.partylist.Party_name,
+                'image_url': picture_url,
+            }
+            candidates.append(candidate_info)
+
+        positions_with_candidates[position.id] = {
+            'name': position.Pos_name,
+            'candidates': candidates
+        }
+
+    context = {
+    'current_election': current_election,
+    'positions_with_candidates': positions_with_candidates,
+}
+
+    return render(request, 'Voters/voting_page.html', context)
 
 
+@login_required
+@transaction.atomic
+def submit_vote(request):
+    if request.method == 'POST':
+        current_election = get_object_or_404(Election, is_active=True)
+        
+        # Check if the user has already voted in this election
+        has_voted_in_election = VoteLog.objects.filter(
+            voter=request.user, 
+            election=current_election
+        ).exists()
+
+        if has_voted_in_election:
+            messages.error(request, "You have already voted in this election.")
+            return redirect('voting_page')
+
+        positions = Positions.objects.filter(election=current_election)
+
+        for position in positions:
+            candidate_id = request.POST.get(f'vote_{position.id}', None)
+            if candidate_id:
+                try:
+                    candidate = Candidate.objects.get(
+                        id=candidate_id, 
+                        candidateapplication__positions=position,
+                        candidateapplication__status='approved'
+                    )
+
+                    # Record the vote
+                    candidate.votes = F('votes') + 1
+                    candidate.save()
+
+                    position.total_votes = F('total_votes') + 1
+                    position.save()
+
+                    VoteLog.objects.create(
+                        voter=request.user,
+                        election=current_election,
+                        position=position,
+                        candidate=candidate,
+                        vote_time=timezone.now()
+                    )
+
+                except Candidate.DoesNotExist:
+                    transaction.set_rollback(True)
+                    messages.error(request, f"Invalid vote for {position.Pos_name}.")
+                    return redirect('voting_page')
+                
+        messages.success(request, "Your vote has been successfully submitted.")
+        return redirect('results_page')  # Redirect to a page showing the voting results or a confirmation page
+    else:
+        messages.error(request, "You can only submit votes using the form.")
+        return redirect('voting_page')

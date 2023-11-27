@@ -1,41 +1,117 @@
+{% extends '../base/Admin_base.html' %}
 {% load static %}
+
+
+
 {% block content %}
-<head>
+ <!-- main -->
+ <main class="main-container">
+    <div class="main-title">
+        <h2>Manage Position</h2>
+    </div>
 
-    <meta charset ="UTF-8">
+    <div class="main-cards" style="grid-template-columns: none;">
+        <table id="example" class="table table-striped " style="width:100%">
+            <thead>
+                <tr>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">ID</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Position Name</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Number of Candidates</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Total Votes</th>
+                </tr>
+            </thead>
+            
+            <tbody id="dynamicTableBody">
+                {% if Positions %}
+                    {% for position in Positions %}
+                        <tr>
+                            <td>{{ position.id }}</td>
+                            <td>{{ position.Pos_name }}</td>
+                            <td>{{ position.Num_Candidates }}</td>
+                            <td>{{ position.Total_votes }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+            <!-- Button trigger modal -->
+            <div class="addButton" style="text-align: right;">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color:#21BF21;border:none;">Add Position</button>
+            </div>
+            <hr style="border:1px solid black;">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- modal -->
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog  modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color:#2B2A4C;">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Position</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="partylistname" class="form-label" style="color:black">Position Name</label>
+                            <input type="text" class="form-control" id="partylist" name="partylistname" required>
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+    </div>
+
+    <div class="charts">
+
+        <div class="charts-cart">
+            <h2 class="chart-title"></h2>
+            <div id="bar-chart"></div>
+        </div>
+
+        <div class="charts-cart">
+            <h2 class="chart-title"></h2>
+            <div id="area-chart"></div>
+        </div>
+    </div>
+</main>
+<!-- end main -->
 
 
-    <title> iCast </title> 
-
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-</head>
-
-<h1>Positions</h1>
-
-<a href="{% url 'add_position' %}">Add Position</a>
-
-<table class="table table-hover table-bordered">
-    <thead class="table-light">
-    <tr>
-        <th>Id</th>
-        <th>Position Name</th>
-        <th>Number of Candidates</th>
-        <th>Total Votes</th>
-    </tr>
-    </thead>
-{% if Positions %}
-    {% for position in Positions %}
-        <tr>
-            <td>{{ position.id }}</td>
-            <td>{{ position.Pos_name }}</td>
-            <td>{{ position.Num_Candidates }}</td>
-            <td>{{ position.Total_votes }}</td>
-        </tr>
-    {% endfor %}
-{% endif %}
-</table>
+</div>
+<!-- SCRIPTS -->
+<script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script>
+    $(document).ready(function() {
+         $('#example').DataTable({        
+             //disable sorting on last column
+             "columnDefs": [
+                 { "orderable": false, "targets": 2 }
+             ],
+             language: {
+                 //customize pagination prev and next buttons: use arrows instead of words
+                 'paginate': {
+                     'previous': '<span class="fa fa-chevron-left"></span>',
+                     'next': '<span class="fa fa-chevron-right"></span>'
+                 },
+                 //customize number of elements to be displayed
+                 "lengthMenu": 'Display <select class="form-control input-sm">' +
+                     '<option value="10">10</option>' +
+                     '<option value="20">20</option>' +
+                     '<option value="30">30</option>' +
+                     '<option value="40">40</option>' +
+                     '<option value="50">50</option>' +
+                     '<option value="-1">All</option>' +
+                     '</select> results'
+             }
+         })
+     });
+</script>
+<!-- APEX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+<!-- CUSTOM JS -->
+<script src="js/scripts.js"></script>
 {% endblock %}

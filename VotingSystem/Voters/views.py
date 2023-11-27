@@ -79,11 +79,6 @@ def dynamic_form_view(request):
 
                 candidate_application.save()
 
-                # Update the number of candidates for the chosen position
-                position = Positions.objects.get(pk=candidate_application.positions_id)
-                position.num_candidates = F('Num_Candidates') + 1
-                position.save(update_fields=['Num_Candidates'])
-
                 # Assuming get_current_election() retrieves the current active election
               
 

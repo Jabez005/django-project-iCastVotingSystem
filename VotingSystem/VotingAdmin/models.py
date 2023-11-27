@@ -14,7 +14,7 @@ class CSVUpload(models.Model):
 
 class Positions(models.Model):
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
-
+    election=models.ForeignKey('Election', on_delete=models.CASCADE, null=True, blank= True ,related_name='election')
     Pos_name=models.CharField(max_length=100)
     Num_Candidates=models.IntegerField(default=0)
     Total_votes=models.IntegerField(default=0)
@@ -56,10 +56,11 @@ class CandidateApplication(models.Model):
         ('rejected', 'Rejected'),
     )
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
+    election = models.ForeignKey('Election', on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     data = JSONField()  # Stores the data for each dynamic field
-    positions = models.ForeignKey('Positions', on_delete=models.CASCADE)
-    partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE)
+    positions = models.ForeignKey('Positions', on_delete=models.CASCADE, related_name='candidates')
+    partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE, related_name='party_list')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
 class Candidate(models.Model):
@@ -72,24 +73,53 @@ class Candidate(models.Model):
     def __str__(self):
         return f"Candidate: {self.user.username}"
     
-
-
 class Election(models.Model):
     name = models.CharField(max_length=100)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    is_active = models.BooleanField(default=False)
     voting_admins = models.ManyToManyField(vote_admins, related_name='elections')
-    
-    def __str__(self):
-        return self.name
+    is_active = models.BooleanField(default=False)
 
     def start_election(self):
+        """Activates the election."""
         self.is_active = True
-        self.start_time = timezone.now()
         self.save()
+        self.associate_candidates()
 
     def end_election(self):
+        """Deactivates the election."""
         self.is_active = False
-        self.end_time = timezone.now()
         self.save()
+
+    def associate_candidates(self):
+        # Logic to associate candidates with the election
+        candidate_applications = CandidateApplication.objects.filter(status='approved', election__isnull=True)
+        for application in candidate_applications:
+            application.election = self
+            application.save()
+    
+    def associate_positions(self):
+        # Logic to associate positions with this election
+        positions = Positions.objects.filter(election__isnull=True)
+        for position in positions:
+            position.election = self
+            position.save()
+
+class VoterElection(models.Model):
+    voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    has_voted = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('voter', 'election')
+
+    def __str__(self):
+        return f"{self.voter} - {self.election}"
+
+class VoteLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE)
+    vote_time = models.DateTimeField(default=timezone.now)
+    position = models.ForeignKey(Positions,on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} voted in {self.election.name} at {self.vote_time}"

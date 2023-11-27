@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
-from .models import Positions, Partylist, DynamicField
+from .models import Positions, Partylist, DynamicField, Election
 from django.core.exceptions import ValidationError
 import json
 
@@ -81,3 +81,11 @@ class DynamicForm(forms.Form):
             return json.loads(data)
         except json.JSONDecodeError:
             raise ValidationError('Invalid JSON format')
+        
+class ElectionForm(forms.ModelForm):
+    class Meta:
+        model = Election
+        fields = ['name']
+
+class VoteForm(forms.Form):
+    candidate_id = forms.IntegerField(widget=forms.HiddenInput())

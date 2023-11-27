@@ -1,40 +1,7 @@
+{% extends '../base/Admin_base.html' %}
 {% load static %}
-<head>
 
-    <meta charset ="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <title> iCast </title> 
-
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-
-    <style type=""text/css">
-        .sidebar{
-         height: 100%;
-         width: 200px;
-         position: fixed;
-         top: 95;
-         left: 0;
-         background-color: maroon;
-         overflow-x: hidden;
-        }
-        .sidebar a{
-            padding: 6px 8px 6px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: whitesmoke;
-            display: block;
-        }
-        .sidebar a:hover{
-            color: teal;
-        }
-
-    </style>
-
+{% block content %}
 </head>
 <body>
 
@@ -57,4 +24,4 @@
     </div>
     
     </body>
-    </html>
+    {% endblock %}

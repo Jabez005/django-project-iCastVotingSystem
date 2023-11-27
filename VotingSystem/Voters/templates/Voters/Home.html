@@ -1,5 +1,5 @@
 {% load static %}
-<html>
+<!DOCTYPE html>
 
     <head>
 
@@ -12,7 +12,7 @@
 
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
 
-        <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+        <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'%}"> 
 
     </head>
 
@@ -31,7 +31,7 @@
                     <a class="nav-link" href="{% url 'dynamic_form' %}">Candidates</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Vote</a>
+                    <a class="nav-link" href="{% url 'voting_page' %}">Vote</a>
                   </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -58,7 +58,7 @@
 
         <script src ="{% static 'js/app.js' %}"></script>
 
-        <script src="https://cdn.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 

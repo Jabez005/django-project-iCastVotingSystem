@@ -1,5 +1,7 @@
 from django.urls import path
-from . import views
+from .import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -20,6 +22,9 @@ urlpatterns = [
     path('view_application/<int:pk>', views.view_application, name="generate_view"),
     path('approve_application/<int:pk>', views.approve_application, name="approved"),
     path('reject_application/<int:pk>', views.reject_application, name="reject"),
+    path('manage_election', views.manage_election, name="manage_election"),
+    path('stop_election/<int:election_id>/', views.stop_election, name="stop_election"),
+    path('voting_page', views.voting_page, name="voting_page"),
 ]
     
 

@@ -115,10 +115,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEDIA_URL = '/media/'  # URL to use when referring to media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Path where media is stored
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -135,3 +140,4 @@ AUTHENTICATION_BACKENDS = [
     'Voters.backends.VoterAuthenticationBackend',  
     'django.contrib.auth.backends.ModelBackend',  
 ]
+

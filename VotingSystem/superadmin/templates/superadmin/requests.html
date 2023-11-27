@@ -1,55 +1,86 @@
+{%extends '../base/Sys_base.html' %}
+{% load static %}
+{% block content %}
+  <!-- main -->
+  <main class="main-container">
+    <div class="main-title">
+        <h2>Request Form Lists</h2>
+    </div>
 
-<head>
+    <div class="main-cards" style="grid-template-columns: none;">
+        <table id="example" class="table table-striped " style="width:100%">
+            <thead>
+                <tr>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Request ID</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">First Name</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Last Name</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Email</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Organization</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Details</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Status</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Date Submitted</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">View Request</th>
+                </tr>
+            </thead>
+            <tbody id="dynamicTableBody">
+                {% if Requestform %}
 
-    <meta charset ="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-    <title> iCast </title> 
-
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
-</head>
-
-<body>
-<h1>Request form List</h1>
-<hr>
-
-<table class="table table-hover table-bordered">
-    <thead class="table-light">
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">First Name</th>
-        <th scope="col">Last Name</th>
-        <th scope="col">Email</th>
-        <th scope="col">Organization</th>
-        <th scope="col">Details</th>
-        <th scope="col">Status</th>
-        <th scope="col">Date Submitted</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>
-    {% if Requestform %}
-
-        {% for Requestforms in Requestform %}
-        <tr>
-            <td> {{ Requestforms.id }}</td>
-            <td> {{ Requestforms.f_name }}</td>
-            <td> {{ Requestforms.l_name }}</td>
-            <td> {{ Requestforms.email }}</td>
-            <td> {{ Requestforms.organization }}</td>
-            <td> {{ Requestforms.details }}</td>
-            <td> {{ Requestforms.status }}</td>
-            <td> {{ Requestforms.created }}</td> 
-            <td><a href="{% url 'view' Requestforms.id %}"> View Request </a></td>
+                {% for Requestforms in Requestform %}
+                <tr>
+                    <td> {{ Requestforms.id }}</td>
+                    <td> {{ Requestforms.f_name }}</td>
+                    <td> {{ Requestforms.l_name }}</td>
+                    <td> {{ Requestforms.email }}</td>
+                    <td> {{ Requestforms.organization }}</td>
+                    <td> {{ Requestforms.details }}</td>
+                    <td> {{ Requestforms.status }}</td>
+                    <td> {{ Requestforms.created }}</td> 
+                    <td><a href="{% url 'view' Requestforms.id %}"> View Request </a></td>
+                    
+                </tr>
+                {% endfor %}
+            {% endif %}
             
-        </tr>
-        {% endfor %}
-    {% endif %}
-    </tbody>
-
-</table>
+            </tbody>
+        </table>
+        <hr style="border:1px solid black;">
+    </div>
+</main>
+<!-- end main -->
+ <!-- SCRIPTS -->
+ <script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+ <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+ <script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+ <script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+ <script>
+     $(document).ready(function() {
+          $('#example').DataTable({        
+              //disable sorting on last column
+              "columnDefs": [
+                  { "orderable": false, "targets": 9 }
+              ],
+              language: {
+                  //customize pagination prev and next buttons: use arrows instead of words
+                  'paginate': {
+                      'previous': '<span class="fa fa-chevron-left"></span>',
+                      'next': '<span class="fa fa-chevron-right"></span>'
+                  },
+                  //customize number of elements to be displayed
+                  "lengthMenu": 'Display <select class="form-control input-sm">' +
+                      '<option value="10">10</option>' +
+                      '<option value="20">20</option>' +
+                      '<option value="30">30</option>' +
+                      '<option value="40">40</option>' +
+                      '<option value="50">50</option>' +
+                      '<option value="-1">All</option>' +
+                      '</select> results'
+              }
+          })
+      });
+ </script>
+ <!-- APEX -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+ <!-- CUSTOM JS -->
+ <script src="js/scripts.js"></script>
 </body>
+{% endblock %}
