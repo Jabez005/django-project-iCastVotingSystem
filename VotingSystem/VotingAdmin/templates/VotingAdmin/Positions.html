@@ -49,13 +49,21 @@
                     <h5 class="modal-title" id="exampleModalLabel">Add Position</h5>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="partylistname" class="form-label" style="color:black">Position Name</label>
-                            <input type="text" class="form-control" id="partylist" name="partylistname" required>
-                        </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
-                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                        <form id="addPositionForm" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="Pos_name" class="form-label" style="color:black">Position Name</label>
+                                <input type="text" class="form-control" id="Pos_name" name="Pos_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="max_candidates_elected" class="form-label" style="color:black">Max Candidates Elected</label>
+                                <input type="number" class="form-control" id="max_candidates_elected" name="max_candidates_elected" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                                <button type="submit" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 </div>
@@ -109,6 +117,40 @@
              }
          })
      });
+     document.addEventListener('DOMContentLoaded', function() {
+    var addPositionForm = document.getElementById('addPositionForm');
+
+    addPositionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('{% url "add_position" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'), // Get the CSRF token from the form
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'ok') {
+                // Close the modal using Bootstrap's modal method
+                $('#exampleModal').modal('hide');
+                // Reset the form
+                addPositionForm.reset();
+                // Show success message (you can replace this with your preferred method of notification)
+                alert(data.message);
+            } else {
+                // Show error message (again, replace with your preferred method of notification)
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
 </script>
 <!-- APEX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>

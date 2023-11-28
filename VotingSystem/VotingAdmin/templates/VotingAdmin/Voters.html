@@ -10,6 +10,7 @@
             <h2>Manage Voters</h2>
         </div>
         <div class="main-cards" style="grid-template-columns: none;">
+        <form method="post" action="{% url 'generate_voter_accounts' %}">
             {% csrf_token %}
             <table id="example" class="table table-striped " style="width:100%">
                 <thead>
@@ -35,51 +36,12 @@
             </table>
             <input type="submit" value="Generate Voter Account"/>
         </form>
-        <div>
-            <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
-                {% csrf_token %}
-                <label for="file">Import CSV File:</label>
-                <input type="file" name="file" id="file" accept=".csv" required>
-                <button type="submit">Upload CSV</button>
-            </form>
-        </div>
+       
 
             <div class="addButton" style="text-align: right;">
-                <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color:#21BF21;border:none;">Add Voter</button>
                 <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#importModal" style="background-color:#FFC220;border:none;">Import User Database</button>
             </div>
             <hr style="border:1px solid black;">
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog  modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color:#2B2A4C;">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Voter</h5>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="userID" class="form-label" style="color:black">User ID</label>
-                            <input type="text" style="width:30%;"class="form-control" id="userID" name="userID" required readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="lastname" class="form-label" style="color:black">Last Name</label>
-                            <input type="text" class="form-control" id="lastname" name="lastname" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="firstname" class="form-label" style="color:black">First Name</label>
-                            <input type="text" class="form-control" id="firstname" name="firstname" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label" style="color:black">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
-                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
-                    </div>
-                </div>
-                </div>
-            </div>
 
             <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog  modal-dialog-centered">
@@ -88,14 +50,17 @@
                     <h5 class="modal-title" id="exampleModalLabel">Upload CSV File</h5>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="csv" class="form-label" style="color:black">Upload CSV File</label>
-                            <input type="file" class="form-control" id="csv" name="csv" accept="image/*" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
-                    <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                        <form method="post" enctype="multipart/form-data" action="{% url 'Upload_CSV' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="file" class="form-label" style="color:black">Import CSV File:</label>
+                                <input type="file" class="form-control" name="file" id="file" accept=".csv" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                                <button type="submit" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Upload CSV</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 </div>

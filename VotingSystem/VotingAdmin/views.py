@@ -20,9 +20,11 @@ from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset, Election
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 from django.utils import timezone
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from .utils import broadcast_vote_update
 import os
 import uuid
 import csv
@@ -146,11 +148,12 @@ def add_position_view(request):
                 defaults={'Num_Candidates': 0, 'Total_votes': 0, 'max_candidates_elected': max_candidates}
             )
             if created:
-                messages.success(request, 'Position added successfully.')
+                return JsonResponse({'status': 'ok', 'message': 'Position added successfully.'}, safe=False)
             else:
-                messages.info(request, 'Position already exists.')
+                return JsonResponse({'status': 'ok', 'message': 'Position already exists.'}, safe=False)
+# Handle the error case
+            return JsonResponse({'status': 'error', 'message': 'Position name and max candidates are required.'}, safe=False)
             
-            return redirect('ManagePositions')  # Replace with your actual URL name for positions list
         else:
             messages.error(request, 'Position name and max candidates are required.')
 
@@ -215,9 +218,9 @@ def add_party(request):
             partylist = form.save(commit=False)
             partylist.voting_admins = voting_admin  # Set the foreign key relation
             partylist.save()
-            return redirect('ManageParty')  # Redirect to the party list view
-    else:
-        form = AddPartyForm()
+            return JsonResponse({'status': 'ok', 'message': 'Party added successfully.'}, safe=False)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Form is not valid.'}, safe=False)
 
     return render(request, 'VotingAdmin/add_party.html', {'form': form})
 
@@ -512,3 +515,57 @@ def submit_vote(request):
     else:
         messages.error(request, "You can only submit votes using the form.")
         return redirect('voting_page')
+
+@login_required    
+def election_results(request):
+    positions_data = []
+
+    positions = Positions.objects.all()
+    for position in positions:
+        candidates = Candidate.objects.filter(position=position).select_related('application')
+        candidates_data = [
+            {
+                # Concatenate 'First name' and 'Last name' to create a full name
+                'name': json.loads(candidate.application.data)['First Name'] + ' ' + json.loads(candidate.application.data)['Last Name'],
+                'votes': candidate.votes
+            } 
+            for candidate in candidates
+        ]
+        positions_data.append({'position_name': position.Pos_name, 'candidates': candidates_data})
+
+    context = {'positions_data': positions_data}
+    return render(request, 'VotingAdmin/results.html', context)
+
+@login_required
+def latest_votes(request):
+    # Prepare a dictionary to hold the data.
+    data = {'positions': []}
+
+    # Get all positions.
+    positions = Positions.objects.all()
+
+    # For each position, get the candidates and their current vote counts.
+    for position in positions:
+        # Dictionary to hold position data.
+        position_data = {
+            'position_name': position.Pos_name,
+            'candidates': []
+        }
+
+        # Get all candidates for the position.
+        candidates = Candidate.objects.filter(position=position)
+
+        # For each candidate, get their name and vote count.
+        for candidate in candidates:
+            candidate_data = {
+                'name': json.loads(candidate.application.data)['First Name'] + ' ' + json.loads(candidate.application.data)['Last Name'],  # Assuming you have a method to get the full name of the user
+                'votes': candidate.votes
+            }
+            # Add candidate data to the position data.
+            position_data['candidates'].append(candidate_data)
+
+        # Add position data to the main data dictionary.
+        data['positions'].append(position_data)
+
+    # Return a JsonResponse with the data dictionary.
+    return JsonResponse(data)

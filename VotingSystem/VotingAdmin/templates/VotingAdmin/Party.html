@@ -47,18 +47,25 @@
                 <h5 class="modal-title" id="exampleModalLabel">Add Partylist</h5>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="partylistname" class="form-label" style="color:black">Partylist Name</label>
-                        <input type="text" class="form-control" id="partylist" name="partylistname" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="logo" class="form-label" style="color:black">Logo</label>
-                        <input type="file" class="form-control" id="logo" name="logo" accept="image/*" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
-                <button type="button" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                    <form id="addPartyForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="Party_name" class="form-label" style="color:black">Partylist Name</label>
+                            <input type="text" class="form-control" id="Party_name" name="Party_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Logo" class="form-label" style="color:black">Logo</label>
+                            <input type="file" class="form-control" id="Logo" name="Logo" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label" style="color:black">Description</label>
+                            <textarea class="form-control" id="Description" name="Description" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>
+                            <button type="submit" class="btn btn-primary" style="background-color:#4E9FFF;border:none;">Save changes</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             </div>
@@ -111,6 +118,36 @@
              }
          })
      });
+     document.addEventListener('DOMContentLoaded', function() {
+    var addPartyForm = document.getElementById('addPartyForm');
+
+    addPartyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('{% url "add_party" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'ok') {
+                $('#exampleModal').modal('hide');
+                addPartyForm.reset();
+                alert(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
 </script>
 <!-- APEX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>

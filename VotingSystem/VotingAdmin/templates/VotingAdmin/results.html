@@ -1,0 +1,61 @@
+{% extends '../base/Admin_base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Results</title>
+    <!-- Include ApexCharts via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <h1>Election Results</h1>
+
+    <!-- Divs for each position's chart -->
+    <div id="vote-tallies">
+        {% for position in positions %}
+            <div id="position-{{ position.Pos_name }}" class="position-tally">
+                <h3>{{ position.Pos_name }}</h3>
+                <!-- Candidates and votes will be inserted here by JavaScript -->
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Define the positions data for the charts -->
+    <script type="application/json" id="positions-data">
+        {{ positions_data|json_script:"positions-data" }}
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchVotes() {
+                fetch('/latest_votes/')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateVoteDisplay(data.positions);
+                    })
+                    .catch(error => console.error('Error fetching votes:', error));
+            }
+        
+            function updateVoteDisplay(positions) {
+                positions.forEach(position => {
+                    // Update the HTML for each position with the new vote counts
+                    // You'll need to ensure that the HTML structure matches what you're updating here
+                    const positionElement = document.getElementById(`position-${position.position_name}`);
+                    positionElement.innerHTML = ''; // Clear current content
+                    position.candidates.forEach(candidate => {
+                        positionElement.innerHTML += `<div>${candidate.name}: ${candidate.votes}</div>`;
+                    });
+                });
+            }
+        
+            // Fetch votes when page loads
+            fetchVotes();
+        
+            // Set an interval to fetch votes every 30 seconds
+            setInterval(fetchVotes, 30000);
+        });
+    </script> 
+</body>
+{% endblock %}

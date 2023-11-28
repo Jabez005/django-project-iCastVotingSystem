@@ -56,16 +56,31 @@ def dynamic_form_view(request):
         form = DynamicForm(request.POST, request.FILES, dynamic_fields_queryset=dynamic_fields_queryset)
         if form.is_valid():
             with transaction.atomic():
+                position = form.cleaned_data.get('position')  # This should be the ID of the position
+                partylist = form.cleaned_data.get('partylist')  # This should be the ID of the partylist
+
+                # Fetch the actual instances based on IDs provided
+                position_instance = Positions.objects.get(id=position)
+                partylist_instance = Partylist.objects.get(id=partylist)
+
+                # Here you use the function to get the voting admin
+                voting_admin_instance = get_voting_admin_for_user(request.user)
+                if not voting_admin_instance:
+                    messages.error(request, "Voting admin not found for the user.")
+                    return redirect('Home')
+                
                 candidate_application = CandidateApplication(
                     user=request.user,
-                    status='pending'
+                    status='pending',
+                    positions=position_instance,
+                    partylist=partylist_instance,
+                    voting_admins=voting_admin_instance
                 )
 
                 dynamic_data = {}
                 for field in dynamic_fields_queryset:
                     field_name = field.field_name
                     field_value = form.cleaned_data.get(field_name)
-
                     if isinstance(field_value, InMemoryUploadedFile):
                         file_path = default_storage.save(field_value.name, ContentFile(field_value.read()))
                         field_value = file_path
@@ -73,31 +88,24 @@ def dynamic_form_view(request):
                     dynamic_data[field_name] = field_value
 
                 candidate_application.data = json.dumps(dynamic_data)
-                candidate_application.positions_id = form.cleaned_data.get('position')
-                candidate_application.partylist_id = form.cleaned_data.get('partylist')
-                candidate_application.voting_admins = get_voting_admin_for_user(request.user)
-
                 candidate_application.save()
-
-                # Assuming get_current_election() retrieves the current active election
-              
 
                 candidate, created = Candidate.objects.get_or_create(
                     user=request.user,
                     defaults={
                         'votes': 0,
                         'application': candidate_application,
+                        'position': position_instance,
                         'voting_admins': candidate_application.voting_admins,
                     }
-                   )
+                )
 
                 if not created:
                     candidate.application = candidate_application
                     candidate.save()
 
                 messages.success(request, 'Your application has been submitted successfully.')
-
-            return redirect('Home')
+                return redirect('Home')
 
     return render(request, 'Voters/Candidate_application.html', {'form': form})
 

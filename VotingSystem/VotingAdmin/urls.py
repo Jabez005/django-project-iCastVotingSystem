@@ -26,6 +26,8 @@ urlpatterns = [
     path('stop_election/<int:election_id>/', views.stop_election, name="stop_election"),
     path('voting_page', views.voting_page, name="voting_page"),
     path('submit_vote', views.submit_vote, name="submit_vote"),
+    path('election_results', views.election_results, name="election_results"),
+    path('latest_votes', views.latest_votes, name="latest_votes"),
 ]
     
 
