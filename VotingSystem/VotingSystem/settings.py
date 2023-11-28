@@ -76,7 +76,6 @@ WSGI_APPLICATION = 'VotingSystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': BASE_DIR / 'db.sqlite3',
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'A3b5G5dcACeg44CbefFC14GG-ccaCcFd',
