@@ -29,8 +29,8 @@
 :root{
 	--bg-color: maroon;
 	--text-color: #fff;
-	--main-color: #29fd53;
-	--background-image: url('Images/background.png');
+	--main-color: #ffc220;
+	--background-image: url({% static '/images/background.png' %});
 }
 body{
 	min-height: 20vh;
@@ -181,12 +181,12 @@ display: flex;
 }
 .image-container {
   flex-grow: 1; /* Allow image container to fill the space */
-  background-image: url('Images/hand.png'); /* Path to your image */
+  background-image: url({% static '/images/hand.png' %}); /* Path to your image */
   background-position: center right; /* Position image on the right */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: contain; /* Contain the image within the div */
   height: 100%; /* Full height of the content wrapper */
-  padding-right: 50px;
+  margin-right: 150px;
 }
 .text-container {
     flex: 0 1 auto; /* Do not grow, allow shrink, and base width on content */
@@ -454,7 +454,7 @@ width: 50px%; height; 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px
 			<a href="#" class="logo"><span>iCast</span></a>
 		<ul class="navbar">
 			<li><a href="#" class="active">Home</a></li>
-            <li><a href="#" class="active">Request</a></li>
+            <li><a href="{% url 'Request' %}" class="active">Request</a></li>
 		
 				
 		</ul>
@@ -476,30 +476,9 @@ width: 50px%; height; 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px
 			<button onclick="document.location='reqform.html'" class="myBtn" id="myBtn">Join Now</button>
 			<div id="myModal" class="modal">
 
-	  <!-- Modal content -->
-	  <div class="modal-content">
-		<div class="req-bg"> Request for use</div>
-		<form>
-		  <label for="orgName">Organization Name:</label><br>
-		  <input type="text" id="orgName" name="orgName" required div style="margin-top: 10px; margin-bottom: 10px; width: 490px; height: 40px;%; background: rgba(255, 255, 255, 0.50); border: 1px #110DE9 solid;"><br>
-		  <label for="clientName">Client Name:</label><br>
-		  <input type="text" id="clientName" name="clientName" required style="margin-top: 10px; margin-bottom: 10px; width: 490px; height: 40px;%; background: rgba(255, 255, 255, 0.50); border: 1px #110DE9 solid;"><br>
-		  <label for="email">Email:</label><br>
-		  <input type="email" id="email" name="email" required style="margin-top: 10px; margin-bottom: 10px; width: 490px; height: 40px;%; background: rgba(255, 255, 255, 0.50); border: 1px #110DE9 solid;"><br>
-		  <label for="phone">Phone Number:</label><br>
-		  <input type="tel" id="phone" name="phone" required style="margin-top: 10px; margin-bottom: 10px; width: 490px; height: 40px;%; background: rgba(255, 255, 255, 0.50); border: 1px #110DE9 solid;"><br><br>
-		  <div class="btn-cont">
-		  <input type="button" id="butCan" value="Cancel">
-		  <button class="butSub" id="butSub" value="submit">Submit</button>
-		  </div<
-		  </div>
-		</form>
-	  </div>
-
 	</div>
 		</div>	
 		<div class="image-container">
-			<!-- The new PNG image will go here -->
 		</div>
 	</div>
 	</div>
@@ -534,7 +513,7 @@ width: 50px%; height; 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px
 	<div style="width: auto; height: 528px; top: 1300px; position: absolute">
 				<div style="width: 1347px; height: 728px; left: 0px; top: 0px; position: absolute; background: rgba(215.69, 215.69, 215.69, 0.90); border-top-left-radius: 200px"></div>
 				<div style="width: 637px; height: 61px; left: 46px; top: 34px; position: absolute">
-					<img style="width: 637px; height: 661px; left: 0px; top: 0px; position: absolute; border-radius: 190px 0px"src='Images/hand1.jpg' />
+					<img style="width: 637px; height: 661px; left: 0px; top: 0px; position: absolute; border-radius: 190px 0px"src="{% static '/images/hand1.jpg' %}"/>
 					<div style="width: 306px; height: 137px; left: 287px; top: 168px; position: absolute; background: #F1B025"></div>
 				</div>
 				<div style="width: 644px; left: 794px; top: 85px; position: absolute; text-align: justify; color: #333333; font-size: 50px; font-family: Roboto; font-weight: 400; letter-spacing: 20px; word-wrap: break-word">ABOUT US</div>

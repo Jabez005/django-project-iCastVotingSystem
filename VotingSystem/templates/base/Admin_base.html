@@ -48,7 +48,9 @@
         </div>
         <ul class="sidebar-list">
             <li class="sidebar-list-item">
-                <span class="material-icons-outlined">home</span>Home
+                <a href="{% url 'Votingadmin' %}" class="sidebar-link">
+                    <span class="material-icons-outlined">home</span>Home
+                </a>
             </li>
             <li class="sidebar-list-item">
                 <a href="{% url 'ManagePositions' %}" class="sidebar-link">
@@ -73,17 +75,17 @@
             </li>
             <li class="sidebar-list-item">
                 <a href="{% url 'manage_election' %}" class="sidebar-link">
-                <span class="material-icons-outlined">poll</span> Survey Polls
+                <span class="material-icons-outlined">poll</span> Elections
                 </a>
             </li>
             <li class="sidebar-list-item">
-                <a href="{% url 'election_results' %}" class="sidebar-link">
+                <a href="{% url 'latest_votes' %}" class="sidebar-link">
                 <span class="material-icons-outlined">badge</span> Results
                 </a>
             </li>
             <br><br>
             <li class="sidebar-list-item">
-                <a href="homepage.html" class="sidebar-link">
+                <a href="{% url 'logout' %}" class="sidebar-link">
                     <span class="material-icons-outlined">logout</span> Logout
                 </a>
             </li>

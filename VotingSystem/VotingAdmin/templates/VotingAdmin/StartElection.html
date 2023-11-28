@@ -1,38 +1,95 @@
+{% extends '../base/Admin_base.html' %}
 {% load static %}
+{%block content%}
 <head>
+<style>
+/* This will center the card on the page */
+.election-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    /* Remove any border-radius if it exists to make it look more rectangular */
+    border-radius: 0; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 80px;
+    margin-left: 450px; /* This will center the card on the page */
+    width: 80%; /* Adjust width as per your requirement for a rectangle shape */
+    height: 500px; /* You can set a specific height or leave it auto */
+    display: flex;
+    flex-direction: column;
+    left: 700px;
+    align-items: center; /* This will center the content horizontally */
+    justify-content: center; /* This will center the content vertically if height is set */
+}
 
-    <meta charset ="UTF-8">
+/* Ensure that your headings and buttons are also styled to fit the rectangular card */
+.election-card h1, .election-card h2 {
+    text-align: center;
+    width: 100%;
+}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+.btn {
+    /* Other button styles */
+    display: block;
+    margin: 10px auto; /* This will center the button */
+}
 
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
 
-    <title> iCast </title> 
+.btn.start-election {
+    background-color: #4CAF50; /* Green */
+}
 
-    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
+.btn.stop-election {
+    background-color: #f44336; /* Red */
+}
 
-    <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
+.btn.start-election:hover {
+    background-color: #45a049;
+}
+
+.btn.stop-election:hover {
+    background-color: #d32f2f;
+}
+
+#electionFormContainer {
+    margin-top: 20px;
+}
+
+</style>
 </head>
-
 <body>
-   
-    <h1>Manage Election</h1>
-    {% if current_election %}
-    <h1>Current Election: {{ current_election.name }}</h1>
-    <!-- If the current election is active, show a stop button -->
-    {% if current_election.is_active %}
-        <button onclick="window.location.href='{% url 'stop_election' current_election.id %}'">Stop Election</button>
-    {% endif %}
-    {% else %}
-    <h1>No Active Election</h1>
-    <button id="startElectionButton">Create Election</button>
-    <div id="electionFormContainer" style="display: none;">
-        <form method="post" action="{% url 'manage_election' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Start Election</button>
-        </form>
+    <div class="election-card">
+        <h1>Manage Election</h1>
+        {% if current_election %}
+        <h2>Current Election: {{ current_election.name }}</h2>
+        {% if current_election.is_active %}
+            <button class="btn stop-election" onclick="window.location.href='{% url 'stop_election' current_election.id %}'">Stop Election</button>
+        {% endif %}
+        {% else %}
+        <h2>No Active Election</h2>
+        <button id="startElectionButton" class="btn start-election">Create Election</button>
+        <div id="electionFormContainer" style="display: none;">
+            <form method="post" action="{% url 'manage_election' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn start-election">Start Election</button>
+            </form>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
     <script type="text/JavaScript">
         // JavaScript to handle showing the new election form
         document.getElementById('startElectionButton').addEventListener('click', function() {
@@ -51,3 +108,4 @@
         {% endif %}
     </script>
 </body>
+{% endblock %}

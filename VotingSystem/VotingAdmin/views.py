@@ -379,7 +379,7 @@ def reject_application(request, pk):
         
     if email:
         send_mail(
-            'Application Approved',
+            'Application Rejected',
             'Your application has been rejected.',
             settings.DEFAULT_FROM_EMAIL,
             [email],
@@ -418,7 +418,12 @@ def stop_election(request, election_id):
 @login_required
 def voting_page(request):
     # Get the currently active election
-    current_election = get_object_or_404(Election, is_active=True)
+    try:
+        # Try to get the current active election
+        current_election = Election.objects.get(is_active=True)
+    except Election.DoesNotExist:
+        # If no active election exists, redirect to another page, for example, 'home'
+        return redirect('Not_started')
     
     positions = Positions.objects.filter(election=current_election)
     positions_with_candidates = {}
@@ -467,7 +472,7 @@ def submit_vote(request):
 
         if VoteLog.objects.filter(voter=request.user, election=current_election).exists():
             messages.error(request, "You have already voted in this election.")
-            return redirect('voting_page')
+            return redirect('Results_not_open')
 
         positions = Positions.objects.filter(election=current_election)
 
@@ -511,30 +516,10 @@ def submit_vote(request):
                         raise
 
         messages.success(request, "Your vote has been successfully submitted.")
-        return redirect('Home')
+        return redirect('Results_not_open')
     else:
         messages.error(request, "You can only submit votes using the form.")
         return redirect('voting_page')
-
-@login_required    
-def election_results(request):
-    positions_data = []
-
-    positions = Positions.objects.all()
-    for position in positions:
-        candidates = Candidate.objects.filter(position=position).select_related('application')
-        candidates_data = [
-            {
-                # Concatenate 'First name' and 'Last name' to create a full name
-                'name': json.loads(candidate.application.data)['First Name'] + ' ' + json.loads(candidate.application.data)['Last Name'],
-                'votes': candidate.votes
-            } 
-            for candidate in candidates
-        ]
-        positions_data.append({'position_name': position.Pos_name, 'candidates': candidates_data})
-
-    context = {'positions_data': positions_data}
-    return render(request, 'VotingAdmin/results.html', context)
 
 @login_required
 def latest_votes(request):
@@ -555,17 +540,32 @@ def latest_votes(request):
         # Get all candidates for the position.
         candidates = Candidate.objects.filter(position=position)
 
-        # For each candidate, get their name and vote count.
+        # For each candidate, get their name, vote count, and candidate names from the data field.
         for candidate in candidates:
+            # Make sure to handle the JSON loading safely.
+            candidate_info = json.loads(candidate.application.data)
+            first_name = candidate_info.get('First Name', '')
+            last_name = candidate_info.get('Last Name', '')
+
+            # Access candidate names from the data field
+            candidate_names = candidate_info.get('Candidate Names', '')  # Replace 'Candidate Names' with the actual key in your data field
+
             candidate_data = {
-                'name': json.loads(candidate.application.data)['First Name'] + ' ' + json.loads(candidate.application.data)['Last Name'],  # Assuming you have a method to get the full name of the user
-                'votes': candidate.votes
+                'name': f"{first_name} {last_name}",  # Using an f-string for clarity
+                'votes': candidate.votes,
+                'candidate_names': candidate_names  # Include candidate names
             }
+
             # Add candidate data to the position data.
             position_data['candidates'].append(candidate_data)
 
         # Add position data to the main data dictionary.
         data['positions'].append(position_data)
 
-    # Return a JsonResponse with the data dictionary.
-    return JsonResponse(data)
+    # Convert your 'data' dictionary into JSON and pass it to the template
+    positions_json = json.dumps(data['positions'])
+
+    # Pass the JSON string to the template
+    context = {'positions_data': positions_json}
+    return render(request, 'VotingAdmin/results.html', context)
+

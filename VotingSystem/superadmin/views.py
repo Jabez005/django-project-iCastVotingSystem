@@ -137,6 +137,6 @@ def generate_admin_account(request, admin_id):
 
     send_mail(subject, message, from_email, recipient_list)
 
-    return render(request, 'sending_email.html', {'email': email, 'password': password})
+    redirect('VotingAdmins')
 
     

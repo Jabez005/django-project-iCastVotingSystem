@@ -1,8 +1,10 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns =[
     path('login_superuser', views.login_superuser, name="login_superuser"),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('Superadmin', views.Superadmin, name="Superadmin"),
     path('requests', views.requests, name="requests"),
     path('Requestform/<int:pk>', views.singular_request, name="view"),

@@ -109,7 +109,8 @@ font-family: 'Poppins', sans-serif;
 	<br>
         
     <button type="submit">LOGIN</button><br>
-
+    <button class="butAdmin" id="votingadmin-login">ADMIN LOGIN</button>
+    
   </div>
 
 </form>
@@ -124,5 +125,16 @@ font-family: 'Poppins', sans-serif;
     <div style="left: 250px; top: 650px; position: absolute; color: #B1A9A9; font-size: 16px; font-family: 'Inter', sans-serif;
 font-family: 'Poppins', sans-serif; font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">© 2023 iCast. All rights reserved.</div>
 	</div>
+  <script>
+    document.getElementById('systemadmin-login').onclick = function () {
+        window.location.href = "{% url 'login_superuser' %}";
+    };
+    document.getElementById('votingadmin-login').onclick = function () {
+        window.location.href = "{% url 'Adminlogin' %}";
+    };
+    document.getElementById('voter-login').onclick = function () {
+        window.location.href = "{% url 'login_voter' %}";
+    };
+</script>
 </body>
 </html>

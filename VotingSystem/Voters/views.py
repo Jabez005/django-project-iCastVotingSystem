@@ -43,11 +43,12 @@ def voter_login(request):
 def home(request):
     return render(request, 'Voters/Home.html')
 
+
 @login_required
 def dynamic_form_view(request):
     if CandidateApplication.objects.filter(user=request.user).exists():
         messages.error(request, 'You have already submitted an application.')
-        return redirect('Home')
+        return redirect('form_submitted')
 
     dynamic_fields_queryset = DynamicField.objects.all()
     form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)
@@ -67,7 +68,7 @@ def dynamic_form_view(request):
                 voting_admin_instance = get_voting_admin_for_user(request.user)
                 if not voting_admin_instance:
                     messages.error(request, "Voting admin not found for the user.")
-                    return redirect('Home')
+                    return redirect('Not_started')
                 
                 candidate_application = CandidateApplication(
                     user=request.user,
@@ -105,7 +106,7 @@ def dynamic_form_view(request):
                     candidate.save()
 
                 messages.success(request, 'Your application has been submitted successfully.')
-                return redirect('Home')
+                return redirect('Results_not_open')
 
     return render(request, 'Voters/Candidate_application.html', {'form': form})
 
@@ -122,3 +123,40 @@ def get_voting_admin_for_user(user):
         # If a VotingAdmin with the given org_code does not exist, handle this case appropriately.
         return None
 
+@login_required
+def show_candidates(request):
+    partylist_data = []
+
+    partylists = Partylist.objects.all()
+    for party in partylists:
+        party_data = {
+            'partylist_name': party.Party_name,
+            'candidates': []
+        }
+
+        # Get all candidates for the partylist
+        candidates = Candidate.objects.filter(partylist=party).select_related('position')
+
+        for candidate in candidates:
+            candidate_data = {
+                'name': f"{candidate.first_name} {candidate.last_name}",
+                'position': candidate.position.name
+            }
+            party_data['candidates'].append(candidate_data)
+
+        if party_data['candidates']:
+            partylist_data.append(party_data)
+
+    return render(request, 'Voter/Candidates.html', {'partylists': partylist_data})
+
+def Not_started(request):
+    return render(request, 'Voters/Election_not_started.html')
+
+def Ended(request):
+    return render(request, 'Voters/election_ended.html')
+
+def Results_not_open(request):
+    return render(request, 'Voters/Resultsnotyetopen.html')
+
+def form_submitted(request):
+    return render(request, 'Voters/Alreadysubmitted.html')

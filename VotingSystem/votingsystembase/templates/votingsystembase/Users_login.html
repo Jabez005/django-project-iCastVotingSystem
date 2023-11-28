@@ -1,11 +1,14 @@
-{% extends 'votingsystembase/main.html'%}
+
 {% load static %}
-{% block content %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Voting Template</title>
     <style>
+        body{
+            background-color: #B31312;
+        }
    
         .card {
             display: flex;
@@ -14,10 +17,16 @@
             padding: 30px;
             width: 400px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            margin-top: 200px;
+            margin-left:625px;
+            height: 300px;
+            border-radius: 20px;
+            border-style: solid;
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #2B2A4C;
             border: none;
             color: white;
             padding: 15px 32px;
@@ -30,14 +39,11 @@
             border-radius: 10px;
         }
 
-        button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>E-Voting System</h1>
+        <h1><center>iCast</center></h1>
         <button id="voter-login">Voter Login</button>
         <button id="votingadmin-login">Voting Admin</button>
         <button id="systemadmin-login">System Admin</button>
@@ -56,4 +62,3 @@
     </script>
 </body>
 
-{% endblock %}
