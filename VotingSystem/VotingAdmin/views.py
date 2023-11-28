@@ -24,7 +24,6 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from .utils import broadcast_vote_update
 import os
 import uuid
 import csv

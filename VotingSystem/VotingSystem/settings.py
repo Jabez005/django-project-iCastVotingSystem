@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_io',
-    'channels',
 
     'votingsystembase',
     'superadmin',
