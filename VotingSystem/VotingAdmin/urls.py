@@ -25,6 +25,7 @@ urlpatterns = [
     path('manage_election', views.manage_election, name="manage_election"),
     path('stop_election/<int:election_id>/', views.stop_election, name="stop_election"),
     path('voting_page', views.voting_page, name="voting_page"),
+    path('submit_vote', views.submit_vote, name="submit_vote"),
 ]
     
 

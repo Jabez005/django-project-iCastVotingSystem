@@ -3,6 +3,13 @@
 {%load static %}
 {% block content %}
 <head>
+    <!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<!-- Include Bootstrap JS and its dependencies -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <style>
 .candidates-container {
     margin: 0 auto;
@@ -49,34 +56,99 @@
     <div id="election-info">
         <h1>{{ current_election.name }}</h1><br><br>
     </div>
-
-    <form method="post" action="#">
+    <form method="post" action="{% url 'submit_vote' %}" id="votingForm">
         {% csrf_token %}
-        
-        <div class="candidates-container">
-            {% for position, candidates_info in positions_with_candidates.items %}
-            <h2>{{ candidates_info.name }}</h2>
-            {% if candidates_info.candidates %}
-                <div class="candidates-row">
-                    {% for candidate in candidates_info.candidates %}
-                        <div class="candidate-card">
-                            <img class="candidate-image" src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}">
-                            <h3>{{ candidate.name }}</h3>
-                            <p>{{ candidate.party }}</p>
-                            <!-- Add other candidate details here -->
-                            <input type="radio" name="position_{{ position }}" value="{{ candidate.id }}" required>
-                        </div>
-                    {% endfor %}
-                </div>
+        <div class="position-container">
+            {% for position_id, candidates_info in positions_with_candidates.items %}
+    <h2>{{ candidates_info.name }}</h2>
+    {% if candidates_info.candidates %}
+        <div class="candidates-row">
+            {% if position.max_candidates_elected > 1 %}
+                <!-- If multiple candidates can be voted for, use checkboxes -->
+                {% for candidate in candidates_info.candidates %}
+                    <div class="candidate-card">
+                        <img class="candidate-image" src="{{ candidate.image.url }}" alt="Photo of {{ candidate.name }}">
+                        <h3>{{ candidate.name }}</h3>
+                        <p>{{ candidate.party }}</p>
+                        <!-- Add other candidate details here -->
+                        <input type="checkbox" name="position_{{ position_id }}" value="{{ candidate.id }}">
+                    </div>
+                {% endfor %}
             {% else %}
-                <p>No candidates</p>
+                <!-- If only one candidate can be voted for, use radio buttons -->
+                {% for candidate in candidates_info.candidates %}
+                    <div class="candidate-card">
+                        <img class="candidate-image" src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}">
+                        <h3>{{ candidate.name }}</h3>
+                        <p>{{ candidate.party }}</p>
+                        <!-- Add other candidate details here -->
+                        <input type="radio" name="position_{{ position_id }}" value="{{ candidate.id }}" required>
+                    </div>
+                {% endfor %}
             {% endif %}
-        {% endfor %}
         </div>
-        <button type="submit">Submit Vote</button>
+    {% else %}
+        <p>No candidates</p>
+    {% endif %}
+{% endfor %}
+        </div>
+        <button type="button" id="reviewVoteButton" class="btn btn-primary">Vote</button>
     </form>
+    <!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Your Vote</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalVoteBody">
+                <!-- Vote summary will be populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitVote">Submit Vote</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-   
-</body>
+<script>
+$(document).ready(function() {
+    $('#reviewVoteButton').click(function() {
+        var modalBody = $('#modalVoteBody');
+        modalBody.empty(); // Clear previous content
+
+        // Iterate over each position container
+        $('.position-container').each(function() {
+            // Get the position name
+            var positionName = $(this).find('h2').first().text().trim();
+            
+            // Create a container for this position's candidates
+            var positionBlock = $('<div>').append('<strong>' + positionName + ':</strong>');
+
+            // Find all checked radio buttons or checkboxes within this position container
+            $(this).find('input[type="radio"]:checked, input[type="checkbox"]:checked').each(function() {
+                var candidateName = $(this).closest('.candidate-card').find('h3').text().trim();
+                positionBlock.append('<p>' + candidateName + '</p>'); // Append each candidate name within this position's block
+            });
+
+            // Append the entire block for this position to the modal
+            modalBody.append(positionBlock);
+        });
+
+        $('#confirmModal').modal('show');
+    });
+
+    $('#submitVote').click(function(event) {
+        event.preventDefault(); // Prevent the default button action
+        document.getElementById('votingForm').submit(); // Use native JS to submit the form
+    });
+});
+</script>
 </center>
+</body>
+
 {% endblock %}

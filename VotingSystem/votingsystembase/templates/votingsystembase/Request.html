@@ -1,8 +1,11 @@
-{% extends 'votingsystembase/main.html'%}
+{%extends '../base/homepage.html' %}
 {% load static %}
+
+
+
 {% block content %}
-<body>
     <center>
+    <div>
     <h1>Request for Use Form</h1>
     <br><br><br>
     {% if submitted %}
@@ -21,7 +24,8 @@
         </form>
     
     {% endif %}
-    </center>
-</body>
-
+        </div>
+</center>
+    
 {% endblock %}
+

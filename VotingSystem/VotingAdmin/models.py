@@ -14,7 +14,7 @@ class CSVUpload(models.Model):
 
 class Positions(models.Model):
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
-    election=models.ForeignKey('Election', on_delete=models.CASCADE, null=True, blank= True ,related_name='election')
+    election=models.ForeignKey('Election', on_delete=models.CASCADE, null=True, blank= True ,related_name='positions')
     Pos_name=models.CharField(max_length=100)
     Num_Candidates=models.IntegerField(default=0)
     Total_votes=models.IntegerField(default=0)
@@ -59,15 +59,16 @@ class CandidateApplication(models.Model):
     election = models.ForeignKey('Election', on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     data = JSONField()  # Stores the data for each dynamic field
-    positions = models.ForeignKey('Positions', on_delete=models.CASCADE, related_name='candidates')
-    partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE, related_name='party_list')
+    positions = models.ForeignKey('Positions', on_delete=models.CASCADE, related_name='candidap')
+    partylist = models.ForeignKey('Partylist', on_delete=models.CASCADE, related_name='candidateapp')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
 class Candidate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Assuming each candidate is a user
     voting_admins=models.ForeignKey('superadmin.vote_admins', on_delete=models.CASCADE)
     application = models.OneToOneField('CandidateApplication', on_delete=models.CASCADE, related_name='candidate')
-    election =models.ForeignKey('Election', on_delete=models.SET_NULL, null=True, blank=True, related_name='candidates')
+    position = models.ForeignKey(Positions, on_delete=models.CASCADE, related_name='candidates')
+    election =models.ForeignKey('Election', on_delete=models.SET_NULL, null=True, blank=True, related_name='candid')
     votes = models.IntegerField(default=0)
 
     def __str__(self):
@@ -115,7 +116,7 @@ class VoterElection(models.Model):
         return f"{self.voter} - {self.election}"
 
 class VoteLog(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    voter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     election = models.ForeignKey(Election, on_delete=models.CASCADE)
     vote_time = models.DateTimeField(default=timezone.now)
     position = models.ForeignKey(Positions,on_delete=models.CASCADE)

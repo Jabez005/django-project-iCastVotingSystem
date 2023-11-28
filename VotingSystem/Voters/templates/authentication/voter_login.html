@@ -1,28 +1,128 @@
-{% extends 'votingsystembase/main.html'%}
 {% load static %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+<title> Voter Login </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Sora:wght@100&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200&family=Poppins:wght@600&family=Sora:wght@100;200&display=swap" rel="stylesheet">
+<style>
+body {font-family: Arial, Helvetica, sans-serif; background-color: #B31312;}
+
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+	background: #EA906C;
+	cursor: pointer; /* Pointer cursor on hover */
+	padding: 12px 46px;
+	border: none;
+	color: white;
+	margin-left: 295px;
+	font-size: 20px;
+	font-family: 'Poppins', sans-serif;
+	font-family: 'Sora', sans-serif;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+.butAdmin{
+		margin-left: -30px; 
+		margin-top:20px;
+		background: transparent;
+		padding: 10px 20px;
+		border-radius: 20px;
+		cursor: pointer;
+		border: none;
+		color: gray;
+		font-size: 18px;
+	}
+
+
+.container {
+  padding-left: 24px;
+  padding-top: 2px;
+  margin-top: 120px;
+  background-color: #EFEFEF;
+  padding-right: 24px;
+  width: 80%;
+  margin-left: 47px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+b{
+font-size: 14px;
+}
+h2{
+font-family: 'Poppins', sans-serif;
+	font-family: 'Sora', sans-serif;
+	font-weight: thick;
+}
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+</head>
 <body>
-    <center>
-    <h1>Voter Login</h1>
-    <br><br><br>
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="formGroupExampleInput" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" placeholder="Username">
-              </div>
-              <div class="mb-3">
-                <label for="formGroupExampleInput2" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Password">
-              </div>
-              <div class="mb-3">
-                <label for="formGroupExampleInput2" class="form-label">Organization Code</label>
-                <input type="text" class="form-control" name="org_code" placeholder="Organization Code">
-              </div>
+        <div style="width: 564px; height: 100%; left: 800px; top: 0px; position: absolute; background: #EEE2DE">
+	<form action="{% url 'login_voter' %}" method="post">
+    {% csrf_token %}
+  <div class="container">
+	<h2>VOTER LOGIN<h2>
+    <label>Username</label>
+    <input type="text" class="form-control" name="username" placeholder="Username">
 
-            <input type="submit" class="btn btn-primary">
-        </form>
-    </center>
+    <label>Password</label>
+    <input type="password" class="form-control" name="password" placeholder="Password">
+	
+	  <label>Organization Code</label>
+    <input type="text" class="form-control" name="org_code" placeholder="Organization Code">
+	<br>
+	<br>
+        
+    <button type="submit">LOGIN</button><br>
+
+  </div>
+
+</form>
+		</div>
+        <div style="width: 0px; height: 44.17px; left: 159.87px; top: 423.17px; position: absolute"></div>
+		<button onclick="window.location.href='welcomepage.html';" style="border: none; background: none; padding: 0;"><img style="width: 30px; height: 30px; left: 0; top: 0; position: absolute;" src="{% static '/images/back.png' %}">
+</button>
+    <img style="width: 180px; height: 60px; left: 467px; top: 410px; position: absolute" src="{% static '/images/icast.png' %}" />
+    <img style="width: 300px; height: 290px; left: 240px; top: 117px; position: absolute; background: linear-gradient(0deg, rgba(255, 0, 0, 0.42) 0%, rgba(255, 0, 0, 0.42) 100%); border-radius: 9999px; opacity: 0.5;" src="{% static '/images/imgLog.png' %}"></div>
+    <div style="left: 141px; top: 440px;; position: absolute; color: white; font-size: 22px; font-family: Source Sans Pro;font-family: 'Poppins', sans-serif;
+	font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">Seamless Voting, Powered by</div>
+    <div style="left: 250px; top: 650px; position: absolute; color: #B1A9A9; font-size: 16px; font-family: 'Inter', sans-serif;
+font-family: 'Poppins', sans-serif; font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">© 2023 iCast. All rights reserved.</div>
+	</div>
 </body>
-
-{% endblock %}
+</html>

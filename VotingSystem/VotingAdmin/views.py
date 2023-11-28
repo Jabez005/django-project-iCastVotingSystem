@@ -461,51 +461,54 @@ def voting_page(request):
 def submit_vote(request):
     if request.method == 'POST':
         current_election = get_object_or_404(Election, is_active=True)
-        
-        # Check if the user has already voted in this election
-        has_voted_in_election = VoteLog.objects.filter(
-            voter=request.user, 
-            election=current_election
-        ).exists()
 
-        if has_voted_in_election:
+        if VoteLog.objects.filter(voter=request.user, election=current_election).exists():
             messages.error(request, "You have already voted in this election.")
             return redirect('voting_page')
 
         positions = Positions.objects.filter(election=current_election)
 
         for position in positions:
-            candidate_id = request.POST.get(f'vote_{position.id}', None)
-            if candidate_id:
-                try:
-                    candidate = Candidate.objects.get(
+            if position.max_candidates_elected > 1:
+                candidate_ids = request.POST.getlist(f'position_{position.id}')
+            else:
+                # This handles the case where no candidate might be selected for a position
+                candidate_id = request.POST.get(f'position_{position.id}')
+                candidate_ids = [candidate_id] if candidate_id else []
+
+            if candidate_ids and len(candidate_ids) > position.max_candidates_elected:
+                messages.error(request, f"You can select up to {position.max_candidates_elected} candidates for {position.Pos_name}.")
+                return redirect('voting_page')
+
+            for candidate_id in candidate_ids:
+                if candidate_id:  # Check if candidate_id is not None
+                    try:
+                        candidate = Candidate.objects.get(
                         id=candidate_id, 
-                        candidateapplication__positions=position,
-                        candidateapplication__status='approved'
-                    )
+                        application__positions=position,
+                        application__status='approved'
+                        )
+                        candidate.votes = F('votes') + 1
+                        candidate.save()
 
-                    # Record the vote
-                    candidate.votes = F('votes') + 1
-                    candidate.save()
+                        # Make sure the field name matches the model definition
+                        position.Total_votes = F('Total_votes') + 1
+                        position.save()
 
-                    position.total_votes = F('total_votes') + 1
-                    position.save()
-
-                    VoteLog.objects.create(
+                        VoteLog.objects.create(
                         voter=request.user,
                         election=current_election,
                         position=position,
                         candidate=candidate,
                         vote_time=timezone.now()
-                    )
+                        )
 
-                except Candidate.DoesNotExist:
-                    transaction.set_rollback(True)
-                    messages.error(request, f"Invalid vote for {position.Pos_name}.")
-                    return redirect('voting_page')
-                
+                    except Candidate.DoesNotExist:
+                    # Correct way to indicate a transaction should be rolled back in case of exception
+                        raise
+
         messages.success(request, "Your vote has been successfully submitted.")
-        return redirect('results_page')  # Redirect to a page showing the voting results or a confirmation page
+        return redirect('Home')
     else:
         messages.error(request, "You can only submit votes using the form.")
         return redirect('voting_page')

@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> Home Page </title>
+    <link rel="stylesheet" href="homepage.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <link rel="stylesheet"
+    href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet">
+
+    <style>
+*{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+	text-decoration: none;
+	list-style: none;
+}
+header{
+	position: fixed;
+	width: 100%;
+	top: 0;
+	right: 0;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: transparent;
+	padding: 28px 12%;
+	transition: all .50s ease;
+    background-color:maroon; /* Make the header transparent */
+}
+:root{
+	--background-color: maroon;
+	--text-color: #fff;
+	--main-color: rgb(252, 252, 2);
+	--background-image: url('Images/background.png');
+}
+body{
+	min-height: 20vh;
+	background: var(--bg-color);
+	color: var(--text-color);
+}
+.logo{
+	display: flex;
+	align-items: center;
+}
+.logo i{
+	color: var(--main-color);
+	font-size: 28px;
+	margin-right: 3px;
+}
+.logo span{
+	color: var(--text-color);
+	font-size: 1.7rem;
+	font-weight: 600;
+}
+.navbar{
+	display: flex;
+	background-color: maroon;
+	
+}
+.navbar a{
+	color: var(--text-color);
+	font-size: 1.1rem;
+	font-weight: 500;
+	padding: 5px 0;
+	margin: 0px 30px;
+	transition: all .50s ease;
+	background-color: maroon;
+}
+.navbar a:hover{
+	color: var(--main-color);
+}
+.navbar a.active{
+	color: var(--main-color);
+}
+    </style>
+
+</head>
+<body>
+    <header>
+		<a href="#" class="logo"><span>iCast</span></a>
+
+	<ul class="navbar">
+		<li><a href="#" >Home</a></li>
+		<li><a href="#">Vote Now</a></li>
+		<li><a href="#">Candidates</a></li>
+		<li><a href="#"class="active"> Partylists</a></li>	
+		<li><a href="#"> Log in</a></li>
+	</ul>
+	
+	<div class="main">
+		<a href="#" class="user"><i class="ri-user-fill"></i>Sign in</a>
+		<div class="bx bx-menu" id="menu-icon"></div>
+	</div>
+	</header>
+
+    {% block content %}
+
+
+
+
+    {% endblock %}
+
+
+</body>
+</html>
