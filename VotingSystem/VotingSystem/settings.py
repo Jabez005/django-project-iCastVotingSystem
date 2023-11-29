@@ -16,11 +16,8 @@ SECRET_KEY = 'django-insecure-nvhd*q53*y-e+6^h#3*$9tm2wnrle5zqwm^st%h6dqkcxtxjdi
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    'https://django-project-icastvotingsystem-production.up.railway.app',
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = ['*']
+
 
 CSRF_TRUSTED_ORIGIN=['django-project-icastvotingsystem-production.up.railway.app']
 
