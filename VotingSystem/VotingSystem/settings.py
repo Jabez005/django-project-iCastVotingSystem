@@ -22,6 +22,13 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+CSRF_TRUSTED_ORIGIN=['django-project-icastvotingsystem-production.up.railway.app']
+
+CORS_ALLOWED_ORIGINS=[
+    'https://django-project-icastvotingsystem-production.up.railway.app',
+    "http://localhost:8000/",
+    "http://127.0.0.1:8000/",
+]
 
 # Application definition
 
@@ -125,9 +132,9 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")  # Where `collectstatic` will collect static files for deployment.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static/'),
+    os.path.join(BASE_DIR,'static'),
 ]
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -153,4 +160,3 @@ AUTHENTICATION_BACKENDS = [
 
 LOGOUT_REDIRECT_URL = 'home'
 
-CSRF_TRUSTED_ORIGIN =['https://django-project-icastvotingsystem-production.up.railway.app']
