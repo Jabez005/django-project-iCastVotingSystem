@@ -129,10 +129,13 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_DIRS = [BASE_DIR / 'static']
 
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Where `collectstatic` will collect static files for deployment.
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+
+]
 MEDIA_URL = '/media/'  # URL to use when referring to media files
 MEDIA_ROOT = BASE_DIR / 'media'  # Path where media is stored
 
