@@ -128,12 +128,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-STATIC_URL = '/static/'  # URL to use when referring to static files located in STATIC_ROOT
-STATICFILES_DIRS = [BASE_DIR / 'static']  # The list of folders where Django will search for additional static files, in addition to the 'static' folder of each app installed.
-STATIC_ROOT = BASE_DIR / "staticfiles" 
+STATIC_URL = '/static/'
+
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR,"static"),
+]
+
 
 MEDIA_URL = '/media/'  # URL to use when referring to media files
-MEDIA_ROOT = BASE_DIR / 'media'  # Path where media is stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Path where media is stored
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

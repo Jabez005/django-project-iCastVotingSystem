@@ -1,29 +1,4 @@
-.rform-layout{
-    border-radius: 15px;
-    width: 500px;
-}
-
-.sidebar{
-    height: 100%;
-    width: 200px;
-    position: fixed;
-    top: 95;
-    left: 0;
-    background-color: maroon;
-    overflow-x: hidden;
-   }
-   .sidebar a{
-       padding: 6px 8px 6px 16px;
-       text-decoration: none;
-       font-size: 25px;
-       color: whitesmoke;
-       display: block;
-   }
-   .sidebar a:hover{
-       color: teal;
-   }
-
-   body {
+body {
     margin: 0;
     padding: 0;
     color: #939ea4;
