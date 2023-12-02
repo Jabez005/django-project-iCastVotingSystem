@@ -8,6 +8,7 @@ urlpatterns = [
     path('Adminlogin', views.Adminlogin, name="Adminlogin"),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('Votingadmin', views.Votingadmin, name="Votingadmin"),
+    path('profile', views.profile, name="profile"),
     path('upload_csv', views.upload_csv, name="Upload_CSV"),
     path('display_csv_data', views.display_csv_data, name="Display_data"),
     path('ManagePositions', views.ManagePositions, name="ManagePositions"),

@@ -43,7 +43,6 @@ def voter_login(request):
 def home(request):
     return render(request, 'Voters/Home.html')
 
-
 @login_required
 def dynamic_form_view(request):
     if CandidateApplication.objects.filter(user=request.user).exists():

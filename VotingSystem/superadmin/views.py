@@ -1,3 +1,4 @@
+from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -10,7 +11,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 from votingsystembase.models import Requestform
-from superadmin.models import vote_admins
+from superadmin.models import vote_admins, Survey, Choice
+from .forms import SurveyForm, ChoiceForm
 
 # Create your views here.
 
@@ -139,4 +141,16 @@ def generate_admin_account(request, admin_id):
 
     redirect('VotingAdmins')
 
-    
+COMMON_CHOICES = ['Very Satisfied', 'Satisfied', 'Neutral', 'Unsatisfied', 'Very Unsatisfied']
+@login_required
+def manage_questions(request):
+    if request.method == 'POST':
+        question_text = request.POST.get('question')
+        if question_text:
+            question = Survey.objects.create(text=question_text)
+            # Create predefined choices for the question
+            for choice_text in COMMON_CHOICES:
+                Choice.objects.create(question=question, choice_text=choice_text)
+            return redirect('manage_questions')
+    questions = Survey.objects.prefetch_related('choices').all()
+    return render(request, 'superadmin/Survey.html', {'questions': questions})

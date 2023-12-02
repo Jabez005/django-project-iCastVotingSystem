@@ -124,3 +124,4 @@ class VoteLog(models.Model):
 
     def __str__(self):
         return f"{self.user.username} voted in {self.election.name} at {self.vote_time}"
+    

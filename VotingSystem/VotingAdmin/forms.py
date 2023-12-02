@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import ModelForm, modelformset_factory
+from superadmin.models import vote_admins
 from .models import Positions, Partylist, DynamicField, Election
 from django.core.exceptions import ValidationError
 import json
@@ -89,3 +90,8 @@ class ElectionForm(forms.ModelForm):
 
 class VoteForm(forms.Form):
     candidate_id = forms.IntegerField(widget=forms.HiddenInput())
+
+class VoteAdminChangeForm(forms.ModelForm):
+    class Meta:
+        model = vote_admins
+        fields = ['first_name', 'last_name']

@@ -9,14 +9,15 @@ from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.contrib import messages
 from VotingSystem.settings import MEDIA_URL
-from .models import Positions, VoteLog, VoterProfile, Partylist, DynamicField, CandidateApplication, Election, Candidate
+from .models import  Positions, VoteLog, VoterProfile, Partylist, DynamicField, CandidateApplication, Election, Candidate
 from .models import CSVUpload
 from superadmin.models import vote_admins
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
 from django.forms import modelformset_factory
-from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset, ElectionForm
+from .forms import AddPartyForm, DynamicFieldForm, DynamicFieldFormset, ElectionForm, VoteAdminChangeForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
@@ -51,6 +52,26 @@ def Adminlogin(request):
 @login_required
 def Votingadmin(request):
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
+
+@login_required
+def profile(request):
+    vote_admin = request.user.vote_admins  # Assuming the VoteAdmin model is related to the User model
+    vote_admin_form = VoteAdminChangeForm(instance=vote_admin)
+    password_form = PasswordChangeForm(request.user)
+
+    if request.method == 'POST':
+        vote_admin_form = VoteAdminChangeForm(request.POST, instance=vote_admin)
+        password_form = PasswordChangeForm(request.user, request.POST)
+
+        if vote_admin_form.is_valid():
+            vote_admin_form.save()
+            # Redirect or add a success message
+
+        if password_form.is_valid():
+            password_form.save()
+            # Redirect or add a success message
+
+    return render(request, 'VotingAdmin/profile.html', {'vote_admin': vote_admin, 'vote_admin_form': vote_admin_form, 'password_form': password_form})
 
 @login_required
 def upload_csv(request):
@@ -452,9 +473,11 @@ def voting_page(request):
 
         positions_with_candidates[position.id] = {
             'name': position.Pos_name,
+            'max_candidates_elected': position.max_candidates_elected, 
             'candidates': candidates
         }
 
+    
     context = {
     'current_election': current_election,
     'positions_with_candidates': positions_with_candidates,
@@ -522,49 +545,42 @@ def submit_vote(request):
 
 @login_required
 def latest_votes(request):
-    # Prepare a dictionary to hold the data.
-    data = {'positions': []}
+    # List to hold all positions with candidates and their votes
+    chart_data = []
 
-    # Get all positions.
+    # Get all positions
     positions = Positions.objects.all()
-
-    # For each position, get the candidates and their current vote counts.
+    print("Positions found:", positions)
+    # For each position, prepare the data for the chart
     for position in positions:
-        # Dictionary to hold position data.
-        position_data = {
-            'position_name': position.Pos_name,
-            'candidates': []
-        }
-
-        # Get all candidates for the position.
+        # List to hold candidates and their votes for the position
+        candidates_data = []
+        
+        # Get all candidates for the position
         candidates = Candidate.objects.filter(position=position)
-
-        # For each candidate, get their name, vote count, and candidate names from the data field.
+        
+        # For each candidate, get their vote count
         for candidate in candidates:
-            # Make sure to handle the JSON loading safely.
+            # Attempt to load the candidate information from the JSON field
             candidate_info = json.loads(candidate.application.data)
             first_name = candidate_info.get('First Name', '')
             last_name = candidate_info.get('Last Name', '')
+            
+            # Combine first name and last name for the full name
+            full_name = f"{first_name} {last_name}".strip()
 
-            # Access candidate names from the data field
-            candidate_names = candidate_info.get('Candidate Names', '')  # Replace 'Candidate Names' with the actual key in your data field
+            # Append the candidate's name and votes to the candidates list
+            candidates_data.append({'name': full_name, 'votes': candidate.votes})
+        
+        # Append the position data with its candidates to the chart_data list
+        chart_data.append({'position': position.Pos_name, 'candidates': candidates_data})
 
-            candidate_data = {
-                'name': f"{first_name} {last_name}",  # Using an f-string for clarity
-                'votes': candidate.votes,
-                'candidate_names': candidate_names  # Include candidate names
-            }
-
-            # Add candidate data to the position data.
-            position_data['candidates'].append(candidate_data)
-
-        # Add position data to the main data dictionary.
-        data['positions'].append(position_data)
-
-    # Convert your 'data' dictionary into JSON and pass it to the template
-    positions_json = json.dumps(data['positions'])
-
+    # Convert the chart data into JSON and pass it to the template
+    chart_data_json = json.dumps(chart_data)
+    
+    print("Chart Data: ", chart_data)
+    print("Number of items in Chart Data: ", len(chart_data))
     # Pass the JSON string to the template
-    context = {'positions_data': positions_json}
+    context = {'chart_data': chart_data_json}
     return render(request, 'VotingAdmin/results.html', context)
 

@@ -34,7 +34,7 @@
         <div class="header-right">
             <span class="material-icons-outlined">settings</span>
             <span class="material-icons-outlined">person</span>
-            Welcome, John Raymond Legaspi
+            Welcome, {{ user.username }}!
         </div>
     </header>
     <!-- end header -->
@@ -62,6 +62,11 @@
             <li class="sidebar-list-item">
                 <a href="{% url 'VotingAdmins' %}" class="sidebar-link">
                 <span class="material-icons-outlined">how_to_reg</span> Manage Voting Admin
+                </a>
+            </li>
+            <li class="sidebar-list-item">
+                <a href="{% url 'Survey_questions' %}" class="sidebar-link">
+                <span class="material-icons-outlined">how_to_reg</span> Survey
                 </a>
             </li>
             <br><br>

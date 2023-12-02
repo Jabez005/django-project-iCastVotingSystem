@@ -1,5 +1,7 @@
+{% extends 'votingsystembase/main.html'%}
 {% load custom_filters %}
-{%load static %}
+{% load static %}
+{% block content %}
 <head>
     <!-- Include Bootstrap CSS -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -9,8 +11,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <style>
+
 .candidates-container {
-    margin: 0 auto;
+    margin: 10px;
     width: 90%; /* Adjust as necessary */
 }
 
@@ -18,12 +21,13 @@
     display: flex;
     justify-content: space-around; /* This will space out your candidates evenly */
     flex-wrap: wrap; /* Allows candidates to wrap to next line if space is insufficient */
+    margin-top: 50px;
 }
 
 .candidate-card {
     text-align: center; /* Center the text and image within the card */
     flex-basis: 20%; /* Adjust this to change the width of the candidate card */
-    margin-bottom: 20px; /* Space between rows of candidates */
+    margin-bottom: 200px; /* Space between rows of candidates */
 }
 
 .candidate-image {
@@ -56,39 +60,40 @@
     </div>
     <form method="post" action="{% url 'submit_vote' %}" id="votingForm">
         {% csrf_token %}
-        <div class="position-container">
-            {% for position_id, candidates_info in positions_with_candidates.items %}
-    <h2>{{ candidates_info.name }}</h2>
-    {% if candidates_info.candidates %}
-        <div class="candidates-row">
-            {% if position.max_candidates_elected > 1 %}
-                <!-- If multiple candidates can be voted for, use checkboxes -->
-                {% for candidate in candidates_info.candidates %}
-                    <div class="candidate-card">
-                        <img class="candidate-image" src="{{ candidate.image.url }}" alt="Photo of {{ candidate.name }}">
-                        <h3>{{ candidate.name }}</h3>
-                        <p>{{ candidate.party }}</p>
-                        <!-- Add other candidate details here -->
-                        <input type="checkbox" name="position_{{ position_id }}" value="{{ candidate.id }}">
-                    </div>
-                {% endfor %}
-            {% else %}
-                <!-- If only one candidate can be voted for, use radio buttons -->
-                {% for candidate in candidates_info.candidates %}
-                    <div class="candidate-card">
-                        <img class="candidate-image" src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}">
-                        <h3>{{ candidate.name }}</h3>
-                        <p>{{ candidate.party }}</p>
-                        <!-- Add other candidate details here -->
-                        <input type="radio" name="position_{{ position_id }}" value="{{ candidate.id }}" required>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-    {% else %}
-        <p>No candidates</p>
-    {% endif %}
-{% endfor %}
+    <div class="position-container">
+        {% for position_id, candidates_info in positions_with_candidates.items %}
+        <h2>{{ candidates_info.name }}</h2>
+        {% if candidates_info.candidates %}
+            <div class="candidates-row">
+                <!-- Correct usage of candidates_info.max_candidates_elected -->
+                {% if candidates_info.max_candidates_elected > 1 %}
+                    <!-- If multiple candidates can be voted for, use checkboxes -->
+                    {% for candidate in candidates_info.candidates %}
+                        <div class="candidate-card">
+                            <img class="candidate-image" src="{{ candidate.image.url }}" alt="Photo of {{ candidate.name }}">
+                            <h3>{{ candidate.name }}</h3>
+                            <p>{{ candidate.party }}</p>
+                            <!-- Add other candidate details here -->
+                            <input type="checkbox" name="position_{{ position_id }}" value="{{ candidate.id }}">
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- If only one candidate can be voted for, use radio buttons -->
+                    {% for candidate in candidates_info.candidates %}
+                        <div class="candidate-card">
+                            <img class="candidate-image" src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}">
+                            <h3>{{ candidate.name }}</h3>
+                            <p>{{ candidate.party }}</p>
+                            <!-- Add other candidate details here -->
+                            <input type="radio" name="position_{{ position_id }}" value="{{ candidate.id }}" required>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% else %}
+            <p>No candidates</p>
+        {% endif %}
+    {% endfor %}
         </div>
         <button type="button" id="reviewVoteButton" class="btn btn-primary">Vote</button>
     </form>
@@ -149,3 +154,4 @@ $(document).ready(function() {
 </center>
 </body>
 
+{% endblock %}

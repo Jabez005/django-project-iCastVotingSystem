@@ -31,9 +31,9 @@
         <div class="header-left">
         </div>
         <div class="header-right">
-            <span class="material-icons-outlined">notifications</span>
             <span class="material-icons-outlined">settings</span>
-            <span class="material-icons-outlined">person</span>
+            <a href="{% url 'profile' %}"><span class="material-icons-outlined">person</span></a>
+            Welcome, {{ user.username }}!
         </div>
     </header>
     <!-- end header -->
@@ -76,6 +76,11 @@
             <li class="sidebar-list-item">
                 <a href="{% url 'manage_election' %}" class="sidebar-link">
                 <span class="material-icons-outlined">poll</span> Elections
+                </a>
+            </li>
+            <li class="sidebar-list-item">
+                <a href="#" class="sidebar-link">
+                <span class="material-icons-outlined">poll</span> Survey Polls
                 </a>
             </li>
             <li class="sidebar-list-item">

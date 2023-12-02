@@ -1,0 +1,27 @@
+{% extends '../base/Admin_base.html' %}
+
+{% block content %}
+<main class="main-container">
+<div class="main-cards" style="grid-template-columns: none;">
+  <h1>Profile</h1>
+  <h2>First Name: {{ vote_admin.first_name }}</h2>
+  <h2>Last Name: {{ vote_admin.last_name }}</h2>
+  <p>Email: {{ user.username }}</p>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ vote_admin_form.as_p }}
+    <button type="submit">Update User Info</button>
+  </form>
+
+  <hr>
+
+  <h2>Change Password</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ password_form.as_p }}
+    <button type="submit">Change Password</button>
+  </form>
+  </div>
+  </main>
+{% endblock %}

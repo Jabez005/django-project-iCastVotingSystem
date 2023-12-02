@@ -1,0 +1,27 @@
+{%extends '../base/Sys_base.html' %}
+{% load static %}
+{% block content %}
+
+<main class="main-container">
+<div class="main-title">
+<h2>User Experience Questions</h2>
+</div>
+
+<div class="main-cards" style="grid-template-columns: none;">
+    {% for question in questions %}
+    <div>
+      <h3>{{ question.text }}</h3>
+      {% for choice in question.choices.all %}
+        <p>{{ choice.choice_text }} - Votes: {{ choice.votes }}</p>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  
+  <form method="post">
+    {% csrf_token %}
+    <input type="text" name="question_text" placeholder="Enter new question" required>
+    <button type="submit">Add Question</button>
+  </form>
+</div>
+</main>
+{% endblock %}

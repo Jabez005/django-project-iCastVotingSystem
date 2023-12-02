@@ -454,10 +454,10 @@ width: 50px%; height: 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px
 		<header>				
 			<a href="#" class="logo"><span>iCast</span></a>
 		<ul class="navbar">
-			<li><a href="{% url 'Home' %}" class="active">Home</a></li>
-      <li><a href="{% url 'dynamic_form_view' %}" class="active">Candidate</a></li>
-      <li><a href="{% url 'voting_page' %}" class="active">Vote</a></li>
-      <li><a href="{% url 'Home' %}" class="active">Results</a></li>
+		<li><a href="{% url 'Home' %}" class="active">Home</a></li>
+      	<li><a href="{% url 'dynamic_form_view' %}" class="active">Candidate</a></li>
+      	<li><a href="{% url 'voting_page' %}" class="active">Vote</a></li>
+      	<li><a href="{% url 'Home' %}" class="active">Results</a></li>
 		</ul>
 		<div class="main">
 
@@ -545,31 +545,7 @@ width: 50px%; height: 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px
 			<div style="left: 93px; top: 360px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Commission on Audit (SC-COA)</div>
 			<div style="left: 93px; top: 380px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Student Tribunal (SC-ST)</div>
 			</div>
-<script>
-var modal = document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
-var butCan = document.getElementById("butCan"); // Ensure you have an element with id="butCan"
-var cancelBtn = document.getElementById('butCan');
 
-cancelBtn.onclick = function() {
-  modal.style.display = "none";
-  form.reset();
-}
-
-myBtn.onclick = function() {
-  modal.style.display = "block";
-}
-
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-butCan.onclick = function(event) {
-  event.preventDefault(); // Prevent default form submission
-  modal.style.display = "none";
-}
-
-</script>
 
 	</body>
 	</html>
