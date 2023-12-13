@@ -2,26 +2,50 @@
 
 {% block content %}
 <main class="main-container">
-<div class="main-cards" style="grid-template-columns: none;">
-  <h1>Profile</h1>
-  <h2>First Name: {{ vote_admin.first_name }}</h2>
-  <h2>Last Name: {{ vote_admin.last_name }}</h2>
-  <p>Email: {{ user.username }}</p>
+  <div class="main-title"><h1>Profile</h1></div>  
+  <div class="main-cards" style="grid-template-columns: none;">
+    <h3>First Name: {{ vote_admin.first_name }}</h3>
+    <h3>Last Name: {{ vote_admin.last_name }}</h3>
+    <h3>Email: {{ user.username }}</h3>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ vote_admin_form.as_p }}
-    <button type="submit">Update User Info</button>
-  </form>
+    <button onclick="toggleUserInfoForm()">Edit Details</button>
 
-  <hr>
+    <form method="post" id="user-info-form" style="display: none;">
+      {% csrf_token %}
+      {{ vote_admin_form.as_p }}
+      <button type="submit">Update User Info</button>
+    </form>
 
-  <h2>Change Password</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ password_form.as_p }}
-    <button type="submit">Change Password</button>
-  </form>
+    <hr>
+
+    <button onclick="togglePasswordForm()">Change Password</button>
+
+    <form method="post" id="password-form" style="display: none;">
+      {% csrf_token %}
+      {{ password_form.as_p }}
+      <button type="submit">Change Password</button>
+    </form>
   </div>
-  </main>
+</main>
+
+<script>
+  function toggleUserInfoForm() {
+    var userInfoForm = document.getElementById('user-info-form');
+    userInfoForm.style.display = userInfoForm.style.display === 'none' ? 'block' : 'none';
+
+    // Hide password form
+    var passwordForm = document.getElementById('password-form');
+    passwordForm.style.display = 'none';
+  }
+
+  function togglePasswordForm() {
+    var passwordForm = document.getElementById('password-form');
+    passwordForm.style.display = passwordForm.style.display === 'none' ? 'block' : 'none';
+
+    // Hide user info form
+    var userInfoForm = document.getElementById('user-info-form');
+    userInfoForm.style.display = 'none';
+  }
+</script>
+
 {% endblock %}

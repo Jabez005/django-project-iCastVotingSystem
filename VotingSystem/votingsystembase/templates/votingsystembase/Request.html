@@ -1,29 +1,227 @@
-{% extends 'votingsystembase/main.html'%}
 {% load static %}
-{% block content %}
-    <center>
-    <div>
-    <h1>Request for Use Form</h1>
-    <br><br><br>
-    {% if submitted %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        Your Request is submitted.
-        Wait for email confirmation.
+    <!-- CSS -->
+    <link rel="stylesheet" href="{%static 'css/landingstyles.css'%}" />
+    <!-- CSS -->
 
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- AOS -->
+
+    <!-- FONTAWESOME -->
+    <link rel="stylesheet" href="{%static 'css/landingstyles.css'%}" />
+    <!-- FONTAWESOME -->
+
+     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"> -->
+
+     <style>
+      input:placeholder-shown {
+   font-style: italic;
+}
+body{
+    background-image: url('{%static 'images/transparentbg.png' %}');
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+}
+     </style>
+
+    <title>iCast</title>
+  </head>
+  <body>
+    
+    <!-- HEADER -->
+
+    <header>
+      <div class="container flex-row">
+        <div class="header__logo">
+          <img src={%static 'images/iCast Images/iCast.png' %} alt="iCast Logo" />
+        </div>
+        <nav>
+          <ul class="header__menu flex-row">
+            <li>
+              <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li>
+              <a href="{% url 'home' %}">About Us</a>
+            </li>
+            <li>
+              <a href="{% url 'home' %}">Services</a>
+            </li>
+            <li>
+              <a href="{% url 'home' %}">Our Team</a>
+            </li>
+            <li>
+              <a href="{% url 'home' %}" style="color: #ffc220;">Request for Use</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="right flex-center">
+          <a href="Login Option.html" class="btn btn-secondary">Login</a>
+          <div class="menu-btn">
+            <i class="fas fa-bars"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HEADER -->
+
+    <!-- FORM -->
+
+    <section id="hero" class="container flex-row">
+
+      <form>
+        {% if submitted %}
+        <p>Your Request is submitted.</p>
+        <p>Wait for email confirmation.</p>
     {% else %}
- 
         <form action="" method="post">
             {% csrf_token %}
-            
-            {{form.as_p}}
-
-            <input type="submit" class="btn btn-primary">
-        </form>
     
+            <div class="request" style="border: 1px solid maroon; border-radius: 20px; background-color: #faf9f9; padding: 30px 100px 30px 100px">
+                <p style="text-align: center; font-size: 2rem; margin-bottom: 10px; font-weight: 500;">Request for Use</p>
+    
+                <div class="form-group">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">First Name</p>
+                    {{ form.f_name.errors }}
+                    <input type="text" name="{{ form.f_name.html_name }}" id="id_{{ form.f_name.html_name }}" class="form-control" style="width: 250px; height: 2rem; padding-left: 10px; font-size: 15px;" placeholder="Enter First Name" value="{{ form.f_name.value|default_if_none:'' }}">
+                </div>
+    
+                <div class="form-group">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">Last Name</p>
+                    {{ form.l_name.errors }}
+                    <input type="text" name="{{ form.l_name.html_name }}" id="id_{{ form.l_name.html_name }}" class="form-control" style="width: 250px; height: 2rem; padding-left: 10px; font-size: 15px;" placeholder="Enter Last Name" value="{{ form.l_name.value|default_if_none:'' }}">
+                </div>
+    
+                <div class="form-group">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">Email</p>
+                    {{ form.email.errors }}
+                    <input type="email" name="{{ form.email.html_name }}" id="id_{{ form.email.html_name }}" class="form-control" style="width: 250px; height: 2rem; padding-left: 10px; font-size: 15px;" placeholder="Enter Email" value="{{ form.email.value|default_if_none:'' }}">
+                </div>
+    
+                <div class="form-group">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">Organization</p>
+                    {{ form.organization.errors }}
+                    <input type="text" name="{{ form.organization.html_name }}" id="id_{{ form.organization.html_name }}" class="form-control" style="width: 250px; height: 2rem; padding-left: 10px; font-size: 15px;" placeholder="Enter Organization" value="{{ form.organization.value|default_if_none:'' }}">
+                </div>
+    
+                <div class="form-group">
+                    <p style="font-size: 1.2rem; margin-bottom: 10px;">Details</p>
+                    {{ form.details.errors }}
+                    <textarea name="{{ form.details.html_name }}" id="id_{{ form.details.html_name }}" class="form-control" style="width: 250px; height: 5rem; padding-left: 10px; font-size: 15px;" placeholder="Enter Details">{{ form.details.value|default_if_none:'' }}</textarea>
+                </div>
+    
+                <div style="text-align: center;">
+                    <input type="submit" class="btn btn-primary" style="width: 250px; height: 40px; margin-top: 40px; font-size: 15px;" value="Submit">
+                </div>
+            </div> 
+        </form>
     {% endif %}
-        </div>
-</center>
-</body>
-</html>
-{% endblock %}
+      </div>
+      </form>
+    </section>
+    
+    <!-- FORM -->
 
+
+    <!-- FOOTER -->
+
+    <footer>
+      <div class="container">
+        <div class="footer__content">
+          <div class="footer__details">
+            <div class="footer__logo">
+              <img src={%static 'images/iCast Images/iCast.png' %} alt="iCast">
+            </div>
+            <p class="footer__text">
+              iCast streamlines and digitalizes the voting process, ensuring secure
+              and efficient representation for all our clients.
+            </p>
+            <div class="footer__newsletter">
+              <form action="#" 
+              class="footer__newsletter-form">
+              <input type="email" placeholder="Submit Email" required>
+              <div class="icon">
+                <i class="fa fa-envelope"></i>
+              </div>
+            </form>
+            </div>
+          </div>
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Quick Links</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">Home</a></li>
+              <li><a href="#" style="color:#747474">About Us</a></li>
+              <li><a href="#" style="color:#747474">Services</a></li>
+              <li><a href="#" style="color:#747474">Our Team</a></li>
+              <li><a href="#" style="color:#747474">Request for Use</a></li>
+            </ul>
+          </div>
+
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Services</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">Seamless Voting</a></li>
+              <li><a href="#" style="color:#747474">Voter Registration</a></li>
+              <li><a href="#" style="color:#747474">Candidacy Filing</a></li>
+              <li><a href="#" style="color:#747474">Automated Results</a></li>
+              <li><a href="#" style="color:#747474">Data Analysis</a></li>
+              <li><a href="#" style="color:#747474">Centralized Database</a></li>
+            </ul>
+          </div>
+
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Contact Us</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">+63 951 729 8377</a></li>
+              <li><a href="#" style="color:#747474">icastvoting@gmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <div class="footer__bottom-icons">
+            <p>Follow us</p>
+            <a href="#" class="facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="#" class="twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+
+            <a href="#" class="instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a href="#" class="linkedin">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
+          <p>&copy; 2023 iCast. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- FOOTER -->
+
+    <!-- FONTAWESOME -->
+    <script src="assets/js/fontawesome.min.js"></script>
+    <!-- FONTAWESOME -->
+
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- AOS -->
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/script.js"></script>
+    <!-- SCRIPTS -->
+
+    <script>
+      AOS.init();
+    </script>
+  </body>
+</html>

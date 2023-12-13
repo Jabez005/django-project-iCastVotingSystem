@@ -1,64 +1,154 @@
-
 {% load static %}
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Voting Template</title>
-    <style>
-        body{
-            background-color: #B31312;
-        }
-   
-        .card {
-            display: flex;
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 30px;
-            width: 400px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            flex-direction: column;
-            margin-top: 200px;
-            margin-left:625px;
-            height: 300px;
-            border-radius: 20px;
-            border-style: solid;
-        }
+  <title>User Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USER LOGIN</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
+<style>
+  *{
+    margin:0;
+    font-family: 'Sora', sans-serif;
 
-        button {
-            background-color: #2B2A4C;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 10px;
-        }
+  }
+  .login-container {
+    display: flex;
+    height: 80vh;
+    width: 150vh;
+    margin: auto;
+    
+  }
+  .left-side {
+    background-color: #b31312; /* Replace with the exact color code */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .right-side {
+    background-color: #eee2de; /* Replace with the exact color code */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-box {
+    width: 350px;
+    background-color: #efefef;
+    padding: 20px;
+    height: auto;
 
-    </style>
+  }
+  .back-button {
+    position: absolute; /* Position the back button absolutely */
+    top: 10px; /* Adjust these values to fit your design */
+    left: 10px;
+    width: 50px; /* Adjust if necessary */
+    height: 50px; /* Adjust if necessary */
+  }
+  /* Add additional styles here */
+  .allrights{
+    margin-top: 100px;
+    color: white;
+
+  }
+  .card{
+    height: 100vh;
+    background-color: #EA906C;
+  }
+
+  @media (max-width: 768px) {
+    .left-side {
+        width: 0;
+        display: none;
+    }
+.vote-icon{
+  display: none;
+}
+.allrights{
+  display: none;
+}
+.seamless{
+  display: none;
+
+}
+}
+
+
+</style>
 </head>
 <body>
-    <div class="card">
-        <h1><center>iCast</center></h1>
-        <button id="voter-login">Voter Login</button>
-        <button id="votingadmin-login">Voting Admin</button>
-        <button id="systemadmin-login">System Admin</button>
-    </div>
+<div class="card">
+<div class="login-container">
 
-    <script>
-        document.getElementById('systemadmin-login').onclick = function () {
-            window.location.href = "{% url 'login_superuser' %}";
-        };
-        document.getElementById('votingadmin-login').onclick = function () {
-            window.location.href = "{% url 'Adminlogin' %}";
-        };
-        document.getElementById('voter-login').onclick = function () {
-            window.location.href = "{% url 'login_voter' %}";
-        };
-    </script>
+  
+  <div class="left-side d-flex flex-column  ">
+    <a href="{% url 'home' %}" class="back-button">
+      <img style="height: 50px;" src={% static 'images/back.png' %} alt="Back">
+    </a>
+
+    <div class="vote-icon">
+      <img src={% static 'images/picture.png' %} width="350"height="350" alt="" style="border-radius: 50% ;">
+      <br>
+      <img  class="seamless" src={% static 'images/seamless3.JPG' %} alt="" style="height: 45px; width:350px; margin-top:5px" >
+
+    </div>
+    <div class="allrights">
+      © 2023 iCast. All rights reserved.
+
+    </div>
+  
+    
+  </div>
+  <div class="right-side">
+    <div class="login-box">
+        <h2 class="text-center"style="margin-top: 20px;padding-bottom:20px;text-align: center;">ICAST LOGIN</h2>
+
+       
+        <div style="text-align: right;" class="button">
+        <a href="{% url 'login_voter' %}">
+          <button style="margin-top: 25px; background: #b31312; border: none;" type="submit" class="btn btn-primary w-100">USER LOGIN</button>
+        </a>
+        </div>
+
+        <div style="text-align: right;" class="button">
+        <a href="{% url 'Adminlogin' %}">
+            <button style="margin-top: 25px; background: #2B2A4C; border: none;" type="submit" class="btn btn-primary w-100">CLIENT ADMIN</button>
+        </a>
+        </div>
+
+        <div style="text-align: right;" class="button">
+        <a href="{% url 'login_superuser' %}">
+            <button style="margin-top: 25px; background: black; border: none;" type="submit" class="btn btn-primary w-100">SYSTEM ADMIN</button>
+        </a>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+<script>
+  const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
+
+  togglePassword.addEventListener('click', function () {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.classList.toggle('fa-eye-slash');
+  });
+</script>
 </body>
+</html>
 

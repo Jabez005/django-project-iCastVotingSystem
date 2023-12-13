@@ -4,114 +4,74 @@
 {% block content %}
 <head>
     <title>Election Results</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
 <main class="main-container">
     <div class="main-title">
     <h2> Voting Results Tally</h2>
     </div>
-    {% for data in chart_data %}
-    <div class="chart-container">
-    <h3>{{ data.position }}</h3>
-    <canvas id="votesChart-{{ forloop.counter }}" width="50" height="50"></canvas>
+    <div class="main-cards" style="grid-template-columns: none;">
+        <div id="charts"></div>
     </div>
-    {% empty %}
-    <p>No positions available.</p>
-    {% endfor %}
-
 <script id="chart-data" type="application/json">{{ chart_data|safe }}</script>
 
   
-    <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-    const chartDataElement = document.getElementById('chart-data');
-    if (!chartDataElement) {
-        console.error('No chart data element found');
-        return;
-    }
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+  const chartData = JSON.parse(document.getElementById('chart-data').textContent);
+  const chartsContainer = document.getElementById('charts');
 
-    const chartData = JSON.parse(chartDataElement.textContent);
-    console.log('Parsed chartData:', chartData);
+  chartData.forEach((position, index) => {
+    // Create chart container div
+    const chartContainer = document.createElement('div');
+    chartContainer.classList.add('chart-container');
 
-    if (!Array.isArray(chartData)) {
-        console.error('chartData is not an array:', chartData);
-        return;
-    }
+    // Create title
+    const title = document.createElement('h3');
+    title.textContent = position.position;
+    chartContainer.appendChild(title);
 
-    if (chartData.length === 0) {
-        console.log('No positions data to display the chart.');
-        return;
-    }
+    // Create div for the ApexChart
+    const chartDiv = document.createElement('div');
+    chartDiv.id = 'chart-' + (index + 1);
+    chartContainer.appendChild(chartDiv);
 
-    // Log the number of charts to be rendered
-    console.log(`Rendering ${chartData.length} charts.`);
-    
-    // Log the total number of canvas elements
-    const canvasElements = document.querySelectorAll('.chart-container canvas');
-    console.log(`Total number of canvas elements in the DOM: ${canvasElements.length}`);
-  
-    console.log('chartData just before rendering charts:', chartData);
-    chartData.forEach((positionData, index) => {
-        // Log the position for which the chart is being rendered
-        console.log(`Rendering chart for position: ${positionData.position}`);
+    // Append the chart container to the main container
+    chartsContainer.appendChild(chartContainer);
 
-        const canvasId = `votesChart-${index + 1}`;
-        // Log the ID of the canvas being targeted
-        console.log(`Looking for canvas with ID: ${canvasId}`);
+    // Prepare the data for the chart
+    const seriesData = position.candidates.map(c => c.votes);
+    const categories = position.candidates.map(c => c.name);
 
-        const canvasElement = document.getElementById(canvasId);
-        if (!canvasElement) {
-            console.error(`Canvas element not found: ${canvasId}`);
-            return;
+    // Create the chart
+    var options = {
+      series: [{
+        name: position.position,
+        data: seriesData
+      }],
+      chart: {
+        type: 'bar',
+        height: 250, // Adjust height as needed
+        width: '50%' // You can also use absolute values like '400px'
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true
         }
-        // Confirm that the canvas element was found
-        console.log(`Found canvas element for ID ${canvasId}`);
-        console.log('Canvas ID being processed:', canvasId);
-        const ctx = canvasElement.getContext('2d');
-        if (!ctx) {
-            console.error(`Failed to get context for canvas ID ${canvasId}`);
-            return;
-        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      xaxis: {
+        categories: categories
+      }
+    };
 
-        // Log the data for each position
-        const data = positionData.candidates && positionData.candidates.length > 0 
-                     ? positionData.candidates.map(c => c.votes) 
-                     : [0];
-        // Log the labels for each position
-        const labels = positionData.candidates && positionData.candidates.length > 0 
-                       ? positionData.candidates.map(c => c.name) 
-                       : ['No Candidates'];
-
-        console.log(`Data for ${positionData.position}:`, data);
-        console.log(`Labels for ${positionData.position}:`, labels);
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: `${positionData.position} Votes`,
-                    data: data,
-                    backgroundColor: 'rgba(0, 123, 255, 0.5)'
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: `${positionData.position} Votes`
-                }
-            }
-        });
-    });
+    // Initialize the chart
+    var chart = new ApexCharts(chartDiv, options);
+    chart.render();
+  });
 });
     </script>
 </main>

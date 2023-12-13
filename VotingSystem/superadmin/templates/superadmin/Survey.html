@@ -10,9 +10,9 @@
 <div class="main-cards" style="grid-template-columns: none;">
     {% for question in questions %}
     <div>
-      <h3>{{ question.text }}</h3>
+      <h2>{{ question.text }}</h2>
       {% for choice in question.choices.all %}
-        <p>{{ choice.choice_text }} - Votes: {{ choice.votes }}</p>
+        <p>{{ choice.choice_text }} </p>
       {% endfor %}
     </div>
   {% endfor %}

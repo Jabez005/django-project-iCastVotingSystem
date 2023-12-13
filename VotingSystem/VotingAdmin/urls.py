@@ -26,9 +26,10 @@ urlpatterns = [
     path('reject_application/<int:pk>', views.reject_application, name="reject"),
     path('manage_election', views.manage_election, name="manage_election"),
     path('stop_election/<int:election_id>/', views.stop_election, name="stop_election"),
+    path('partylist_view', views.partylist_view, name="partylist_view"),
     path('voting_page', views.voting_page, name="voting_page"),
     path('submit_vote', views.submit_vote, name="submit_vote"),
-    path('latest_votes', views.latest_votes, name="latest_votes"),
+    path('latest_votes', views.latest_votes, name="latest_votes"), 
 ]
     
 

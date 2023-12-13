@@ -436,6 +436,43 @@ def stop_election(request, election_id):
     return redirect('manage_election')
 
 @login_required
+def partylist_view(request):
+    # Retrieve all partylists
+    partylists = Partylist.objects.all()
+
+    # For each partylist, we'll want to get the associated approved candidates
+    for party in partylists:
+        # Initialize an empty list for candidates
+        party_candidate_info = []
+        
+        # Assuming 'approved' candidates are the ones you want to show
+        candidates = CandidateApplication.objects.filter(
+            partylist=party, 
+            status='approved'
+        )
+       
+        for candidate in candidates:
+            candidate_data = json.loads(candidate.data) if isinstance(candidate.data, str) else candidate.data
+            # Append each candidate's data to the party_candidate_info list
+            party_candidate_info.append({
+                'full_name': f"{candidate_data.get('first_name', '')} {candidate_data.get('last_name', '')}".strip(),
+                'position': candidate.positions.Pos_name,
+            })
+            
+        # Now we assign the filled list to the party object using setattr
+        setattr(party, 'candidates', party_candidate_info)
+
+        # Print for debugging
+        print(f"Candidates for {party.Party_name}: {party.candidates}")
+
+    # Passing the partylists with candidates to the template
+    context = {
+        'partylists': partylists,
+    }
+    return render(request, 'Voters/Partylists.html', context)
+
+
+@login_required
 def voting_page(request):
     # Get the currently active election
     try:

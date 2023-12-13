@@ -1,551 +1,388 @@
 {% load static %}
 <!DOCTYPE html>
-	<html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title> Home Page </title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		
-		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
-		
-		<link rel="stylesheet"
-		href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-		
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet">
-		<link rel="stylesheet", href="{% static 'css/Style.css' %}">
-    <style>
-      *{
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
-	font-family: 'Poppins', sans-serif;
-	text-decoration: none;
-	list-style: none;
-}
-:root{
-	--bg-color: maroon;
-	--text-color: #fff;
-	--main-color: #29fd53;
-	--background-image: url('Images/background.png');
-}
-body{
-	min-height: 20vh;
-	background: var(--bg-color);
-	color: var(--text-color);
-}
-header{
-	position: fixed;
-	width: 100%;
-	top: 0;
-	right: 0;
-	z-index: 1000;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	background: transparent;
-	padding: 28px 12%;
-	transition: all .50s ease;
-	background-color: maroon;
-}
-.logo{
-	display: flex;
-	align-items: center;
-}
-.logo i{
-	color: var(--main-color);
-	font-size: 28px;
-	margin-right: 3px;
-}
-.logo span{
-	color: var(--text-color);
-	font-size: 1.7rem;
-	font-weight: 600;
-}
-.navbar{
-	display: flex;
-}
-.navbar a{
-	color: var(--text-color);
-	font-size: 1.1rem;
-	font-weight: 500;
-	padding: 5px 0;
-	margin: 0px 30px;
-	transition: all .50s ease;
-}
-.navbar a:hover{
-	color: var(--main-color);
-}
-.navbar a.active{
-	color: var(--main-color);
-}
-.main{
-	display: flex;
-	align-items: center;
-}
-.main a{
-	margin-right: 25px;
-	margin-left: 10px;
-	color: var(--text-color);
-	font-size: 1.1rem;
-	font-weight: 500;
-	transition: all .50s ease;
-}
-.user{
-	display: flex;
-	align-items: center;
-}
-.user i{
-	color: var(--main-color);
-	font-size: 28px;
-	margin-right: 7px;
-}
-.main a:hover{
-	color: var(--main-color);
-}
-#menu-icon{
-	font-size: 35px;
-	color: var(--text-color);
-	cursor: pointer;
-	z-index: 10001;
-	display: none;
-}
+    <!-- CSS -->
+    <link rel="stylesheet" href="{%static 'css/landingstyles.css'%}" />
+    <!-- CSS -->
 
-@media (max-width: 1280px){
-	header{
-		padding: 14px 2%;
-		transition: .2s;
-	}
-	.navbar a{
-		padding: 5px 0;
-		margin: 0px 20px;
-	}
-}
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- AOS -->
 
-@media (max-width: 1090px){
-	#menu-icon{
-		display: block;
-	}
-	.navbar{
-		position: absolute;
-		top: 100%;
-		right: 2%;
-		width: 270px;
-		height: 29vh;
-		background: var(--main-color);
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-		border-radius: 10px;
-		transition: all .50s ease;
-	}
-	.navbar a{
-		display: block;
-		margin: 12px 0;
-		padding: 0px 25px;
-		transition: all .50s ease;
-	}
-	.navbar a:hover{
-		color: var(--text-color);
-		transform: translateY(5px);
-	}
-	.navbar a.active{
-		color: var(--text-color);
-	}
-	.navbar.open{
-		right: 2%;
-	}
-}
-.content-area{
-  text-align: center; /* Centers text */
-  position: relative; /* For positioning the overlay */
-  color: white; /* Text color */
-  height: 600px;
-  width: auto;
-  padding-top: 10px;
-  background: transparent;
-display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-}
-.bg-cont{
-    background-image: var(--background-image);
-    background-size: cover;
-    background-position: center;
-    height: auto;
-}
-.image-container {
-  flex-grow: 1; /* Allow image container to fill the space */
-  background-image: url('Images/hand.png'); /* Path to your image */
-  background-position: center right; /* Position image on the right */
-  background-repeat: no-repeat; /* Do not repeat the image */
-  background-size: contain; /* Contain the image within the div */
-  height: 100%; /* Full height of the content wrapper */
-  padding-right: 50px;
-}
-.text-container {
-    flex: 0 1 auto; /* Do not grow, allow shrink, and base width on content */
-    padding-right: 20px;
-	 text-align: left;
-	 width: 750px;
-	 padding-left: 70px;
-	 text-align: justify;
-}
-/* Dark overlay for better text visibility */
-.content-area::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Adjust the color and opacity to match your design */
-    z-index: 1;
-}
-.content-area::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.75); /* Adjust the color and opacity as needed */
-    z-index: 1;
-}
-.text-container, .image-container {
-    position: relative;
-    z-index: 2;
-}
-
-/* Ensuring content is above the overlay */
-.content-area > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* Style the heading */
-.content-area .Casting {
-  font-size: 2em; /* Adjust the font size as needed */
-  font-weight: bold; /* Bold font weight */
-  margin: 20px 0; /* Spacing above and below the heading */
-  text-align: left;
-  margin-left: 33px;
-  /* Add drop shadow if it appears in the second image */
-}
-
-/* Style the paragraph */
-.content-area .justified-text {
-  font-size: 1em; /* Adjust the font size as needed */
-  margin: 20px 0; /* Spacing above and below the paragraph */
-  /* Ensure maximum width for readability */
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Style the button */
-.content-area .myBtn {
-  background-color: maroon;
-  color: white; /* Button text color */
-  border: none;
-  padding: 15px 30px; /* Button padding */
-  font-weight: bold; /* Bold font weight */	
-  border-radius: 50px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-size: 1em; /* Adjust the font size as needed */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box shadow for 3D effect */
-  margin-top: 20px; /* Spacing above the button */
-  /* Add transition effects if any */
-}
-
-/* Button hover effect */
-.content-area .myBtn:hover {
-  background-color: darken(#ff4500, 10%); /* Darken the button on hover */
-  /* Add any other hover effects */
-}
-.highlight {
-  color: #FFD700; /* This is the hex code for a shade of yellow, adjust as needed */
-}
-.myBtn {
-    padding: 10px 20px; /* Adjust the padding to increase the button size */
-    background-color: #FFC200; /* The yellow background color */
-    color: black; /* Text color */
-    border: none; /* No border */
-    border-radius: 5px; /* Rounded corners */
-    font-weight: bold; /* Bold text */
-    text-transform: uppercase; /* Uppercase text */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease; /* Smooth background color transition on hover */
-}
-
-.myBtn:hover {
-    background-color: #e6b800; /* Darker yellow on hover */
-    color: white; /* Change text color on hover if needed */
-}
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-	color: black;
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 40%;
-  }
-.req-bg{
-	align-items: center;
-	text-align: center;
-	width: 100%;
-	margin-bottom: 20px;
-}
-.btn-cont{
-	align-items: right;
-	text-align: right;
-}
-.btn-cont #butCan{
-	background: white;
-	cursor: pointer; /* Pointer cursor on hover */
-	padding: 10px 20px;
-	margin-right: 10px;
-	border-color: gray;
-	color: black;
-}
-.btn-cont .butSub{
-	background: #FFC220;
-	cursor: pointer; /* Pointer cursor on hover */
-	padding: 10px 30px;
-	border: none;
-	color: white;
-}
-.btn-cont .butSub:hover {
-    background-color: maroon; /* Darker yellow on hover */
-    color: white; /* Change text color on hover if needed */
-}
-.btn-cont #butCan:hover {
-    background-color: maroon; /* Darker yellow on hover */
-    color: white; /* Change text color on hover if needed */
-}
-.rqt{
-width: 50px%; height: 50px;%; background: rgba(255, 255, 255, 0.50); border: 1px #110DE9 solid;
-}
-.section-container {
-  display: flex;
-  background: #f2f2f2; /* Replace with the color or image you want */
-  padding: 20px;
-  height: 600px;
-}
-
-.vision-mission, .announcements {
-  flex: 1;
-  margin: 10px;
-  background: #fff; /* Or another color or image */
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional */
-}
+    <!-- FONTAWESOME -->
+    <link rel="stylesheet" href="{%static 'css/fontawesome.min.css'%}" />
+    <!-- FONTAWESOME -->
 
 
-.announcements {
-  color: #d9534f; /* Adjust the color to match your design */
-  background: #fff; /* Or another color or image */
-}
+    <title>iCast</title>
+  </head>
+  <body>
+    <!-- HEADER -->
 
-.vision-mission h2, .announcements h2 {
-  text-align: center;
-  font-weight: bold;
-}
+    <header>
+      <div class="container flex-row">
+        <div class="header__logo">
+          <img src="{% static 'images/iCast Images/iCast.png' %}" alt="iCast Logo" />
+        </div>
+        <nav>
+          <ul class="header__menu flex-row">
+            <li>
+              <a href="#hero" style="color: #FFC220;">Home</a>
+            </li>
+            <li>
+              <a href="{%url 'partylist_view' %}">Partylists</a>
+            </li>
+            <li>
+              <a href="Candidates.html">Candidates</a>
+            </li>
+            <li>
+              <a href="voteoption.html">Vote Now</a>
+            </li>
+            <li>
+              <a href="View Results 1.html">Results</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="right flex-center">
+          <a href="landing.html" class="btn btn-secondary">Logout</a>
+          <div class="menu-btn">
+            <i class="fas fa-bars"></i>
+          </div>
+        </div>
+      </div>
+    </header>
 
-.vision, .mission {
-  margin-bottom: 20px;
-}
+    <!-- HEADER -->
 
-.vision h3, .mission h3 {
-  font-weight: bold;
-}
+    <!-- HERO -->
 
-.announcements ul {
-  list-style-type: none;
-  padding: 0;
-}
+    <section id="hero" class="container flex-row" style="background-image: url('{% static 'images/iCast Images/landingbackground.png' %}');
+    background-size: cover; background-position: center; background-repeat: no-repeat;">
+      <div class="hero__content">
+        <h1 class="title">Casting Futures for <span>Empowered
+          Citizens</span>, Your Digital Voice in Every Election</h1>
+        <p class="text">
+          Fellow citizens, iCast is your digital democracy, simplifying the
+          voting process for you. Make your voice count with ease. Join in
+          shaping the future of your institutionn with a few simple clicks.
+          Your voice matters, and iCast ensures it's heard loud and clear.
+        </p>
+        <a href="request.html" class="btn btn-primary">Join Now</a>
+      </div>
+    </section>
+    
+    <!-- HERO -->
 
-.announcements li {
-  margin-bottom: 10px;
-  font-size: 0.9em;
-}
+    <!-- ABOUT -->
 
-/* Add more styles as necessary to match the provided design */
-.vision-mission-container {
-  background-color: #d9534f; /* Maroon background */
-  color: white;
-  padding: 20px;
-  text-align: center; /* Center the text */
-  border-radius: 10px; /* Rounded corners */
-  width: 650px;
-}
+    <section id="about" class="container flex-center flex-column">
+      <h5 class="section-subheading">OUR MANIFESTO</h5>
+      <h2 class="section-heading">OUR MISSION AND VISION</h2>
+      <div class="features text-center">
+        <div class="feature" style="--color: maroon">
+          <div class="feature__icon">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+          <h3 class="feature__title">Our Mission</h3>
+          <p class="feature__text">
+            Our mission is to redefine elections by providing a
+            user-friendly, secure, and transparent e-voting platform.
+            We are dedicate to enhancing the organizations representation
+            experience, ensuring every voice is heard, and fostering a
+            vibrant and engaged community
+          </p>
+        </div>
 
-.vision-mission-content {
-  max-width: 800px; /* Maximum width of the content */
-  margin: 0 auto; /* Center the content block */
-}
+        <div class="feature" style="--color: #ffc220">
+          <div class="feature__icon">
+            <i class="fa-solid fa-eye"></i>
+          </div>
+          <h3 class="feature__title">Our Vision</h3>
+          <p class="feature__text">
+            To empower individual through iCast,
+            shaping the future of representation with
+            accessible and secure digital voting.
+          </p>
+        </div>
 
-.vision-section h2, .mission-section h2 {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+        <div class="feature" style="--color: #2b2a4c">
+          <div class="feature__icon">
+            <i class="fa-solid fa-handshake-simple"></i>
+          </div>
+          <h3 class="feature__title">Core Values</h3>
+          <p class="feature__text">
+            To empower individual through iCast,
+            shaping the future of representation with
+            accessible and secure digital voting.
+          </p>
+        </div>
+      </div>
+      <div class="about__details flex-center">
+        <div class="about__details-content">
+          <h1>Everything You Need to Know About Us</h1>
+          <p>The iCast has been implemented to transcend the limitations of
+            traditional voting methods, ushering in a new era of coolective
+            decision-making. Tqailored for diverse groups and organizations,
+            this system ensures that every participant's voice is not only
+            heard but accurately represented.</p>
+            <br>
+          <p>iCast embodies a transformative shift towards enhanced 
+            efficiency and transparency in voting systems. Through its
+            streamlined interface, security measures, and centralized
+            database, iCast paves the way for a new era where casting votes
+            becomes not only convenient but also empowered by innovation.</p>
+          <a href="#" class="btn btn-primary"> Learn More</a>
+        </div>
+        <div class="about__details-img">
+          <img src={% static 'images/iCast Images/vote.png' %} alt="">
+        </div>
+      </div>
+    </section>
 
-.vision-section {
-  background-color: #f2dede; /* Light pink background for the vision section */
-  padding: 15px;
-  margin-bottom: 20px; /* Space between vision and mission */
-}
+    <!-- ABOUT -->
 
-.mission-section {
-  background-color: #f2dede; /* Light pink background for the mission section */
-  padding: 15px;
-}
+    <!-- SERVICES -->
 
-.vision-section, .mission-section {
-  flex: 1;
-  margin: 10px;
-  background-color: #d9534f;
-  padding: 20px;
-  border-radius: 1px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border: solid white;
-  width: 500px;
-  margin-left: 55px;
-  text-align: justify;
-}
-.vmText{
-	font-family: 'Alex Brush', cursive;
-	font-size: 50px;
-	color: yellow;
-	text-align: center;
-}
-.textAnnounce a{
-	color: maroon;
-	border-bottom: 2px solid black;
-	text-align: justify;
-}
-.textAnnounce{
-	margin-top: 30px;
-	margin-bottom: 20px;
-}
-    </style>
-	</head>
-	<body>
-		<header>				
-			<a href="#" class="logo"><span>iCast</span></a>
-		<ul class="navbar">
-		<li><a href="{% url 'Home' %}" class="active">Home</a></li>
-      	<li><a href="{% url 'dynamic_form_view' %}" class="active">Candidate</a></li>
-      	<li><a href="{% url 'voting_page' %}" class="active">Vote</a></li>
-      	<li><a href="{% url 'Home' %}" class="active">Results</a></li>
-		</ul>
-		<div class="main">
+    <section id="services" style="background: url('{% static 'images/iCast Images/services-bg.png' %}'); 
+    background-repeat: no-repeat; background-position: top; background-size: 100% 80%;">
+      <div class="container">
+        <h5 class="section-subheading">What we Do</h5>
+        <h2 class="section-heading right">Our Solution is to Digitalize Elections</h2>
+        <div class="services">
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/electionservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Seamless Voting</h3>
+            <p class="services__text text-center">
+              Offer an intuitive and accessible online platform for convenient user engagement.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
 
-			<div class="bx bx-menu" id="menu-icon"></div>
-		</div>
-			</header>
-			<br>
-			<br>
-			<br>
-			<br>
-	<div class="bg-cont">
-	<div  class="content-area">
-		<div class="text-container">
-			<!-- Your text goes here -->
-			<h1>Casting Futures for <span class="highlight">Empowered Citizens</span>, Your Digital Voice in Every Election</h1>
-			<p>Fellow citizens, iCast is your digital democracy, simplifying the voting process for you. Make your voice count with ease. Join in shaping the future of your institution with a few simple clicks. Your voice matters, and iCast ensures it's heard loud and clear.</p>
-			<button class="myBtn" id="myBtn">Join Now</button>
-			<div id="myModal" class="modal">
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/voteservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Voter Registration</h3>
+            <p class="services__text text-center">
+              Facilitate the creation of user accounts for eligible voters.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
 
-	
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/candidateservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Candidacy Filing</h3>
+            <p class="services__text text-center">
+              Streamline the process for candidates to file their candidacy electronically.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
 
-	</div>
-		</div>	
-		<div class="image-container">
-			<!-- The new PNG image will go here -->
-		</div>
-	</div>
-	</div>
-	<div class="section-container">
-	  <div class="vision-mission-container">
-	  <div class="vision-mission-content">
-		<h1>OUR VISION AND MISSION</h1>
-		<div class="vision-section">
-		  <div class="vmText">Vision</div>
-		  <p>Our mission is to redefine elections by providing a user-friendly, secure, and transparent e-voting platform We are dedicated to enhancing the organizations representation experience, ensuring every voice is heard, and fostering a </p>
-		</div>
-		<div class="mission-section">
-		  <div class="vmText">Mission</div>
-		  <p>To empower individuals through iCast, shaping the future of representation with accessible and secure digital voting.</p>
-		</div>
-	  </div>
-	</div>
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/automateservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Automated Results</h3>
+            <p class="services__text text-center">
+              Provide real-time, automated tallying of election results for immediate reporting.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
 
-	  
-	  <div class="announcements">
-		<h2>ANNOUNCEMENTS</h2>
-		<ul>
-		  <div class="textAnnounce"><a href="#"> Proclamation Posponed | Due to the prevailing Typhoon and Suspension of Activities </a></div>
-		  <div class="textAnnounce"><a href="#"> PUP Halalan 2023 Election Results | Local Student Council </a></div>
-		  <div class="textAnnounce"><a href="#"> Certificate of Canvass of PUP Halalan 2023 are final and official </a></div>
-		  <div class="textAnnounce"><a href="#"> PUP Halalan 2023 Election Results | Sentral na Konseho ng Mag aaral </a></div>
-		  <div class="textAnnounce"><a href="#"> Resolution No. 50 Series of 2023 | A resolution declaring the results.. </a></div>
-		  <div class="textAnnounce"><a href="#"> THE AWAITED DAY IS SET TO COME: PROCLAMATION & OATH TAKING OF ELECTED..</a></div>
-		</ul>
-	  </div>
-	</div>
-	<div style="width: auto; height: 528px; top: 1300px; position: absolute">
-				<div style="width: 1347px; height: 728px; left: 0px; top: 0px; position: absolute; background: rgba(215.69, 215.69, 215.69, 0.90); border-top-left-radius: 200px"></div>
-				<div style="width: 637px; height: 61px; left: 46px; top: 34px; position: absolute">
-					<img style="width: 637px; height: 661px; left: 0px; top: 0px; position: absolute; border-radius: 190px 0px"src='Images/hand1.jpg' />
-					<div style="width: 306px; height: 137px; left: 287px; top: 168px; position: absolute; background: #F1B025"></div>
-				</div>
-				<div style="width: 644px; left: 794px; top: 85px; position: absolute; text-align: justify; color: #333333; font-size: 50px; font-family: Roboto; font-weight: 400; letter-spacing: 20px; word-wrap: break-word">ABOUT US</div>
-				<div style="width: 586px; left: 717px; top: 186px; position: absolute; text-align: justify; color: black; font-size: 20px; font-family: Source Sans 3; font-weight: 300; word-wrap: break-word">The iCast has been implemented to transcend the limitations of traditional voting methods, ushering in a new era of student council elections. Tailored for PUP's diverse departments, this system ensures that every student's voice is not only heard but accurately represented.<br/><br/>iCast embodies a transformative shift towards enhanced efficiency, inclusivity, and transparency in voting systems. Through its streamlined interface, robust security measures, and centralized database, iCast paves the way for a new era where casting votes becomes not only convenient but also empowered by the force of innovation.</div>
-				<div style="width: 108px; height: 13px; left: 1311px; top: 847px; position: absolute; background: #800000"></div>
-			</div>
-					<div style="width: 100%; height: 500px; left: 0px; top: 2028px; position: absolute; background: #222222">
-			<div style="left: 491px; top: 450px; position: absolute; color: #B1A9A9; font-size: 18px; font-family: Inter; font-weight: 400; word-wrap: break-word">© 2023 iCast. All rights reserved.</div>
-			<div style="left: 93px; top: 100px ; position: absolute; color: white; font-size: 16px; font-family: Source Sans 3; font-weight: 600; word-wrap: break-word">Main Menu</div>
-			<div style="left: 93px; top: 270px; position: absolute; color: white; font-size: 16px; font-family: Source Sans 3; font-weight: 600; word-wrap: break-word">Offices and Services</div>
-			<div style="left: 93px; top: 150px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Home</div>
-			<div style="left: 93px; top: 170px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Partylists</div>
-			<div style="left: 93px; top: 190px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Comelec</div>
-			<div style="left: 93px; top: 210px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Vote Now</div>
-			<div style="left: 334px; top: 100px; position: absolute; color: white; font-size: 16px; font-family: Source Sans 3; font-weight: 600; word-wrap: break-word">Contact Us</div>
-			<div style="left: 334px; top: 150px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">+62 961 729 8377</div>
-			<div style="left: 334px; top: 170px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">icastsupport@gmail.com</div>
-			<div style="left: 765px; top: 100px; position: absolute; color: white; font-size: 16px; font-family: Source Sans 3; font-weight: 600; word-wrap: break-word">Community</div>
-			<div style="left: 765px; top: 150px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Commission on Elections - PUP Manila</div>
-			<div style="left: 765px; top: 170px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Polytechnic University of the Philippines (Official)</div>
-			<div style="left: 765px; top: 190px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">The Forum (Official)</div>
-			<div style="left: 765px; top: 210px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">PUP Office of the Student Regent</div>
-			<div style="left: 93px; top: 320px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Commission on Student Organization and Accrediation (SC-COSOA)<br/></div>
-			<div style="left: 93px; top: 340px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Commission on Elections (SC-COMELEC)</div>
-			<div style="left: 93px; top: 360px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Commission on Audit (SC-COA)</div>
-			<div style="left: 93px; top: 380px; position: absolute; color: white; font-size: 12px; font-family: Source Sans 3; font-weight: 300; text-decoration: underline; word-wrap: break-word">Student Tribunal (SC-ST)</div>
-			</div>
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/dataservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Data Analysis</h3>
+            <p class="services__text text-center">
+              Provide a data analysis component to interpret and filter voters' choices for a deeper understanding of election dynamics.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
 
+          <div class="service">
+            <div class="service__icon">
+              <img src={% static 'images/iCast Images/centralizedservice.png' %} alt="">
+            </div>
+            <h3 class="services__title">Centralized Database</h3>
+            <p class="services__text text-center">
+              Create and maintain a centralized database for all votes to streamline data management and enhance transparency.
+            </p>
+            <div class="arrow-icon">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
 
-	</body>
-	</html>
+    </section>
+
+    <!-- SERVICES -->
+
+    <!-- TEAM -->
+
+    <section id="team" class="container">
+      <h5 class="section-subheading text-center">Meet Our Team</h5>
+      <h2 class="section-heading text-center right left">
+        The Developers
+      </h2>
+      <div class="members">
+        <div class="member">
+          <div class="member__img">
+            <img src={% static 'images/iCast Images/chavez.png' %} alt="">
+          </div>
+          <div class="member__content">
+            <h1>Jabez Chavez</h1>
+            <p>Backend Developer</p>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="member__img">
+            <img src={% static 'images/iCast Images/legaspi.png' %} alt="">
+          </div>
+          <div class="member__content">
+            <h1>Raymond Legaspi</h1>
+            <p>Frontend Developer</p>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="member__img">
+            <img src={% static 'images/iCast Images/maldecir.png' %} alt="">
+          </div>
+          <div class="member__content">
+            <h1>Lenard Maldecir</h1>
+            <p>Frontend Developer</p>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="member__img">
+            <img src={% static 'images/iCast Images/yandoc.png' %} alt="">
+          </div>
+          <div class="member__content">
+            <h1>Francis Yandoc</h1>
+            <p>Frontend Developer</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+
+    <!-- FOOTER -->
+
+    <footer>
+      <div class="container">
+        <div class="footer__content">
+          <div class="footer__details">
+            <div class="footer__logo">
+              <img src={% static 'images/iCast Images/iCast.png' %} alt="iCast">
+            </div>
+            <p class="footer__text">
+              iCast streamlines and digitalizes the voting process, ensuring secure
+              and efficient representation for all our clients.
+            </p>
+            <div class="footer__newsletter">
+              <form action="#" 
+              class="footer__newsletter-form">
+              <input type="email" placeholder="Submit Email" required>
+              <div class="icon">
+                <i class="fa fa-envelope"></i>
+              </div>
+            </form>
+            </div>
+          </div>
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Quick Links</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">Home</a></li>
+              <li><a href="#" style="color:#747474">About Us</a></li>
+              <li><a href="#" style="color:#747474">Services</a></li>
+              <li><a href="#" style="color:#747474">Our Team</a></li>
+              <li><a href="#" style="color:#747474">Request for Use</a></li>
+            </ul>
+          </div>
+
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Services</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">Seamless Voting</a></li>
+              <li><a href="#" style="color:#747474">Voter Registration</a></li>
+              <li><a href="#" style="color:#747474">Candidacy Filing</a></li>
+              <li><a href="#" style="color:#747474">Automated Results</a></li>
+              <li><a href="#" style="color:#747474">Data Analysis</a></li>
+              <li><a href="#" style="color:#747474">Centralized Database</a></li>
+            </ul>
+          </div>
+
+          <div class="footer__menu">
+            <h3 class="footer__menu-title">Contact Us</h3>
+            <ul class="footer__menu-list">
+              <li><a href="#" style="color:#747474">+63 951 729 8377</a></li>
+              <li><a href="#" style="color:#747474">icastvoting@gmail.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer__bottom">
+          <div class="footer__bottom-icons">
+            <p>Follow us</p>
+            <a href="#" class="facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="#" class="twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+
+            <a href="#" class="instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+
+            <a href="#" class="linkedin">
+              <i class="fab fa-linkedin"></i>
+            </a>
+          </div>
+          <p>&copy; 2023 iCast. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- FOOTER -->
+
+    <!-- FONTAWESOME -->
+    <script src="assets/js/fontawesome.min.js"></script>
+    <!-- FONTAWESOME -->
+
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- AOS -->
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/script.js"></script>
+    <!-- SCRIPTS -->
+
+    <script>
+      AOS.init();
+    </script>
+  </body>
+</html>
