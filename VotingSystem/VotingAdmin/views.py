@@ -25,6 +25,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from collections import OrderedDict
 import os
 import uuid
 import csv
@@ -471,6 +472,69 @@ def partylist_view(request):
     }
     return render(request, 'Voters/Partylists.html', context)
 
+@login_required
+def candidate_cards_view(request):
+    # Temporary dictionary to hold positions and their candidates
+    temp_positions = {}
+
+    for candidate in Candidate.objects.filter(application__status='approved').select_related('application__partylist', 'position'):
+        data = candidate.application.data
+
+        if isinstance(data, str):  # Check if data is a string and convert to dict if necessary
+            try:
+                data = json.loads(data)
+            except json.JSONDecodeError:
+                print(f"Error decoding JSON for candidate: {candidate}")
+                continue
+
+        # Use the exact keys from the JSON data
+        first_name = data.get('First Name', '')
+        last_name = data.get('Last Name', '')
+        full_name = f"{first_name} {last_name}"
+
+        # Here we get the position object which includes the id
+        position = candidate.position
+
+        # Populate the temporary positions dictionary with position.id as the key
+        if position.id not in temp_positions:
+            temp_positions[position.id] = {
+                'position_name': position.Pos_name,
+                'candidates': []
+            }
+
+        temp_positions[position.id]['candidates'].append({
+            'full_name': full_name,
+            'partylist_name': candidate.application.partylist.Party_name,
+            # Add other candidate details as needed
+        })
+
+    # Sort positions by their ID to maintain the correct order
+    sorted_positions = OrderedDict(sorted(temp_positions.items()))
+
+    party_lists = Partylist.objects.all()
+
+    # Prepare the context for the template
+    context = {
+        'positions': sorted_positions,  # Using the sorted positions
+        'party_lists': party_lists,
+    }
+
+    # Render the template with the context
+    return render(request, 'Voters/Candidates copy.html', context)
+
+@login_required
+def voting_is_now_open_view(request):
+    return render(request, 'Voters/VotingOpen.html')
+
+@login_required
+def check_voting_status(request):
+    try:
+        current_election = Election.objects.get(is_active=True)
+        # Redirect to the 'Voting is now open' page
+        return redirect('voting_open')
+    except Election.DoesNotExist:
+        # If no active election exists, render the 'Voting not open' page
+        return render(request, 'Voters/Home.html')
 
 @login_required
 def voting_page(request):
@@ -531,7 +595,7 @@ def submit_vote(request):
 
         if VoteLog.objects.filter(voter=request.user, election=current_election).exists():
             messages.error(request, "You have already voted in this election.")
-            return redirect('Results_not_open')
+            return redirect('Voting_success')
 
         positions = Positions.objects.filter(election=current_election)
 
@@ -575,7 +639,7 @@ def submit_vote(request):
                         raise
 
         messages.success(request, "Your vote has been successfully submitted.")
-        return redirect('Results_not_open')
+        return redirect('Voting_success')
     else:
         messages.error(request, "You can only submit votes using the form.")
         return redirect('voting_page')

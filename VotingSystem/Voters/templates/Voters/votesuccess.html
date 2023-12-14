@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
 
           <!-- FONTAWESOME -->
-          <link rel="stylesheet" href="assets/css/fontawesome.min.css" />
+          <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}" />
           <!-- FONTAWESOME -->
 
   <style>
@@ -76,17 +76,6 @@
     z-index: 999;
     background-color: maroon;
 
-}
-.hourglass{
-  height: 300px;
-}
-.paragraph{
-  color: black; 
-  font-size: 30px; 
-  margin-bottom: 100px;
-}
-.layout{
-  text-align: center;
 }
 
 /* VARIABLES */
@@ -284,7 +273,6 @@ header .right{
   }
   .content-body{
     width: 400px;
-    height: 200px;
   }
 
   .container{
@@ -298,18 +286,6 @@ section{
 
 .section-heading{
     font-size: 2rem;
-}
-.hourglass{
-  height: 150px;
-  font-size: 15px;
-}
-.paragraph{
-  color: black; font-size: 12px; 
-  margin-bottom: 100px;
-}
-.layout{
-  text-align: left;
-  margin-left: 20px;
 }
 
 /* HEADER */
@@ -361,13 +337,13 @@ section{
                 <a href="landinglogged.html">Home</a>
               </li>
               <li>
-                <a href="Partylists.html">Partylists</a>
+                <a href="{%url 'partylist_view' %}">Partylists</a>
               </li>
               <li>
-                <a href="Candidates.html">Candidates</a>
+                <a href="{%url 'candidate_cards_view' %}">Candidates</a>
               </li>
               <li>
-                <a href="voteoption.html" style="color: #FFC220;">Vote Now</a>
+                <a href="{% url 'Voting_open' %}">Vote Now</a>
               </li>
               <li>
                 <a href="View Results 1.html">Results</a>
@@ -390,10 +366,10 @@ section{
     <div class="card-body">
 
         <div class="content-body">
-          <div class="layout">
-            <img src="{% static 'images/iCast Images/hourglass.png %}" alt="" class="hourglass">
-            <p class="paragraph">Voting is Not Yet Open</p>
-          </div>
+            <center>
+            <img src="Images/done.png" alt="" style="height: 200px;">
+            <p style="color: black; font-size: 28px; margin-bottom: 100px;">Your Vote has been Casted, This page will be redirected to Survey Page in <span id="countdown">10</span> seconds...</p>
+            </center>
         </div>
       <div class="d-grid mt-5">
       </div>
@@ -405,5 +381,20 @@ section{
         <!-- SCRIPTS -->
         <script src="{% static 'js/app.js' %}"></script>
         <!-- SCRIPTS -->
+
+        <script>
+            var seconds = 10;
+            var countdown = document.getElementById('countdown');
+            var countdownInterval = setInterval(function() {
+              seconds--;
+              countdown.textContent = seconds;
+        
+              if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = 'User Survey.html'; // Replace with your URL
+              }
+            }, 1000);
+          </script>
+          
 </body>
 </html>

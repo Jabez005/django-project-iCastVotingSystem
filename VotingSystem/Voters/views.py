@@ -106,8 +106,7 @@ def dynamic_form_view(request):
 
                 messages.success(request, 'Your application has been submitted successfully.')
                 return redirect('Results_not_open')
-
-    return render(request, 'Voters/Candidate_application.html', {'form': form})
+    return render(request, 'Voters/Candidates copy.html', {'form': form})
 
 User = get_user_model()
 
@@ -154,8 +153,8 @@ def Not_started(request):
 def Ended(request):
     return render(request, 'Voters/election_ended.html')
 
-def Results_not_open(request):
-    return render(request, 'Voters/Resultsnotyetopen.html')
+def Voting_success(request):
+    return render(request, 'Voters/votesuccess.html')
 
 def form_submitted(request):
     return render(request, 'Voters/Alreadysubmitted.html')

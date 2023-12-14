@@ -11,6 +11,6 @@ urlpatterns =[
     path('show_candidates', views.show_candidates, name="candidates"),
     path('Not_started', views.Not_started, name="Not_started"),
     path('Ended', views.Ended, name="Ended"),
-    path('Results_not_open', views.Results_not_open, name="Results_not_open"),
+    path('Voting_success', views.Voting_success, name="Voting_success"),
     path('form_submitted', views.form_submitted, name="form_submitted"),
 ]

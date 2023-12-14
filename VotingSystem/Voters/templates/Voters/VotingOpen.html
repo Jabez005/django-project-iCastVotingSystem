@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
 
           <!-- FONTAWESOME -->
-          <link rel="stylesheet" href="assets/css/fontawesome.min.css" />
+          <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}" />
           <!-- FONTAWESOME -->
 
   <style>
@@ -23,6 +24,7 @@
     background: url('{% static 'images/transparentbg.png' %}') no-repeat center center; /* Replace with your image path */
     background-size: cover;
 }
+
 
 .card {
   border: none;
@@ -45,7 +47,7 @@
   padding-bottom: 0.5rem;
 }
 
-#results{ 
+#vote{ 
     background-color: darkred;
     width: 180px;
     height: auto;
@@ -287,6 +289,21 @@ header .right{
     height: 200px;
   }
 
+  .hourglass{
+  height: 150px;
+  font-size: 15px;
+}
+.paragraph{
+  color: black; font-size: 12px; 
+  margin-bottom: 100px;
+  text-align: center;
+  margin-right: 210px;
+}
+.layout{
+  text-align: left;
+  margin-left: 20px;
+}
+
   .container{
     padding: 0 1rem;
 }
@@ -298,18 +315,6 @@ section{
 
 .section-heading{
     font-size: 2rem;
-}
-.hourglass{
-  height: 150px;
-  font-size: 15px;
-}
-.paragraph{
-  color: black; font-size: 12px; 
-  margin-bottom: 100px;
-}
-.layout{
-  text-align: left;
-  margin-left: 20px;
 }
 
 /* HEADER */
@@ -361,13 +366,13 @@ section{
                 <a href="landinglogged.html">Home</a>
               </li>
               <li>
-                <a href="Partylists.html">Partylists</a>
+                <a href="{%url 'partylist_view' %}">Partylists</a>
               </li>
               <li>
-                <a href="Candidates.html">Candidates</a>
+                <a href="{%url 'candidate_cards_view' %}">Candidates</a>
               </li>
               <li>
-                <a href="voteoption.html" style="color: #FFC220;">Vote Now</a>
+                <a href="{% url 'Voting_open' %}">Vote Now</a>
               </li>
               <li>
                 <a href="View Results 1.html">Results</a>
@@ -391,11 +396,14 @@ section{
 
         <div class="content-body">
           <div class="layout">
-            <img src="{% static 'images/iCast Images/hourglass.png %}" alt="" class="hourglass">
-            <p class="paragraph">Voting is Not Yet Open</p>
+            <img src="{% static 'images/iCast Images/ongoing.png' %}" alt="" class="hourglass">
+            <p class="paragraph">Voting is now open, <br> Please cast your vote wisely!</p>
           </div>
         </div>
       <div class="d-grid mt-5">
+        <div style="margin-bottom: 10px; text-align: center; margin-top: 30px;" class="resultsbtn">
+            <a href="{% url 'voting_page'%}"><button id="vote" class="btn  btn-lg" type="button">Vote Now</button></a>
+        </div>
       </div>
     </div>
   </div>
@@ -403,7 +411,7 @@ section{
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SCRIPTS -->
-        <script src="{% static 'js/app.js' %}"></script>
+        <script src="{% static 'js/apps.js' %}"></script>
         <!-- SCRIPTS -->
 </body>
 </html>
