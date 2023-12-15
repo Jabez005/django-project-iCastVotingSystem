@@ -342,7 +342,7 @@ section{
           <nav>
             <ul class="header__menu flex-row">
               <li>
-                <a href="{% url 'Home' %}">Home</a>
+                <a href="#hero" style="color: #FFC220;">Home</a>
               </li>
               <li>
                 <a href="{%url 'partylist_view' %}">Partylists</a>
@@ -354,7 +354,7 @@ section{
                 <a href="{% url 'Voting_open' %}">Vote Now</a>
               </li>
               <li>
-                <a href="View Results 1.html">Results</a>
+                <a href="{% url 'results_page' %}">Results</a>
               </li>
             </ul>
           </nav>
@@ -389,9 +389,9 @@ section{
             {% endfor %}
         </div>
         
-        <div class="positionbtn"> <button class="btn apply-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <div class="positionbtn"> <a href="{% url 'dynamic_form_view' %}""><button class="btn apply-btn">
         Apply for Candidacy
-        </button>
+        </button></
         </div>
     </div>
 
@@ -433,6 +433,7 @@ section{
         </div>
     </div>
 
+
     <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog  modal-dialog-centered">
         <div class="modal-content">
@@ -442,7 +443,7 @@ section{
             <div class="modal-body">
                 <p style="color:black; text-align: center;">Your application has been successfully submitted 
                     and is now under review for approval.</p>
-            <center><img src="{% static 'images/Decision.png' %}" alt="" style="height: 100px;"></center
+            <center><img src="{% static 'images/Decision.png' %}" alt="" style="height: 100px;"></center>
         </div>
         </div>
     </div>

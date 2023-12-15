@@ -154,3 +154,18 @@ def manage_questions(request):
             return redirect('manage_questions')
     questions = Survey.objects.prefetch_related('choices').all()
     return render(request, 'superadmin/Survey.html', {'questions': questions})
+
+
+def vote(request, survey_id):
+    survey = get_object_or_404(Survey, id=survey_id)
+    if request.method == 'POST':
+        for question in survey.question_set.all():
+            choice_value = request.POST.get(f'question{question.id}')
+            selected_choice = question.choice_set.filter(choice_text=choice_value).first()
+            if selected_choice:
+                selected_choice.votes += 1
+                selected_choice.save()
+        return redirect('Home')
+    else:
+        print(survey.id)
+        return render(request, 'Voters/survey.html', {'survey': survey})

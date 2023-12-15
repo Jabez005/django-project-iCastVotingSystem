@@ -1,88 +1,95 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vote Confirmation</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Partylist Layout</title>
+  <script src="https://kit.fontawesome.com/d36de8f7e2.js" crossorigin="anonymous"></script>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
-
           <!-- FONTAWESOME -->
-          <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}" />
+          <link rel="stylesheet" href="assets/css/fontawesome.min.css" />
           <!-- FONTAWESOME -->
-
   <style>
     *{
-        font-family: 'Sora', sans-serif;
+      font-family: 'Sora', sans-serif;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('Images/transparentbg.png'); /* Replace with your image path */
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+    
+    .partylist-container {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 20px;
+      max-width: 100%; /* Ensure the container does not exceed viewport width */
+    }
+    .sidebar {
+      flex: 1;
+      background-color: #f8f9fa;
+      margin-top: 60px;
+      margin-bottom: 60px;
+      min-width: 200px;
+    }
+    .content {
+      flex: 3;
+      background-color: white;
+      margin:60px 30px 30px 30px;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      height: 500px;
+    
 
     }
-    body, html {
-  height: 100%;
-    margin: 0;
-    background: url('{% static 'images/transparentbg.png' %}') no-repeat center center; /* Replace with your image path */
-    background-size: cover;
-}
+    .content-header {
+      background-color:white;
+      padding: 10px;
+     margin: auto ;
+    }
+    .partylist-item {
+      cursor: pointer;
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+    .partylist-item:hover {
+      background-color: #eee;
+    }
+    .logo {
+      background-color: #f44336;
+      border-radius: 50%;
+      width: 300px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white; /* Adjusted for better visibility */
+      margin: auto auto;
+      font-size: 24px;
+    }
+    .name{
+      background-color: #efefef;
+   
+      width:auto;
+      padding: 15px;
+      border-radius: 15px;
+      height: 400px;
+      margin-bottom: 10px;
+    }
+    .button-container {
+      text-align: right;
+      margin-right: 180px;
+    }
+            /* HEADER */
 
-.card {
-  border: none;
-  border-radius: 0.5rem;
-}
-.content-body{
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
-    height: 350px;
-    width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    
-}
-
-#vote{ 
-    background-color: darkred;
-    width: 180px;
-    height: auto;
-    color: white;
-    border-radius: 20px;
-}
-
-
-.btn-outline-light:hover {
-  border-color: #adb5bd;
-  color: #ffffff;
-}
-
-.card-title {
-  padding-bottom: 0.5rem;
-}
-
-#results{ 
-    background-color: darkred;
-    width: 180px;
-    height: auto;
-    color: white;
-    border-radius: 20px;
-}
-
-
-.btn-outline-light:hover {
-  border-color: #adb5bd;
-  color: #ffffff;
-}
-#results:hover{
-    background-color:darkgoldenrod;
-}
-
-.badge {
-  font-size: 1rem;
-  padding: 0.5em 0.75em;
-}
-
-        /* HEADER */
-
-        header {
+header {
     padding: 1rem 0;
     width: 100%;
     position: absolute;
@@ -280,15 +287,18 @@ header .right{
     color: #fff;
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
-  .content-body{
-    width: 400px;
-  }
-
-  .container{
+    @media (max-width: 768px) {
+      .button-container {
+        
+        text-align: left;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .partylist-container {
+        flex-direction: column;
+      }
+      .container{
     padding: 0 1rem;
 }
 
@@ -331,12 +341,10 @@ section{
 }
 
         
-}
-
-</style>
+    }
+  </style>
 </head>
 <body>
-
       <!-- HEADER -->
 
       <header>
@@ -371,26 +379,72 @@ section{
           </div>
         </div>
       </header>
-         
-      </div>
-	  <div class="container d-flex vh-100 justify-content-center align-items-center">
-		<div class="card  w-50">
-		  <div class="card-body">
-	  
-			  <div class="content-body">
-				  <center>
-				  <img src="Images/done.png" alt="" style="height: 200px;">
-				  <p style="color: black; font-size: 28px; margin-bottom: 100px;">Results will be open after the Election</p>
-				  <a href="{% url 'Home'%}"><button id="vote" class="btn  btn-lg" type="button">Home</button></a>
-				  </center>
-			  </div>
-			<div class="d-grid mt-5">
-			</div>
-		  </div>
-		</div>
-	  </div>
+  
+      <!-- HEADER -->
+ 
 
-<script src="{% static 'js/app.js' %}"></script>
+
+
+<div style="background-color: white; width: 1300px; margin: auto; margin-top: 200px; height: 650px;" class="container-fluid partylist-container">
+  
+  <div class="content">
+    {% for position in positions %}
+    <div id="position-{{ position.id }}" class="position-content">
+        <div class="content-header">
+            <h3>{{ position.Pos_name }}</h3>
+        </div>
+        <!-- Candidate list for this position -->
+        {% for candidate in position.candidates.all %}
+        <div class="candidate">
+            <img src="{{ candidate.application.data.photo_url }}" alt="{{ candidate.user.username }}" class="candidate-photo">
+            <div class="flex-grow-1">
+                <h5 class="candidate-name">{{ candidate.application.data.first_name }} {{ candidate.application.data.last_name }}</h5>
+                <div style="height: 30px; border-radius: 20px;" class="progress">
+                    <div class="progress-bar yellow-progress" role="progressbar" style="width: calc(100 * candidate.votes / position.Total_votes)%;">
+                        {{ candidate.votes }} Votes
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
+<script>
+  // This script waits until the DOM is ready before running.
+  document.addEventListener("DOMContentLoaded", function() {
+    // Function to hide all forms and logos
+    function hideAllContent() {
+      document.querySelectorAll('.content .name form, .content .logo').forEach(function(element) {
+        element.style.display = 'none';
+      });
+    }
+
+    // Function to show a form and logo with a specific ID
+    function showContent(formId, logoId) {
+      hideAllContent();
+      document.getElementById(formId).style.display = 'block';
+      document.getElementById(logoId).style.display = 'flex'; // assuming logos are flex containers
+    }
+
+    // Event listeners for sidebar items
+    document.getElementById('sidebar-item-1').addEventListener('click', function() {
+      showContent('form1', 'logo1');
+    });
+
+    document.getElementById('sidebar-item-2').addEventListener('click', function() {
+      showContent('form2', 'logo2');
+    });
+
+    // Initially hide all content and show the first one
+    hideAllContent();
+    showContent('form1', 'logo1');
+  });
+</script>
 
 </body>
 </html>
+

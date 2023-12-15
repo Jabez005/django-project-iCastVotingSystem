@@ -9,11 +9,18 @@
 <body>
 <main class="main-container">
     <div class="main-title">
-    <h2> Voting Results Tally</h2>
-    </div>
-    <div class="main-cards" style="grid-template-columns: none;">
-        <div id="charts"></div>
-    </div>
+      <h2> Voting Results Tally</h2>
+  </div>
+  <div class="button-group">
+      <a href="{% url 'latest_votes' %}"><button id="results-btn">Results</button></a>
+      <a href="{% url 'votes_per_position' %}"><button id="total-votes-btn">Votes per Position</button></a>
+      <a href="{% url 'print_results' %}"><button id="print-results-btn">Print Results</button></a>
+  </div>
+  <center>
+  <div class="main-cards" style="grid-template-columns: none; color: black;" >
+      <div id="charts"></div>
+  </div>
+  </center>
 <script id="chart-data" type="application/json">{{ chart_data|safe }}</script>
 
   
@@ -73,7 +80,9 @@
     chart.render();
   });
 });
-    </script>
+// Functions to handle displaying different content based on button clicked
+// You will need to write these functions to change what is displayed in the '#charts' div or other divs.
+</script>
 </main>
 </body>
 {% endblock %}

@@ -40,6 +40,19 @@
     
 }
 
+#vote{ 
+    background-color: darkred;
+    width: 180px;
+    height: auto;
+    color: white;
+    border-radius: 20px;
+}
+
+
+.btn-outline-light:hover {
+  border-color: #adb5bd;
+  color: #ffffff;
+}
 
 .card-title {
   padding-bottom: 0.5rem;
@@ -368,7 +381,8 @@ section{
         <div class="content-body">
             <center>
             <img src="Images/done.png" alt="" style="height: 200px;">
-            <p style="color: black; font-size: 28px; margin-bottom: 100px;">Your Vote has been Casted, This page will be redirected to Survey Page in <span id="countdown">10</span> seconds...</p>
+            <p style="color: black; font-size: 28px; margin-bottom: 100px;">Your Vote has been Casted</p>
+            <a href="{% url 'Home'%}"><button id="vote" class="btn  btn-lg" type="button">Home</button></a>
             </center>
         </div>
       <div class="d-grid mt-5">
@@ -382,19 +396,5 @@ section{
         <script src="{% static 'js/app.js' %}"></script>
         <!-- SCRIPTS -->
 
-        <script>
-            var seconds = 10;
-            var countdown = document.getElementById('countdown');
-            var countdownInterval = setInterval(function() {
-              seconds--;
-              countdown.textContent = seconds;
-        
-              if (seconds <= 0) {
-                clearInterval(countdownInterval);
-                window.location.href = 'User Survey.html'; // Replace with your URL
-              }
-            }, 1000);
-          </script>
-          
 </body>
 </html>

@@ -1,0 +1,55 @@
+{% extends '../base/Admin_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<body>
+<main class="main-container">
+    <div class="main-title">
+      <h2> Voting Results Tally</h2>
+  </div>
+  <div class="button-group">
+      <a href="{% url 'latest_votes' %}"><button id="results-btn">Results</button></a>
+      <a href="{% url 'votes_per_position' %}"><button id="total-votes-btn">Votes per Position</button></a>
+      <button id="print-results-btn">Print Results</button>
+  </div>
+  <center>
+  <div class="main-cards" style="grid-template-columns: none;">
+    <table id="example" class="table table-striped " style="width:100%">
+        <thead>
+            <tr>
+            
+                <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Position</th>
+                <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Total Votes</th>
+            </tr>
+        </thead>
+        <tbody id="dynamicTableBody">
+
+        </tbody>
+    </table> 
+  </div>
+  <script id="votes-data" type="application/json">{{ votes_data|safe }}</script>
+  </center>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  const votesData = JSON.parse(document.getElementById('votes-data').textContent);
+  const tableBody = document.getElementById('dynamicTableBody');
+
+  // Clear existing table rows
+  tableBody.innerHTML = '';
+
+  // Populate table with votes data
+  votesData.forEach(function(vote) {
+    let row = `<tr>
+                 <td style="text-align:center;">${vote.position}</td>
+                 <td style="text-align:center;">${vote.total_votes}</td>
+               </tr>`;
+    tableBody.insertAdjacentHTML('beforeend', row);
+  });
+});
+  </script>
+
+</main>
+</body>
+{% endblock %}

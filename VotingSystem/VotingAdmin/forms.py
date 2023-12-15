@@ -43,37 +43,44 @@ class DynamicForm(forms.Form):
     def __init__(self, *args, **kwargs):
         dynamic_fields_queryset = kwargs.pop('dynamic_fields_queryset', None)
         super(DynamicForm, self).__init__(*args, **kwargs)
-
+        
+        # Define the default attributes for your widgets here
+        default_widget_attrs = {'class': 'form-control', 'style': 'width: 50%;'} 
+        
         for field in dynamic_fields_queryset:
             field_kwargs = {'required': field.is_required}
+            
+            # Add choices if present
             if field.choices:
-                field_kwargs['choices'] = [(choice, choice) for choice in field.choices]  # Assuming field.choices is a list
-
-            # Add a field of the appropriate type to the form
+                field_kwargs['choices'] = [(choice, choice) for choice in field.choices]
+            
+            # Now, apply the default_widget_attrs to the widgets of each field type
             if field.field_type == 'text':
-                self.fields[field.field_name] = forms.CharField(**field_kwargs)
+                self.fields[field.field_name] = forms.CharField(widget=forms.TextInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'email':
-                self.fields[field.field_name] = forms.EmailField(**field_kwargs)
+                self.fields[field.field_name] = forms.EmailField(widget=forms.EmailInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'number':
-                self.fields[field.field_name] = forms.IntegerField(**field_kwargs)
+                self.fields[field.field_name] = forms.IntegerField(widget=forms.NumberInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'date':
-                self.fields[field.field_name] = forms.DateField(**field_kwargs)
+                self.fields[field.field_name] = forms.DateField(widget=forms.DateInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'datetime':
-                self.fields[field.field_name] = forms.DateTimeField(**field_kwargs)
+                self.fields[field.field_name] = forms.DateTimeField(widget=forms.DateTimeInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'file':
-                self.fields[field.field_name] = forms.FileField(**field_kwargs)
+                self.fields[field.field_name] = forms.FileField(widget=forms.FileInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'image':
-                self.fields[field.field_name] = forms.ImageField(**field_kwargs)
+                self.fields[field.field_name] = forms.ImageField(widget=forms.FileInput(attrs=default_widget_attrs), **field_kwargs)  # Image fields use the same widget as File fields
             elif field.field_type == 'textarea':
-                self.fields[field.field_name] = forms.CharField(widget=forms.Textarea, **field_kwargs)
+                self.fields[field.field_name] = forms.CharField(widget=forms.Textarea(attrs=default_widget_attrs), **field_kwargs)
+            
+            # ... Continue for other field types ...
         
-        # Add choice fields for positions and party lists
+        # Add the widget with attributes for the 'position' field
         position_choices = [(pos.id, pos.Pos_name) for pos in Positions.objects.all()]
-        self.fields['position'] = forms.ChoiceField(choices=position_choices, required=True)
+        self.fields['position'] = forms.ChoiceField(choices=position_choices, required=True, widget=forms.Select(attrs=default_widget_attrs))
         
+        # Add the widget with attributes for the 'partylist' field
         partylist_choices = [(party.id, party.Party_name) for party in Partylist.objects.all()]
-        self.fields['partylist'] = forms.ChoiceField(choices=partylist_choices, required=True)
-
+        self.fields['partylist'] = forms.ChoiceField(choices=partylist_choices, required=True, widget=forms.Select(attrs=default_widget_attrs))
 
     def clean_data(self):
         data = self.cleaned_data.get('data', '')

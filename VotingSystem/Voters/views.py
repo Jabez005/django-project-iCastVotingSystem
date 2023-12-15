@@ -47,7 +47,7 @@ def home(request):
 def dynamic_form_view(request):
     if CandidateApplication.objects.filter(user=request.user).exists():
         messages.error(request, 'You have already submitted an application.')
-        return redirect('form_submitted')
+        return redirect('candidate_cards_view')
 
     dynamic_fields_queryset = DynamicField.objects.all()
     form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)
@@ -105,8 +105,9 @@ def dynamic_form_view(request):
                     candidate.save()
 
                 messages.success(request, 'Your application has been submitted successfully.')
-                return redirect('Results_not_open')
-    return render(request, 'Voters/Candidates copy.html', {'form': form})
+                return redirect('Home')
+    print(form)
+    return render(request, 'Voters/Candidate_application.html', {'form': form})
 
 User = get_user_model()
 
@@ -158,3 +159,6 @@ def Voting_success(request):
 
 def form_submitted(request):
     return render(request, 'Voters/Alreadysubmitted.html')
+
+def results_not_open(request):
+    return render(request, 'Voters/Resultsnotyetopen.html')

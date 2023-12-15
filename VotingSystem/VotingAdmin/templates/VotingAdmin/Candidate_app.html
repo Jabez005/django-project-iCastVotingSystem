@@ -40,13 +40,13 @@
             {% endfor %}
             </tbody>
         </table>
-        <a href="{% url 'edit_candidate_form' %}" class="btn btn-secondary">Edit Form</a> <!-- Link to edit the form -->
 
 {% else %}
 <!-- If no fields exist, show the button to create the form -->
 <a href="{% url 'field_create' %}" class="btn btn-primary">Create Candidate Application Form</a>
 {% endif %}
 
-
+</div>
+</main>
 </body>
 {% endblock %}

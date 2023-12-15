@@ -335,7 +335,7 @@ header .right{
         <nav>
           <ul class="header__menu flex-row">
             <li>
-              <a href="landinglogged.html">Home</a>
+              <a href="#hero" style="color: #FFC220;">Home</a>
             </li>
             <li>
               <a href="{%url 'partylist_view' %}">Partylists</a>
@@ -347,7 +347,7 @@ header .right{
               <a href="{% url 'Voting_open' %}">Vote Now</a>
             </li>
             <li>
-              <a href="View Results 1.html">Results</a>
+              <a href="{% url 'results_page' %}">Results</a>
             </li>
           </ul>
         </nav>
@@ -362,9 +362,6 @@ header .right{
 
     <!-- HEADER -->
  
-
-
-
     <div class="container-fluid partylist-container" style="margin-top: 200px;">
       <div class="sidebar">
         <h3 style="text-align: center; background-color: #2B2A4C; color: white; padding: 10px;">Partylist</h3>

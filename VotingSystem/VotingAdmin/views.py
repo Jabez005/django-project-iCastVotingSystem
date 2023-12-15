@@ -1,10 +1,11 @@
 import os
+from reportlab.pdfgen import canvas
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.apps import apps
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import FileResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.urls import reverse
 from django.contrib import messages
@@ -26,6 +27,7 @@ from django.utils import timezone
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from collections import OrderedDict
+from django.db.models import Sum
 import os
 import uuid
 import csv
@@ -387,7 +389,7 @@ def approve_application(request, pk):
 @login_required
 def reject_application(request, pk):
     application = get_object_or_404(CandidateApplication, pk=pk)
-    candidate = application.candidates
+    candidate = application.candidate
     candidate.status = 'rejected'
     candidate.save()
 
@@ -454,9 +456,10 @@ def partylist_view(request):
        
         for candidate in candidates:
             candidate_data = json.loads(candidate.data) if isinstance(candidate.data, str) else candidate.data
+            print(candidate_data.keys()) 
             # Append each candidate's data to the party_candidate_info list
             party_candidate_info.append({
-                'full_name': f"{candidate_data.get('first_name', '')} {candidate_data.get('last_name', '')}".strip(),
+                'full_name': f"{candidate_data.get('First Name', '')} {candidate_data.get('Last Name', '')}".strip(),
                 'position': candidate.positions.Pos_name,
             })
             
@@ -658,7 +661,7 @@ def latest_votes(request):
         candidates_data = []
         
         # Get all candidates for the position
-        candidates = Candidate.objects.filter(position=position)
+        candidates = Candidate.objects.filter(position=position, application__status='approved')
         
         # For each candidate, get their vote count
         for candidate in candidates:
@@ -685,3 +688,100 @@ def latest_votes(request):
     context = {'chart_data': chart_data_json}
     return render(request, 'VotingAdmin/results.html', context)
 
+@login_required
+def votes_per_position(request):
+    # List to hold the total votes per position
+    votes_data = []
+
+    # Get all positions
+    positions = Positions.objects.all()
+
+    # For each position, aggregate the votes for approved candidates
+    for position in positions:
+        total_votes = Candidate.objects.filter(
+            position=position, 
+            application__status='approved'
+        ).aggregate(Sum('votes'))['votes__sum'] or 0
+
+        votes_data.append({
+            'position': position.Pos_name, 
+            'total_votes': total_votes
+        })
+
+    # Convert the votes data into JSON and pass it to the template
+    votes_data_json = json.dumps(votes_data)
+
+    # Pass the JSON string to the template
+    context = {'votes_data': votes_data_json}
+    return render(request, 'VotingAdmin/votes_per_position.html', context)
+
+@login_required
+def print_results(request):
+    # Create a file-like buffer to receive PDF data
+    buffer = io.BytesIO()
+
+    # Create the PDF object, using the buffer as its "file"
+    p = canvas.Canvas(buffer)
+
+    # Set up variables to track the position on the page
+    y_position = 750
+    x_position = 50
+    line_height = 15
+
+    # Draw the title
+    p.drawString(x_position, y_position, "Voting Results")
+    y_position -= 2 * line_height  # Move down two lines
+
+    # Fetch the Results and Votes per Position
+    positions = Positions.objects.all()
+    for position in positions:
+        # Draw position name
+        p.drawString(x_position, y_position, f"Position: {position.Pos_name}")
+        y_position -= line_height
+
+        # Draw each candidate's votes for the position
+        total_votes = 0
+        candidates = Candidate.objects.filter(position=position, application__status='approved')
+        for candidate in candidates:
+            # Assuming 'application' is a OneToOne field to a CandidateApplication model
+            candidate_info = json.loads(candidate.application.data)
+            first_name = candidate_info.get('First Name', 'No First Name')
+            last_name = candidate_info.get('Last Name', 'No Last Name')
+            p.drawString(x_position + 20, y_position, f"{first_name} {last_name}: {candidate.votes} votes")
+            total_votes += candidate.votes
+            y_position -= line_height
+
+        # Draw the total votes
+        p.drawString(x_position, y_position - line_height, f"Total Votes for {position.Pos_name}: {total_votes}")
+        y_position -= 2 * line_height  # Move down two lines
+
+    # Close the PDF object cleanly, and we're done
+    p.showPage()
+    p.save()
+
+    # File response
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='voting_results.pdf')
+
+@login_required
+def results_page(request):
+    try:
+        # Try to get the currently active election
+        election = Election.objects.get(is_active=True)
+        # If an election is active, redirect to a waiting page
+        messages.info(request, 'Results will be out after the election ends.')
+        return redirect('results_not_open')
+    except Election.DoesNotExist:
+        # If no active election, display the results of the most recent election
+        election = Election.objects.filter(is_active=False).order_by('-id').first()
+        if election:
+            positions = Positions.objects.filter(election=election).prefetch_related('candidates__application')
+            context = {
+                'election': election,
+                'positions': positions,
+            }
+            return render(request, 'Voters/View Results 2.html', context)
+        else:
+            # If no elections are found, handle the case appropriately (e.g., show an error message)
+            messages.error(request, 'No elections are found.')
+            return redirect('some_error_page')  # Redirect to an error page or another appropriate view

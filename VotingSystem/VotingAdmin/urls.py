@@ -32,7 +32,10 @@ urlpatterns = [
     path('voting_is_now_open_view', views.voting_is_now_open_view, name="Voting_open"),
     path('voting_page', views.voting_page, name="voting_page"),
     path('submit_vote', views.submit_vote, name="submit_vote"),
-    path('latest_votes', views.latest_votes, name="latest_votes"), 
+    path('latest_votes', views.latest_votes, name="latest_votes"),
+    path('votes_per_position', views.votes_per_position, name="votes_per_position"),
+    path('print_results', views.print_results, name="print_results"), 
+    path('results_page', views.results_page, name="results_page"),
 ]
     
 
