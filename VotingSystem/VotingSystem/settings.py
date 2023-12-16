@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nvhd*q53*y-e+6^h#3*$9tm2wnrle5zqwm^st%h6dqkcxtxjdi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -81,16 +81,30 @@ WSGI_APPLICATION = 'VotingSystem.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'A3b5G5dcACeg44CbefFC14GG-ccaCcFd',
-        'HOST': 'viaduct.proxy.rlwy.net',
-        'PORT': '33284',
-    }
+
+#DATABASES = {
+#       'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#        'USER': 'postgres',
+#        'PASSWORD': 'A3b5G5dcACeg44CbefFC14GG-ccaCcFd',
+#        'HOST': 'viaduct.proxy.rlwy.net',
+#        'PORT': '33284',
+#    }
+#}
+
+
+import dj_database_url
+
+DATABASES ={
+
+    'default': dj_database_url.parse('postgres://productiondatabase_zvpm_user:jWUaBAg0gnMK6TIjebIa0JsSqATGyyFN@dpg-cluif2ed3nmc7384ia50-a.ohio-postgres.render.com/productiondatabase_zvpm')
 }
+
+
+
+
+
 
 
 # Password validation
@@ -129,8 +143,8 @@ USE_TZ = True
 
 
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/' 
+STATIC_URL = "static/"
+MEDIA_URL = "media/" 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")  # Where `collectstatic` will collect static files for deployment.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static/'),
