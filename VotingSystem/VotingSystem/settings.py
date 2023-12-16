@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nvhd*q53*y-e+6^h#3*$9tm2wnrle5zqwm^st%h6dqkcxtxjdi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -129,19 +129,15 @@ USE_TZ = True
 
 
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/' 
-
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
-
-
+STATIC_URL = 'static/'
+MEDIA_URL = 'media/' 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")  # Where `collectstatic` will collect static files for deployment.
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static/'),
 ]
                  # URL to use when referring to media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')  # Path where media is stored
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
