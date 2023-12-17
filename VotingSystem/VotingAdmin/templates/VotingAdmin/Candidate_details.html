@@ -60,7 +60,7 @@
               {% else %}
                   <!-- Assuming 'picture' is a key in your JSONField that contains an image URL -->
                   <div class="text-center mb-3">
-                    <img src="{% static 'images/'|add:value %}" alt="Candidate picture" class="img-fluid" style="width: 200px; height: auto;">
+                    <img src="{{ MEDIA_URL }}{{ value }}" alt="Candidate picture" class="img-fluid" style="width: 200px; height: auto;">
                   </div>
               {% endif %}
           {% endfor %}

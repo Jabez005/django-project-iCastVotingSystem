@@ -14,8 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nvhd*q53*y-e+6^h#3*$9tm2wnrle5zqwm^st%h6dqkcxtxjdi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
@@ -68,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         'libraries': {
                 'custom_filters': 'VotingAdmin.templatetag.custom_filters',  # Replace with the correct path to your custom filter module.
@@ -148,13 +148,13 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/' 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where `collectstatic` will collect static files for deployment.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-                 # URL to use when referring to media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'staticfiles/images')  # Path where media is stored
+
+MEDIA_URL = '/media/'                  # URL to use when referring to media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Path where media is stored
 
 
 
