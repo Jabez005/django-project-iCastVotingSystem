@@ -513,7 +513,7 @@ def candidate_cards_view(request):
                 continue  # Skip this candidate if JSON is invalid
 
         picture_path = data.get('Picture', None)
-        picture_url = 'images/' + picture_path if picture_path else None
+        picture_url = 'media/' + picture_path if picture_path else None
 
         first_name = data.get('First Name', '')
         last_name = data.get('Last Name', '')
@@ -585,7 +585,7 @@ def voting_page(request):
             first_name = candidate_data.get('First Name')
             last_name = candidate_data.get('Last Name')
             picture_path = candidate_data.get('Picture', None)
-            picture_url = 'images/' + picture_path if picture_path else None
+            picture_url = 'media/' + picture_path if picture_path else None
             candidate_info = {
                 'id': application.id,
                 'name': f"{first_name} {last_name}",

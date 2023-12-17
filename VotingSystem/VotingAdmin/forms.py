@@ -68,7 +68,7 @@ class DynamicForm(forms.Form):
             elif field.field_type == 'file':
                 self.fields[field.field_name] = forms.FileField(widget=forms.FileInput(attrs=default_widget_attrs), **field_kwargs)
             elif field.field_type == 'image':
-                self.fields[field.field_name] = forms.ImageField(widget=forms.FileInput(attrs=default_widget_attrs), **field_kwargs)  # Image fields use the same widget as File fields
+                self.fields[field.field_name] = forms.ImageField(widget=forms.FileInput(attrs=default_widget_attrs), max_length=255, **field_kwargs)  # Image fields use the same widget as File fields
             elif field.field_type == 'textarea':
                 self.fields[field.field_name] = forms.CharField(widget=forms.Textarea(attrs=default_widget_attrs), **field_kwargs)
             
