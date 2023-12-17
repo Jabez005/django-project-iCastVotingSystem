@@ -513,7 +513,7 @@ def candidate_cards_view(request):
                 continue  # Skip this candidate if JSON is invalid
 
         picture_path = data.get('Picture', None)
-        picture_url = 'media/' + picture_path if picture_path else None
+        picture_url = settings.MEDIA_URL + picture_path if picture_path else None  # Updated line
 
         first_name = data.get('First Name', '')
         last_name = data.get('Last Name', '')
@@ -552,11 +552,28 @@ def voting_ended(request):
     return render(request, 'Voters/votingended.html')
 
 @login_required
+def already_voted(request):
+    return render(request, 'Voters/alreadyvoted.html')
+
+@login_required
+def form_closed(request):
+    return render(request,'Voters/formcloseed.html')
+
+@login_required
 def check_voting_status(request):
     try:
         current_election = Election.objects.get(is_active=True)
-        # Redirect to the 'Voting is now open' page
-        return redirect('Voting_open')
+        
+        # Check if the current user has an entry in the VoteLog for the current election
+        has_voted = VoteLog.objects.filter(voter=request.user, election=current_election).exists()
+        
+        if has_voted:
+            # Redirect to a page that says the user has already voted
+            return redirect('already_voted')  # Replace 'already_voted' with the name of your url
+        else:
+            # Redirect to the 'Voting is now open' page
+            return redirect('Voting_open')
+            
     except Election.DoesNotExist:
         # If no active election exists, render the 'Voting not open' page
         return redirect('voting_ended')
@@ -585,7 +602,7 @@ def voting_page(request):
             first_name = candidate_data.get('First Name')
             last_name = candidate_data.get('Last Name')
             picture_path = candidate_data.get('Picture', None)
-            picture_url = 'media/' + picture_path if picture_path else None
+            picture_url = settings.MEDIA_URL + picture_path if picture_path else None  # Updated line
             candidate_info = {
                 'id': application.id,
                 'name': f"{first_name} {last_name}",

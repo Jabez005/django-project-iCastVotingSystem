@@ -45,6 +45,9 @@ def home(request):
 
 @login_required
 def dynamic_form_view(request):
+    election_ongoing = Election.objects.filter(is_active=True).exists()
+    form_submitted = False  # Add this variable to track form submission
+
     if CandidateApplication.objects.filter(user=request.user).exists():
         messages.error(request, 'You have already submitted an application.')
         return redirect('candidate_cards_view')
@@ -53,61 +56,74 @@ def dynamic_form_view(request):
     form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)
 
     if request.method == 'POST':
-        form = DynamicForm(request.POST, request.FILES, dynamic_fields_queryset=dynamic_fields_queryset)
-        if form.is_valid():
-            with transaction.atomic():
-                position = form.cleaned_data.get('position')  # This should be the ID of the position
-                partylist = form.cleaned_data.get('partylist')  # This should be the ID of the partylist
+        form_submitted = True  # Update the variable when the form is submitted
+        if election_ongoing:
+            # Only add the message if the form was actually submitted
+            messages.error(request, 'Election is currently ongoing. Candidate application submissions are closed.')
+            # Render the form with the message
+            return render(request, 'Voters/Candidate_application.html', {
+                'form': form,
+                'election_ongoing': election_ongoing,
+                'form_submitted': form_submitted,  # Pass the new variable to the template
+            })
+        else:
+            form = DynamicForm(request.POST, request.FILES, dynamic_fields_queryset=dynamic_fields_queryset)
+            if form.is_valid():
+                with transaction.atomic():
+                    # Extract cleaned data from the form
+                    position = form.cleaned_data.get('position')
+                    partylist = form.cleaned_data.get('partylist')
 
-                # Fetch the actual instances based on IDs provided
-                position_instance = Positions.objects.get(id=position)
-                partylist_instance = Partylist.objects.get(id=partylist)
+                    # Fetch actual instances based on provided IDs
+                    position_instance = Positions.objects.get(id=position)
+                    partylist_instance = Partylist.objects.get(id=partylist)
 
-                # Here you use the function to get the voting admin
-                voting_admin_instance = get_voting_admin_for_user(request.user)
-                if not voting_admin_instance:
-                    messages.error(request, "Voting admin not found for the user.")
-                    return redirect('Not_started')
-                
-                candidate_application = CandidateApplication(
-                    user=request.user,
-                    status='pending',
-                    positions=position_instance,
-                    partylist=partylist_instance,
-                    voting_admins=voting_admin_instance
-                )
+                    # Create a new CandidateApplication
+                    candidate_application = CandidateApplication(
+                        user=request.user,
+                        status='pending',
+                        positions=position_instance,
+                        partylist=partylist_instance,
+                        # Assuming you have a function `get_voting_admin_for_user`
+                        voting_admins=get_voting_admin_for_user(request.user)  
+                    )
 
-                dynamic_data = {}
-                for field in dynamic_fields_queryset:
-                    field_name = field.field_name
-                    field_value = form.cleaned_data.get(field_name)
-                    if isinstance(field_value, InMemoryUploadedFile):
-                        file_path = default_storage.save(field_value.name, ContentFile(field_value.read()))
-                        field_value = file_path
+                    # Store the dynamic data as JSON
+                    dynamic_data = {}
+                    for field in dynamic_fields_queryset:
+                        field_name = field.field_name
+                        field_value = form.cleaned_data.get(field_name)
+                        if isinstance(field_value, InMemoryUploadedFile):
+                            file_path = default_storage.save(field_value.name, ContentFile(field_value.read()))
+                            field_value = file_path
+                        dynamic_data[field_name] = field_value
+                    candidate_application.data = json.dumps(dynamic_data)
+                    candidate_application.save()
 
-                    dynamic_data[field_name] = field_value
+                    # Create or update the Candidate model
+                    candidate, created = Candidate.objects.get_or_create(
+                        user=request.user,
+                        defaults={
+                            'votes': 0,
+                            'application': candidate_application,
+                            'position': position_instance,
+                            'voting_admins': candidate_application.voting_admins,
+                        }
+                    )
+                    if not created:
+                        candidate.application = candidate_application
+                        candidate.save()
 
-                candidate_application.data = json.dumps(dynamic_data)
-                candidate_application.save()
+                    # Redirect to the home page after a successful submission
+                    messages.success(request, 'Your application has been submitted successfully.')
+                    return redirect('Home')
 
-                candidate, created = Candidate.objects.get_or_create(
-                    user=request.user,
-                    defaults={
-                        'votes': 0,
-                        'application': candidate_application,
-                        'position': position_instance,
-                        'voting_admins': candidate_application.voting_admins,
-                    }
-                )
-
-                if not created:
-                    candidate.application = candidate_application
-                    candidate.save()
-
-                messages.success(request, 'Your application has been submitted successfully.')
-                return redirect('Home')
-    print(form)
-    return render(request, 'Voters/Candidate_application.html', {'form': form})
+    # Render the form template
+    return render(request, 'Voters/Candidate_application.html', {
+        'form': form,
+        'election_ongoing': election_ongoing,
+        'form_submitted': form_submitted,
+    })
 
 User = get_user_model()
 

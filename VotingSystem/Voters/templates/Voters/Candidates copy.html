@@ -379,7 +379,7 @@ section{
                 <div class="col">
                     <div style="background-color: #2B2A4C;" class="candidate-card text-white text-center p-3">
                         <!-- Ensure you have the image URL for each candidate -->
-                        <img src="{% static candidate.image_url %}" alt="{{ candidate.full_name }}" class="candidate-image">
+                        <img src="{{ candidate.image_url }}" alt="{{ candidate.full_name }}" class="candidate-image">
                         <h5 class="mt-2">{{ candidate.full_name }}</h5>
                         <p>Partylist: {{ candidate.partylist_name }}</p>
                     </div>

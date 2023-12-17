@@ -368,36 +368,42 @@ section{
 
 
 
-    <div style="background-color: white; padding: 20px; margin-top: 200px; border-radius: 20px; width: auto;" class="container1">
+      <div style="background-color: white; padding: 20px; margin-top: 200px; border-radius: 20px; width: auto;" class="container1">
         <div style="background-color: #EEE2DE; padding: 20px; border-radius:20px;">
             <center>
-            <h1>Application Form</h1>
-            {% if submitted %}
-            <p>Your Candidate Application is submitted.</p>
-            <p>Wait for email confirmation.</p>
-            {% else %}
-            <!-- The form action should point to the URL that is mapped to dynamic_form_view -->
-            <form method="post" enctype="multipart/form-data">
-            {% csrf_token %} <!-- CSRF token for security -->
-            
-            <!-- Render dynamic fields -->
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    <!-- Display errors for each field -->
-                    {% if field.errors %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger">{{ error }}</div>
+                <h1>Application Form</h1>
+                {% if submitted %}
+                    <p>Your Candidate Application is submitted.</p>
+                    <p>Wait for email confirmation.</p>
+                {% else %}
+                    <!-- Only show messages if the form was submitted and the election is ongoing -->
+                    {% if form_submitted and election_ongoing %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                         {% endfor %}
                     {% endif %}
-                </div>
-            {% endfor %}
-            
-           <button type="submit" name="save" class="btn apply-btn">Submit Application</button></div>
-        </form>
-    {% endif %}
-    </center>
+                    <!-- The form action should point to the URL that is mapped to dynamic_form_view -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %} <!-- CSRF token for security -->
+                        
+                        <!-- Render dynamic fields -->
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                <!-- Display errors for each field -->
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <div class="alert alert-danger">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        <button type="submit" name="save" class="btn apply-btn">Submit Application</button>
+                    </form>
+                {% endif %}
+            </center>
         </div>
     </div>
 </body>
