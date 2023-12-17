@@ -556,7 +556,7 @@ def check_voting_status(request):
     try:
         current_election = Election.objects.get(is_active=True)
         # Redirect to the 'Voting is now open' page
-        return redirect('voting_open')
+        return redirect('Voting_open')
     except Election.DoesNotExist:
         # If no active election exists, render the 'Voting not open' page
         return redirect('voting_ended')
@@ -584,7 +584,7 @@ def voting_page(request):
             candidate_data = json.loads(application.data)
             first_name = candidate_data.get('First Name')
             last_name = candidate_data.get('Last Name')
-            picture_path = data.get('Picture', None)
+            picture_path = candidate_data.get('Picture', None)
             picture_url = 'images/' + picture_path if picture_path else None
             candidate_info = {
                 'id': application.id,
