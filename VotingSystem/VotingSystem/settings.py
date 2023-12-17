@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,23 +83,15 @@ WSGI_APPLICATION = 'VotingSystem.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-#DATABASES = {
-#       'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
-#        'USER': 'postgres',
-#        'PASSWORD': 'A3b5G5dcACeg44CbefFC14GG-ccaCcFd',
-#        'HOST': 'viaduct.proxy.rlwy.net',
-#        'PORT': '33284',
-#    }
-#}
-
-
-import dj_database_url
-
-DATABASES ={
-
-    'default': dj_database_url.parse('postgres://productiondatabase_zvpm_user:jWUaBAg0gnMK6TIjebIa0JsSqATGyyFN@dpg-cluif2ed3nmc7384ia50-a.ohio-postgres.render.com/productiondatabase_zvpm')
+DATABASES = {
+       'default': {
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'A3b5G5dcACeg44CbefFC14GG-ccaCcFd',
+        'HOST': 'viaduct.proxy.rlwy.net',
+        'PORT': '33284',
+   }
 }
 
 
@@ -143,11 +136,11 @@ USE_TZ = True
 
 
 
-STATIC_URL = "static/"
-MEDIA_URL = "media/" 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")  # Where `collectstatic` will collect static files for deployment.
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/" 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # Where `collectstatic` will collect static files for deployment.
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'static'),
 ]
                  # URL to use when referring to media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')  # Path where media is stored
