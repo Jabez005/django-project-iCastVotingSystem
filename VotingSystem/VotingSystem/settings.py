@@ -19,10 +19,10 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
-CSRF_TRUSTED_ORIGINS = ['django-project-icastvotingsystem-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://django-project-icastvotingsystem-production.up.railway.app']
 
 CORS_ALLOWED_ORIGINS = [
-    'django-project-icastvotingsystem-production.up.railway.app',
+    'https://django-project-icastvotingsystem-production.up.railway.app',
     'http://localhost',
     'http://127.0.0.1',
 ]
