@@ -35,7 +35,7 @@
                     <td> {{ Requestforms.details }}</td>
                     <td> {{ Requestforms.status }}</td>
                     <td> {{ Requestforms.created }}</td> 
-                    <td><a href="{% url 'view' Requestforms.id %}"> View Request </a></td>
+                    <td><a href="{% url 'view' Requestforms.id %}" class="btn btn-primary"> View Request </a></td>
                     
                 </tr>
                 {% endfor %}

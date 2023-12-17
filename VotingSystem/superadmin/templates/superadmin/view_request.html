@@ -2,20 +2,22 @@
 {% load static %}
 
 {% block content %}
-<div class="card">
+<div class="card" style="margin-left: 400px; height: 60%; margin-top: 100px; width: 100%; padding: 10px; background-color: lightgrey; font-size: 1.2rem; border-radius: 0.25rem; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);">
+  <div class="card-body" style="text-align: center;">
     <strong>
-        {{ Requestform.f_name }}
-        {{ Requestform.l_name }}
+      {{ Requestform.f_name }}
+      {{ Requestform.l_name }}
     </strong>
-    <div class="card-body">
-      <p> ID: {{ Requestform.id }}</p>
-      <p> Email: {{ Requestform.email }}</p>
-      <p> Organization: {{ Requestform.organization }}</p>
-      <p> Details: {{ Requestform.details }}</p>
-      <p> Status: {{ Requestform.status }}</p>
-      <p> Date Submitted: {{ Requestform.created }}</p>
-      <a href="{% url 'approve_request' Requestform.id %}" class="card-link">Approve</a>
-      <a href="{% url 'reject_request' Requestform.id %}" class="card-link">Reject</a>
-    </div>
+    <p> ID: {{ Requestform.id }}</p>
+    <p> Email: {{ Requestform.email }}</p>
+    <p> Organization: {{ Requestform.organization }}</p>
+    <p> Details: {{ Requestform.details }}</p>
+    <p> Status: {{ Requestform.status }}</p>
+    <p> Date Submitted: {{ Requestform.created }}</p>
+    <a href="{% url 'approve_request' Requestform.id %}" class="card-link" style="background-color:#44c767; border-radius:28px; border:1px solid #18ab29; display:inline-block; cursor:pointer; color:#ffffff; font-family:Arial; font-size:17px; padding:16px 31px; text-decoration:none; text-shadow:0px 1px 0px #2f6627;">Approve</a>
+    <a href="{% url 'reject_request' Requestform.id %}" class="card-link" style="background-color:red; border-radius:28px; border:1px solid red; display:inline-block; cursor:pointer; color:#ffffff; font-family:Arial; font-size:17px; padding:16px 31px; text-decoration:none; text-shadow:0px 1px 0px maroon;" >Reject</a>
   </div>
+</div>
 {% endblock %}

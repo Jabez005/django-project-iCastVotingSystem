@@ -15,8 +15,8 @@
                 <h3>Total No. of Voters</h3>
                 <span class="material-icons-outlined">person_outline</span>
             </div>
-            <h1></h1>
-            <h3> <center><a href="voters.html" style="text-decoration: none;color:white">View More</a> </center></h3>
+            <h1>{{voters}}</h1>
+            <h3> <center><a href="{% url 'Display_data' %}" style="text-decoration: none;color:white">View More</a> </center></h3>
         </div>
 
         <div class="card">
@@ -24,8 +24,8 @@
                 <h3>Total No. of Candidates</h3>
                 <span class="material-icons-outlined">assignment_ind</span>
             </div>
-            <h1></h1>
-            <h3> <center><a href="candidates.html" style="text-decoration: none;color:white">View More</a> </center></h3>
+            <h1>{{candidate_count}}</h1>
+            <h3> <center><a href="{% url 'manage_fields' %}" style="text-decoration: none;color:white">View More</a> </center></h3>
         </div>
 
         <div class="card">
@@ -33,11 +33,10 @@
                 <h3>Partylists</h3>
                 <span class="material-icons-outlined">groups</span>
             </div>
-            <h1></h1>
-            <h3> <center><a href="partylist.html" style="text-decoration: none;color:white">View More</a> </center></h3>
+            <h1>{{partylist_count}}</h1>
+            <h3> <center><a href="{% url 'ManageParty'%}" style="text-decoration: none;color:white">View More</a> </center></h3>
         </div>
 
-        
         <div class="card">
             <div class="card-inner">
                 <h3>Reports</h3>

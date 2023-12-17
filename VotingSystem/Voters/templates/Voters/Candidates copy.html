@@ -341,25 +341,25 @@ section{
           </div>
           <nav>
             <ul class="header__menu flex-row">
-              <li>
-                <a href="#hero" style="color: #FFC220;">Home</a>
-              </li>
-              <li>
-                <a href="{%url 'partylist_view' %}">Partylists</a>
-              </li>
-              <li>
-                <a href="{%url 'candidate_cards_view' %}">Candidates</a>
-              </li>
-              <li>
-                <a href="{% url 'Voting_open' %}">Vote Now</a>
-              </li>
-              <li>
-                <a href="{% url 'results_page' %}">Results</a>
-              </li>
+                <li>
+                    <a href="{%url 'Home' %}" style="color: #FFC220;">Home</a>
+                  </li>
+                  <li>
+                    <a href="{%url 'partylist_view' %}">Partylists</a>
+                  </li>
+                  <li>
+                    <a href="{%url 'candidate_cards_view' %}">Candidates</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'check_voting_status' %}">Vote Now</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'results_page' %}">Results</a>
+                </li>
             </ul>
           </nav>
           <div class="right flex-center">
-            <a href="landing.html" class="btn btn-secondary">Logout</a>
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
             <div class="menu-btn">
               <i class="fas fa-bars"></i>
             </div>
@@ -379,7 +379,7 @@ section{
                 <div class="col">
                     <div style="background-color: #2B2A4C;" class="candidate-card text-white text-center p-3">
                         <!-- Ensure you have the image URL for each candidate -->
-                        <img src="{{ candidate.image_url }}" alt="{{ candidate.full_name }}" class="candidate-image">
+                        <img src="{% static candidate.image_url %}" alt="{{ candidate.full_name }}" class="candidate-image">
                         <h5 class="mt-2">{{ candidate.full_name }}</h5>
                         <p>Partylist: {{ candidate.partylist_name }}</p>
                     </div>

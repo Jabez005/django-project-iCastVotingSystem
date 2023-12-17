@@ -54,7 +54,29 @@ def Adminlogin(request):
 
 @login_required
 def Votingadmin(request):
-    return render(request, 'VotingAdmin/Voting_Admin_Dash.html')
+
+    voters_data_count = 0
+
+    # Get all CSVUpload objects
+    csv_uploads = CSVUpload.objects.all()
+
+    # Iterate over each CSVUpload object and count items in the 'data' field
+    for csv_upload in csv_uploads:
+        # Ensure that the 'data' field is a list and count its items
+        if isinstance(csv_upload.data, list):
+            voters_data_count += len(csv_upload.data)
+
+    # Now you have the count of all items in the 'data' fields of all CSVUpload objects
+    candidate_count = CandidateApplication.objects.count()
+    partylist_count = Partylist.objects.count()
+
+    context = {
+        'voters': voters_data_count,  # Updated to use the count of items in 'data'
+        'candidate_count': candidate_count,
+        'partylist_count': partylist_count,
+    }    
+
+    return render(request, 'VotingAdmin/Voting_Admin_Dash.html', context)
 
 @login_required
 def profile(request):
@@ -477,28 +499,28 @@ def partylist_view(request):
 
 @login_required
 def candidate_cards_view(request):
-    # Temporary dictionary to hold positions and their candidates
     temp_positions = {}
-
+    
     for candidate in Candidate.objects.filter(application__status='approved').select_related('application__partylist', 'position'):
         data = candidate.application.data
 
-        if isinstance(data, str):  # Check if data is a string and convert to dict if necessary
+        # Convert data to dict if it's a string (assuming it's JSON)
+        if isinstance(data, str):
             try:
                 data = json.loads(data)
             except json.JSONDecodeError:
                 print(f"Error decoding JSON for candidate: {candidate}")
-                continue
+                continue  # Skip this candidate if JSON is invalid
 
-        # Use the exact keys from the JSON data
+        picture_path = data.get('Picture', None)
+        picture_url = 'images/' + picture_path if picture_path else None
+
         first_name = data.get('First Name', '')
         last_name = data.get('Last Name', '')
         full_name = f"{first_name} {last_name}"
 
-        # Here we get the position object which includes the id
         position = candidate.position
 
-        # Populate the temporary positions dictionary with position.id as the key
         if position.id not in temp_positions:
             temp_positions[position.id] = {
                 'position_name': position.Pos_name,
@@ -508,26 +530,26 @@ def candidate_cards_view(request):
         temp_positions[position.id]['candidates'].append({
             'full_name': full_name,
             'partylist_name': candidate.application.partylist.Party_name,
-            # Add other candidate details as needed
+            'image_url': picture_url,
         })
 
-    # Sort positions by their ID to maintain the correct order
     sorted_positions = OrderedDict(sorted(temp_positions.items()))
-
     party_lists = Partylist.objects.all()
 
-    # Prepare the context for the template
     context = {
-        'positions': sorted_positions,  # Using the sorted positions
+        'positions': sorted_positions,
         'party_lists': party_lists,
     }
 
-    # Render the template with the context
     return render(request, 'Voters/Candidates copy.html', context)
 
 @login_required
 def voting_is_now_open_view(request):
     return render(request, 'Voters/VotingOpen.html')
+
+@login_required
+def voting_ended(request):
+    return render(request, 'Voters/votingended.html')
 
 @login_required
 def check_voting_status(request):
@@ -537,7 +559,7 @@ def check_voting_status(request):
         return redirect('voting_open')
     except Election.DoesNotExist:
         # If no active election exists, render the 'Voting not open' page
-        return render(request, 'Voters/Home.html')
+        return redirect('voting_ended')
 
 @login_required
 def voting_page(request):
@@ -562,11 +584,8 @@ def voting_page(request):
             candidate_data = json.loads(application.data)
             first_name = candidate_data.get('First Name')
             last_name = candidate_data.get('Last Name')
-            picture_path = candidate_data.get('Picture', None)
-            picture_url = request.build_absolute_uri(
-                settings.MEDIA_URL + picture_path
-            ) if picture_path else None
-
+            picture_path = data.get('Picture', None)
+            picture_url = 'images/' + picture_path if picture_path else None
             candidate_info = {
                 'id': application.id,
                 'name': f"{first_name} {last_name}",
@@ -766,22 +785,52 @@ def print_results(request):
 @login_required
 def results_page(request):
     try:
-        # Try to get the currently active election
         election = Election.objects.get(is_active=True)
-        # If an election is active, redirect to a waiting page
         messages.info(request, 'Results will be out after the election ends.')
         return redirect('results_not_open')
     except Election.DoesNotExist:
-        # If no active election, display the results of the most recent election
         election = Election.objects.filter(is_active=False).order_by('-id').first()
+
         if election:
-            positions = Positions.objects.filter(election=election).prefetch_related('candidates__application')
+            positions = Positions.objects.filter(election=election)
+            
+            results_data = []
+            for position in positions:
+                total_votes = position.candidates.aggregate(total=Sum('votes'))['total'] or 0
+
+                approved_candidates = position.candidates.filter(application__status='approved')  # Adjust the filter as needed based on your model
+
+                candidates_data = []
+                for candidate in approved_candidates:
+                    # Parse the JSON string into a Python dictionary
+                    try:
+                        candidate_data = json.loads(candidate.application.data)
+                    except json.JSONDecodeError:
+                        # Handle the exception if data is not properly formatted as JSON
+                        candidate_data = {}
+                    
+                    first_name = candidate_data.get('First Name', 'N/A')
+                    last_name = candidate_data.get('Last Name', 'N/A')
+                    votes_percentage = (100 * candidate.votes / total_votes) if total_votes > 0 else 0
+
+                    candidates_data.append({
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'votes': candidate.votes,
+                        'votes_percentage': votes_percentage,
+                    })
+
+                results_data.append({
+                    'position_name': position.Pos_name,
+                    'total_votes': total_votes,
+                    'candidates': candidates_data,
+                })
+
             context = {
                 'election': election,
-                'positions': positions,
+                'results_data': results_data,
             }
             return render(request, 'Voters/View Results 2.html', context)
         else:
-            # If no elections are found, handle the case appropriately (e.g., show an error message)
             messages.error(request, 'No elections are found.')
-            return redirect('some_error_page')  # Redirect to an error page or another appropriate view
+            return redirect('some_error_page')  

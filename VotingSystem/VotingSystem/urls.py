@@ -12,4 +12,4 @@ urlpatterns = [
     path('VotingAdmin/', include('VotingAdmin.urls')),
     path('Voters/', include('Voters.urls')),
     path('Voters/', include('django.contrib.auth.urls')),
-] 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

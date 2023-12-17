@@ -30,6 +30,7 @@ urlpatterns = [
     path('candidate_cards_view', views.candidate_cards_view, name="candidate_cards_view"),
     path('check_voting_status', views.check_voting_status, name="check_voting_status"),
     path('voting_is_now_open_view', views.voting_is_now_open_view, name="Voting_open"),
+    path('voting_ended', views.voting_ended, name="voting_ended"),
     path('voting_page', views.voting_page, name="voting_page"),
     path('submit_vote', views.submit_vote, name="submit_vote"),
     path('latest_votes', views.latest_votes, name="latest_votes"),

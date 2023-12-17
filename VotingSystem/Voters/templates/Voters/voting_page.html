@@ -381,7 +381,7 @@ section{
                     {% for candidate in candidates_info.candidates %}
                     <div style="margin: 10px;" class="col">
                         <div style="width:350px; height:350px; background-color: #EA906C;" class="candidate-card text-white text-center p-3">
-                            <img src="{{ candidate.image_url }}" alt="Photo of {{ candidate.name }}" class="candidate-image">
+                            <img src="{% static candidate.image_url %}" alt="Photo of {{ candidate.name }}" class="candidate-image">
                             <h5 class="mt-2">{{ candidate.name }}</h5>
                             <p class="mb-0">{{ candidate.party }}</p>
                             <!-- Use radio or checkbox based on max_candidates_elected -->

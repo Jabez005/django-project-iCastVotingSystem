@@ -30,7 +30,7 @@
                           <td> {{ Voting_admin.emaill }}</td>
                           <td> {{ Voting_admin.orgz }}</td>
                           <td> {{ Voting_admin.org_code }}</td>
-                          <td><a href="{% url 'generate_admin_account' Voting_admin.id %}"> Generate Admin Account </a></td>
+                          <td><a href="{% url 'generate_admin_account' Voting_admin.id %}" class="btn btn-primary"> Generate Admin Account </a></td>
       
                       </tr>
                   {% endfor %}

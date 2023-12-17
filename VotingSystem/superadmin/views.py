@@ -1,4 +1,5 @@
 from django.forms import inlineformset_factory
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -30,9 +31,17 @@ def login_superuser(request):
     else:
         return render(request, 'authentication/adminlogin.html', {})
 
-   
+@login_required   
 def Superadmin(request):
-    return render(request, 'superadmin/Superadmin.html')
+
+    request_count = Requestform.objects.count()
+    admins = vote_admins.objects.count()
+
+    context = {
+        'request_count': request_count,
+        'admins': admins,
+    }
+    return render(request, 'superadmin/Superadmin.html', context)
 
 
 @login_required(login_url='requests')
@@ -116,7 +125,7 @@ def generate_admin_account(request, admin_id):
     try:
         admin_record = vote_admins.objects.get(id=admin_id)
     except vote_admins.DoesNotExist:
-        return "Voting admin not found."
+        raise Http404("Voting admin not found.")  # Raises an HTTP 404 error if not found
 
     username = admin_record.emaill
     email = admin_record.emaill
@@ -139,7 +148,7 @@ def generate_admin_account(request, admin_id):
 
     send_mail(subject, message, from_email, recipient_list)
 
-    redirect('VotingAdmins')
+    return HttpResponseRedirect(reverse('VotingAdmins'))
 
 COMMON_CHOICES = ['Very Satisfied', 'Satisfied', 'Neutral', 'Unsatisfied', 'Very Unsatisfied']
 @login_required

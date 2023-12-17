@@ -1,14 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partylist Layout</title>
+  <title>Results</title>
   <script src="https://kit.fontawesome.com/d36de8f7e2.js" crossorigin="anonymous"></script>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
           <!-- FONTAWESOME -->
-          <link rel="stylesheet" href="assets/css/fontawesome.min.css" />
+          <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}" />
           <!-- FONTAWESOME -->
   <style>
     *{
@@ -18,7 +19,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: url('Images/transparentbg.png'); /* Replace with your image path */
+      background: url('{% static 'images/transparentbg.png' %}'); /* Replace with your image path */
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-size: cover;
@@ -355,7 +356,7 @@ section{
           <nav>
             <ul class="header__menu flex-row">
               <li>
-                <a href="#hero" style="color: #FFC220;">Home</a>
+                <a href="{%url 'Home' %}" style="color: #FFC220;">Home</a>
               </li>
               <li>
                 <a href="{%url 'partylist_view' %}">Partylists</a>
@@ -364,7 +365,7 @@ section{
                 <a href="{%url 'candidate_cards_view' %}">Candidates</a>
               </li>
               <li>
-                <a href="{% url 'Voting_open' %}">Vote Now</a>
+                <a href="{% url 'check_voting_status' %}">Vote Now</a>
               </li>
               <li>
                 <a href="{% url 'results_page' %}">Results</a>
@@ -372,7 +373,7 @@ section{
             </ul>
           </nav>
           <div class="right flex-center">
-            <a href="landing.html" class="btn btn-secondary">Logout</a>
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Logout</a>
             <div class="menu-btn">
               <i class="fas fa-bars"></i>
             </div>
@@ -388,62 +389,34 @@ section{
 <div style="background-color: white; width: 1300px; margin: auto; margin-top: 200px; height: 650px;" class="container-fluid partylist-container">
   
   <div class="content">
-    {% for position in positions %}
-    <div id="position-{{ position.id }}" class="position-content">
+    {% for result in results_data %}
+    <div id="position-{{ result.position_name }}" class="position-content">
         <div class="content-header">
-            <h3>{{ position.Pos_name }}</h3>
+            <h3>{{ result.position_name }}</h3>
         </div>
         <!-- Candidate list for this position -->
-        {% for candidate in position.candidates.all %}
+        {% for candidate in result.candidates %}
         <div class="candidate">
-            <img src="{{ candidate.application.data.photo_url }}" alt="{{ candidate.user.username }}" class="candidate-photo">
+          <img src="{{ candidate.application.data.image_url }}" alt="{{ candidate.first_name }}" class="candidate-photo">
             <div class="flex-grow-1">
-                <h5 class="candidate-name">{{ candidate.application.data.first_name }} {{ candidate.application.data.last_name }}</h5>
+                <h5 class="candidate-name">{{ candidate.first_name }} {{ candidate.last_name }}</h5>
+                {% if result.total_votes > 0 %}
                 <div style="height: 30px; border-radius: 20px;" class="progress">
-                    <div class="progress-bar yellow-progress" role="progressbar" style="width: calc(100 * candidate.votes / position.Total_votes)%;">
+                    <div class="progress-bar yellow-progress" role="progressbar" style="width: {{ candidate.votes_percentage }}%;">
                         {{ candidate.votes }} Votes
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
     {% endfor %}
-  </div>
+</div>
 </div>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
-<script>
-  // This script waits until the DOM is ready before running.
-  document.addEventListener("DOMContentLoaded", function() {
-    // Function to hide all forms and logos
-    function hideAllContent() {
-      document.querySelectorAll('.content .name form, .content .logo').forEach(function(element) {
-        element.style.display = 'none';
-      });
-    }
 
-    // Function to show a form and logo with a specific ID
-    function showContent(formId, logoId) {
-      hideAllContent();
-      document.getElementById(formId).style.display = 'block';
-      document.getElementById(logoId).style.display = 'flex'; // assuming logos are flex containers
-    }
-
-    // Event listeners for sidebar items
-    document.getElementById('sidebar-item-1').addEventListener('click', function() {
-      showContent('form1', 'logo1');
-    });
-
-    document.getElementById('sidebar-item-2').addEventListener('click', function() {
-      showContent('form2', 'logo2');
-    });
-
-    // Initially hide all content and show the first one
-    hideAllContent();
-    showContent('form1', 'logo1');
-  });
-</script>
 
 </body>
 </html>

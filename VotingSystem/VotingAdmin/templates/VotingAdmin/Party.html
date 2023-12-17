@@ -16,7 +16,6 @@
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Partylist ID</th>
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Partylist Name</th>
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Partylist Logo</th>
-                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Description</th>
                 </tr>
             </thead>
             <tbody id="dynamicTableBody">
@@ -26,7 +25,6 @@
                         <td>{{ party.id }}</td>
                         <td>{{ party.Party_name }}</td>
                         <td>{{ party.Logo }}</td>
-                        <td>{{ party.Description }}</td>
                         </tr>
                     {% endfor %}
                 {% endif %}
@@ -56,10 +54,6 @@
                         <div class="mb-3">
                             <label for="Logo" class="form-label" style="color:black">Logo</label>
                             <input type="file" class="form-control" id="Logo" name="Logo" accept="image/*" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Description" class="form-label" style="color:black">Description</label>
-                            <textarea class="form-control" id="Description" name="Description" required></textarea>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: transparent;color:black;">Close</button>

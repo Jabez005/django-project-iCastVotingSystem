@@ -95,6 +95,7 @@
         document.getElementById('startElectionButton').addEventListener('click', function() {
             var formContainer = document.getElementById('electionFormContainer');
             formContainer.style.display = 'block'; // Show the form
+            startElectionButton.style.display = 'none';
         });
     
         // If there is an active election, add a listener to the stop button

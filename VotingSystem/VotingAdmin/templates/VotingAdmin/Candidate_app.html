@@ -3,7 +3,24 @@
 {% load static %}
 
 
-{% block content %}  
+{% block content %}
+<head>
+    <style>
+    .header{
+    grid-area: header;
+    height: 70px;
+    width: 1450px;
+    background-color: #B31312;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px 0 30px;
+    box-shadow: 0 6px 7px -3px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+}
+    </style>
+</head>
+
 <body>
     {% if fields %}
   <!-- main -->
@@ -12,8 +29,8 @@
         <h2>Manage Candidates</h2>
     </div>
 
-    <div class="main-cards" style="grid-template-columns: none;">
-        <table id="example" class="table table-striped " style="width:100%">
+    <div class="main-cards">
+        <table id="example" class="table table-striped">
             <thead>
                 <tr>
                     {% for field in fields %}
@@ -22,7 +39,7 @@
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Position</th>
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Partylist</th>
                     <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Candidate Status</th>
-                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;">Votes</th>
+                    <th style="background-color:#2B2A4C;color:#FFF;text-align:center;"></th>
                 </tr>
             </thead>
             <tbody id="dynamicTableBody">
@@ -34,16 +51,23 @@
                     <td>{{ application.positions.Pos_name }}</td> 
                     <td>{{ application.partylist.Party_name}}</td> 
                     <td>{{ application.status }}</td>
-                    <td>{{ application.candidate.votes }}</td>
                     <td><a href="{% url 'generate_view' application.id %}" class="btn btn-primary">View Details</a></td>
                     </tr>
             {% endfor %}
             </tbody>
         </table>
+    </div>
 
 {% else %}
 <!-- If no fields exist, show the button to create the form -->
-<a href="{% url 'field_create' %}" class="btn btn-primary">Create Candidate Application Form</a>
+<div class="main-title">
+    <h2>Manage Candidates</h2>
+</div>
+<div class="main-cards" style="grid-template-columns: none; height: 50%; margin-top: 150px;">
+    <div class="addButton" style="text-align: center; margin-top: 90px;">
+    <a href="{% url 'field_create' %}" class="btn btn-primary">Create Candidate Application Form</a>
+    </div>
+</div>
 {% endif %}
 
 </div>

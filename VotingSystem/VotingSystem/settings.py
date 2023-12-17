@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nvhd*q53*y-e+6^h#3*$9tm2wnrle5zqwm^st%h6dqkcxtxjdi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -93,6 +93,17 @@ DATABASES = {
         'PORT': '33284',
    }
 }
+
+#DATABASES = {
+#       'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#        'USER': 'postgres',
+#        'PASSWORD': 'bABDF6436cd3F*d34bf-46F*BA5AEE4F',
+#        'HOST': 'monorail.proxy.rlwy.net',
+#        'PORT': '29375',
+#   }
+#}
 
 
 

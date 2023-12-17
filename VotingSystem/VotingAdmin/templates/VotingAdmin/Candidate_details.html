@@ -2,26 +2,75 @@
 {% load static %}
 
 {% block content %}
+<head>
+
+<style>
+
+
+.card-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card-text {
+  font-size: 1rem; /* Adjust the font size as needed */
+  line-height: 1.6; /* Adjust the line height as needed */
+  color: #333; /* Text color */
+  margin-bottom: 10px; /* Space between paragraphs */
+}
+
+.card-img {
+  display: block;
+  margin: 0 auto 20px; /* Center image and add space below */
+  width: 200px; /* Adjust the image width as needed */
+  height: auto;
+}
+
+.card-links {
+  text-align: center;
+}
+
+.card-link {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #4CAF50; /* Green background for approve */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px; /* Rounded corners for links */
+}
+
+.card-link.reject {
+  background-color: #f44336; /* Red background for reject */
+}
+</style>
 </head>
+
 <body>
 
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Candidate Application Details</h5>
-        <!-- Dynamically display data from the JSONField -->
-        {% for key, value in data.items %}
-            {% if key != 'Picture' %}
-                <p class="card-text">{{ key|title }}: {{ value }}</p>
-            {% else %}
-                <!-- Assuming 'picture' is a key in your JSONField that contains an image URL -->
-                <img src="{{ value }}" alt="Candidate picture" style="width: 200px; height: auto;">
-            {% endif %}
-        {% endfor %}
-        <br><br><br>
-        <a href="{% url 'approved' application.id %}" class="card-link">Approve</a>
-        <a href="{% url 'reject' application.id %}" class="card-link">Reject</a>
+ <div class="main-container">
+  <div class="main-title">
+    <h2>Manage Candidates</h2>
+  </div>
+  <div class="card" style=" background: lightgrey; align-items: center; width: 60%; margin-left: 250px;">
+    <h5 class="card-title">Candidate Application Details</h5>
+    {% for key, value in data.items %}
+              {% if key != 'Picture' %}
+                  <p class="card-text"><strong>{{ key|title }}:</strong> {{ value }}</p>
+              {% else %}
+                  <!-- Assuming 'picture' is a key in your JSONField that contains an image URL -->
+                  <div class="text-center mb-3">
+                    <img src="{% static 'images/'|add:value %}" alt="Candidate picture" class="img-fluid" style="width: 200px; height: auto;">
+                  </div>
+              {% endif %}
+          {% endfor %}
+      <div class="card-links">
+      <a href="{% url 'approved' application.id %}" class="card-link">Approve</a>
+      <a href="{% url 'reject' application.id %}" class="card-link reject">Reject</a>
       </div>
-    </div>
+  </div>
+</div>
+
     
     </body>
     {% endblock %}

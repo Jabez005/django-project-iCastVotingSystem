@@ -60,7 +60,7 @@ body{
           </ul>
         </nav>
         <div class="right flex-center">
-          <a href="Login Option.html" class="btn btn-secondary">Login</a>
+          <a href="{% url 'User_login' %}" class="btn btn-secondary">Login</a>
           <div class="menu-btn">
             <i class="fas fa-bars"></i>
           </div>
@@ -74,17 +74,17 @@ body{
 
     <section id="hero" class="container flex-row">
 
-      <form>
+     
         {% if submitted %}
         <p>Your Request is submitted.</p>
         <p>Wait for email confirmation.</p>
-    {% else %}
+      {% else %}
         <form action="" method="post">
             {% csrf_token %}
-    
+            <br><br><br><br><br>
             <div class="request" style="border: 1px solid maroon; border-radius: 20px; background-color: #faf9f9; padding: 30px 100px 30px 100px">
                 <p style="text-align: center; font-size: 2rem; margin-bottom: 10px; font-weight: 500;">Request for Use</p>
-    
+              
                 <div class="form-group">
                     <p style="font-size: 1.2rem; margin-bottom: 10px;">First Name</p>
                     {{ form.f_name.errors }}
@@ -120,9 +120,9 @@ body{
                 </div>
             </div> 
         </form>
-    {% endif %}
+      {% endif %}
       </div>
-      </form>
+     
     </section>
     
     <!-- FORM -->

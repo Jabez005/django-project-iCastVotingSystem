@@ -388,6 +388,7 @@ section{
         </div>
       </header>
   
+  
       <!-- HEADER -->
 
 <div class="container d-flex vh-100 justify-content-center align-items-center">
@@ -395,15 +396,12 @@ section{
     <div class="card-body">
 
         <div class="content-body">
-          <div class="layout">
-            <img src="{% static 'images/iCast Images/ongoing.png' %}" alt="" class="hourglass">
-            <p class="paragraph">Voting is now open, <br> Please cast your vote wisely!</p>
-          </div>
+            <center>
+            <img src="assets/img/iCast Images/ended.png" alt="" style="height: 300px;">
+            <p style="color: black; font-size: 30px; margin-bottom: 100px;">Voting is now Closed</p>
+            </center>
         </div>
       <div class="d-grid mt-5">
-        <div style="margin-bottom: 10px; text-align: center; margin-top: 30px;" class="resultsbtn">
-            <a href="{% url 'voting_page'%}"><button id="vote" class="btn  btn-lg" type="button">Vote Now</button></a>
-        </div>
       </div>
     </div>
   </div>
@@ -411,7 +409,7 @@ section{
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SCRIPTS -->
-        <script src="{% static 'js/apps.js' %}"></script>
+        <script src="assets/js/script.js"></script>
         <!-- SCRIPTS -->
 </body>
 </html>
