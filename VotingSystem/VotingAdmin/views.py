@@ -749,7 +749,7 @@ def votes_per_position(request):
 
     # Pass the JSON string to the template
     context = {'votes_data': votes_data_json}
-    return render(request, 'VotingAdmin/votes_per_position.html', context)
+    return render(request, 'VotingAdmin/Votes_per_position.html', context)
 
 @login_required
 def print_results(request):
