@@ -115,12 +115,13 @@ font-family: 'Poppins', sans-serif;
 </form>
 		</div>
         <div style="width: 0px; height: 44.17px; left: 159.87px; top: 423.17px; position: absolute"></div>
-		<button onclick="window.location.href='welcomepage.html';" style="border: none; background: none; padding: 0;"><img style="width: 30px; height: 30px; left: 0; top: 0; position: absolute;" src="{% static '/images/back.png' %}">
+        <a href="{% url 'User_login' %}" class="back-button">
+          <img style="height: 50px;" src={% static 'images/back.png' %} alt="Back">
+        </a>
 </button>
-    <span style = "font-size: 20px:"> iCast </span>
     <img style="width: 300px; height: 290px; left: 240px; top: 117px; position: absolute; background: linear-gradient(0deg, rgba(255, 0, 0, 0.42) 0%, rgba(255, 0, 0, 0.42) 100%); border-radius: 9999px; opacity: 0.5;" src="{% static '/images/imgLog.png' %}"></div>
     <div style="left: 141px; top: 440px;; position: absolute; color: white; font-size: 22px; font-family: Source Sans Pro;font-family: 'Poppins', sans-serif;
-	font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">Seamless Voting, Powered by</div>
+	font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">Seamless Voting, Powered by <span style = "font-size: 50px; font-weight: 400;"> iCast </span></div>
     <div style="left: 250px; top: 650px; position: absolute; color: #B1A9A9; font-size: 16px; font-family: 'Inter', sans-serif;
 font-family: 'Poppins', sans-serif; font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">© 2023 iCast. All rights reserved.</div>
 	</div>
