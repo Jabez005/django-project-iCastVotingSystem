@@ -825,7 +825,9 @@ def results_page(request):
                     except json.JSONDecodeError:
                         # Handle the exception if data is not properly formatted as JSON
                         candidate_data = {}
-                    
+
+                    image_path = candidate_data.get('Picture', None)  # 'image' should be the key where the image path is stored
+                    image_url = settings.MEDIA_URL + image_path if image_path else None  # Construct the full URL
                     first_name = candidate_data.get('First Name', 'N/A')
                     last_name = candidate_data.get('Last Name', 'N/A')
                     votes_percentage = (100 * candidate.votes / total_votes) if total_votes > 0 else 0
@@ -835,6 +837,7 @@ def results_page(request):
                         'last_name': last_name,
                         'votes': candidate.votes,
                         'votes_percentage': votes_percentage,
+                        'image_url': image_url,
                     })
 
                 results_data.append({
@@ -850,4 +853,4 @@ def results_page(request):
             return render(request, 'Voters/View Results 2.html', context)
         else:
             messages.error(request, 'No elections are found.')
-            return redirect('some_error_page')  
+            return redirect('Home')  

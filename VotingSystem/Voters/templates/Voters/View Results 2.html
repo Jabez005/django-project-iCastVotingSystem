@@ -397,7 +397,9 @@ section{
         <!-- Candidate list for this position -->
         {% for candidate in result.candidates %}
         <div class="candidate">
-          <img src="{{ candidate.application.data.image_url }}" alt="{{ candidate.first_name }}" class="candidate-photo">
+          {% if candidate.image_url %}
+            <img style="border-radius: 50%; height: 90px; width: 90px; margin: 10px;" src="{{ candidate.image_url }}" alt="{{ candidate.first_name }} {{ candidate.last_name }}" class="candidate-photo">
+          {% endif %}
             <div class="flex-grow-1">
                 <h5 class="candidate-name">{{ candidate.first_name }} {{ candidate.last_name }}</h5>
                 {% if result.total_votes > 0 %}
