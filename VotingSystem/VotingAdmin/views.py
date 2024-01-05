@@ -1,5 +1,10 @@
 import os
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -54,11 +59,10 @@ def Adminlogin(request):
 
 @login_required
 def Votingadmin(request):
-
     voters_data_count = 0
 
-    # Get all CSVUpload objects
-    csv_uploads = CSVUpload.objects.all()
+    # Get CSVUpload objects for the logged-in admin
+    csv_uploads = CSVUpload.objects.filter(voting_admins=request.user.vote_admins)
 
     # Iterate over each CSVUpload object and count items in the 'data' field
     for csv_upload in csv_uploads:
@@ -66,15 +70,15 @@ def Votingadmin(request):
         if isinstance(csv_upload.data, list):
             voters_data_count += len(csv_upload.data)
 
-    # Now you have the count of all items in the 'data' fields of all CSVUpload objects
-    candidate_count = CandidateApplication.objects.count()
-    partylist_count = Partylist.objects.count()
+    # Fetch counts for candidate and partylists for the logged-in admin
+    candidate_count = CandidateApplication.objects.filter(voting_admins=request.user.vote_admins).count()
+    partylist_count = Partylist.objects.filter(voting_admins=request.user.vote_admins).count()
 
     context = {
-        'voters': voters_data_count,  # Updated to use the count of items in 'data'
+        'voters': voters_data_count,
         'candidate_count': candidate_count,
         'partylist_count': partylist_count,
-    }    
+    }
 
     return render(request, 'VotingAdmin/Voting_Admin_Dash.html', context)
 
@@ -143,7 +147,7 @@ def upload_csv(request):
 
 @login_required
 def display_csv_data(request):
-    last_upload = CSVUpload.objects.last()
+    last_upload = CSVUpload.objects.filter(voting_admins=request.user.vote_admins).last()
     if last_upload:
         voters_data = last_upload.data
         field_names = last_upload.header_order
@@ -163,9 +167,9 @@ def display_csv_data(request):
 @login_required
 def ManagePositions(request):
     # Get the voting admin associated with the current user
-    voting_admin = get_object_or_404(vote_admins, user=request.user)
+   
     # Filter positions by the current voting admin
-    positions = Positions.objects.filter(voting_admins=voting_admin)
+    positions = Positions.objects.filter(voting_admins=request.user.vote_admins)
 
     context = {'Positions': positions}
     return render(request, 'VotingAdmin/Positions.html', context=context)
@@ -246,8 +250,7 @@ def generate_voter_accounts(request):
 @login_required
 def ManageParty(request):
     # Get the voting admin associated with the current user
-    voting_admin = get_object_or_404(vote_admins, user=request.user)
-    partylist = voting_admin.partylist_set.all()  
+    partylist = Partylist.objects.filter(voting_admins=request.user.vote_admins)  
 
     context = {'partylist': partylist}
     return render(request, 'VotingAdmin/Party.html', context=context)
@@ -685,19 +688,28 @@ def submit_vote(request):
 
 @login_required
 def latest_votes(request):
-    # List to hold all positions with candidates and their votes
+    # Get the logged-in admin's associated voting_admins instance
+    # Note: Replace 'vote_admins' with your related field name if different
+    vote_admin_instance = request.user.vote_admins
+
+    # List to hold all positions with candidates and their votes for the logged-in admin
     chart_data = []
 
-    # Get all positions
-    positions = Positions.objects.all()
+    # Get positions related to the logged-in admin
+    positions = Positions.objects.filter(voting_admins=vote_admin_instance)
     print("Positions found:", positions)
+    
     # For each position, prepare the data for the chart
     for position in positions:
         # List to hold candidates and their votes for the position
         candidates_data = []
         
-        # Get all candidates for the position
-        candidates = Candidate.objects.filter(position=position, application__status='approved')
+        # Get all approved candidates for the position related to the logged-in admin
+        candidates = Candidate.objects.filter(
+            position=position, 
+            application__status='approved',
+            voting_admins=vote_admin_instance
+        )
         
         # For each candidate, get their vote count
         for candidate in candidates:
@@ -720,6 +732,7 @@ def latest_votes(request):
     
     print("Chart Data: ", chart_data)
     print("Number of items in Chart Data: ", len(chart_data))
+    
     # Pass the JSON string to the template
     context = {'chart_data': chart_data_json}
     return render(request, 'VotingAdmin/results.html', context)
@@ -753,49 +766,59 @@ def votes_per_position(request):
 
 @login_required
 def print_results(request):
-    # Create a file-like buffer to receive PDF data
     buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    elements = []
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(name='Center', parent=styles['Title'], alignment=TA_CENTER)
+    
+    # Fetch the most recently ended election
+    most_recent_election = Election.objects.filter(
+        end_date__lt=timezone.now(),
+        is_active=False
+    ).order_by('-end_date').first()
 
-    # Create the PDF object, using the buffer as its "file"
-    p = canvas.Canvas(buffer)
+    # Title of the election
+    election_title = most_recent_election.name if most_recent_election else 'Unknown Election'
+    elements.append(Paragraph(f"Election Title: {election_title}", title_style))
+    elements.append(Spacer(1, 20))  # Add space after the title
 
-    # Set up variables to track the position on the page
-    y_position = 750
-    x_position = 50
-    line_height = 15
+    # Centered Voting Results title
+    elements.append(Paragraph("Voting Results", title_style))
+    elements.append(Spacer(1, 20))  # Add space after the Voting Results title
 
-    # Draw the title
-    p.drawString(x_position, y_position, "Voting Results")
-    y_position -= 2 * line_height  # Move down two lines
-
-    # Fetch the Results and Votes per Position
     positions = Positions.objects.all()
     for position in positions:
-        # Draw position name
-        p.drawString(x_position, y_position, f"Position: {position.Pos_name}")
-        y_position -= line_height
+        # Start with the position title in the table data
+        data = [['Position: {}'.format(position.Pos_name)]]
 
-        # Draw each candidate's votes for the position
         total_votes = 0
         candidates = Candidate.objects.filter(position=position, application__status='approved')
         for candidate in candidates:
-            # Assuming 'application' is a OneToOne field to a CandidateApplication model
             candidate_info = json.loads(candidate.application.data)
             first_name = candidate_info.get('First Name', 'No First Name')
             last_name = candidate_info.get('Last Name', 'No Last Name')
-            p.drawString(x_position + 20, y_position, f"{first_name} {last_name}: {candidate.votes} votes")
+            data.append([f"{first_name} {last_name}: {candidate.votes} votes"])
             total_votes += candidate.votes
-            y_position -= line_height
+        data.append([f"Total Votes for {position.Pos_name}: {total_votes}"])
+        # Style for the table
+        table_style = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ])
+ 
+        # Create the table
+        t = Table(data, colWidths=[450], hAlign='CENTER')  # Set the table width and align it to the center
+        t.setStyle(table_style)
+        elements.append(t)
+        elements.append(Spacer(1, 20))  # Add space between tables
 
-        # Draw the total votes
-        p.drawString(x_position, y_position - line_height, f"Total Votes for {position.Pos_name}: {total_votes}")
-        y_position -= 2 * line_height  # Move down two lines
-
-    # Close the PDF object cleanly, and we're done
-    p.showPage()
-    p.save()
-
-    # File response
+    doc.build(elements)
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename='voting_results.pdf')
 

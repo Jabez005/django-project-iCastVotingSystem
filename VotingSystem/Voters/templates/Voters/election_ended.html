@@ -304,19 +304,17 @@ body{
 <body>
 	<header>
 		<a href="#" class="logo"><span>iCast</span></a>
-
-	<ul class="navbar">
-		<li><a href="homepage.html" >Home</a></li>
-		<li><a href="View Votes.html"class="active">Vote Now</a></li>
-		<li><a href="candidacypres.html">Candidates</a></li>
-		<li><a href="#"> Partylists</a></li>	
-	</ul>
-	
-	<div class="main">
-		<a href="#" class="user"><i class="ri-user-fill"></i>Sign in</a>
-		<div class="bx bx-menu" id="menu-icon"></div>
-	</div>
-		</header>
+		<ul class="navbar">
+			<li><a href="homepage.html">Home</a></li>
+			<li><a href="Review Votes.html">Vote Now</a></li>
+			<li><a href="candidacypres.html">Candidates</a></li>
+			<li><a href="#" class="active"> Partylists</a></li>
+		</ul>
+		<div class="main">
+			<a href="voterlogin.html" class="user"><i class="ri-user-fill"></i>Log in</a>
+			<div class="bx bx-menu" id="menu-icon"></div>
+		</div>
+	</header>
       
 		<img style="width: 100%; height: 900px; left: 0px; top: 0px; position: absolute" src="Images/transparentbg.png"back />
          
@@ -328,7 +326,12 @@ body{
   </div>
 </div>
 
-<script src="script.js"></script>
+<!-- SCRIPTS -->
+<script src="{% static 'js/app.js' %}"></script>
+<!-- SCRIPTS -->
+<script>
+  AOS.init();
+</script>
 
 </body>
 <footer>

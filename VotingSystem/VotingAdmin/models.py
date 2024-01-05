@@ -78,17 +78,26 @@ class Election(models.Model):
     name = models.CharField(max_length=100)
     voting_admins = models.ManyToManyField(vote_admins, related_name='elections')
     is_active = models.BooleanField(default=False)
+    start_date = models.DateTimeField(null=True, blank=True)  # Allow null and blank for scheduling
+    end_date = models.DateTimeField(null=True, blank=True)
 
     def start_election(self):
-        """Activates the election."""
-        self.is_active = True
-        self.save()
-        self.associate_candidates()
+        """Activates the election if the current time is within the start and end dates."""
+        if self.start_date <= timezone.now() <= self.end_date:
+            self.is_active = True
+            self.save()
+            self.associate_candidates()
+            return True
+        return False
 
     def end_election(self):
-        """Deactivates the election."""
-        self.is_active = False
-        self.save()
+        """Deactivates the election if the current time is past the end date."""
+        if timezone.now() >= self.end_date:
+            self.is_active = False
+            self.save()
+            return True
+        return False
+
 
     def associate_candidates(self):
         # Logic to associate candidates with the election
