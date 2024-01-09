@@ -23,6 +23,7 @@ from django.db.models import F
 
 
 def voter_login(request):
+    error_message = None
     if request.method == 'POST':
         form = VoterLoginForm(request.POST)
         if form.is_valid():
@@ -35,10 +36,10 @@ def voter_login(request):
                 login(request, user, backend='Voters.backends.VoterAuthenticationBackend')
                 return redirect('Home')  # Redirect to voter's dashboard view
             else:
-                form.add_error(None, "Invalid credentials.")
+                error_message = 'Invalid login credentials.'
     else:
         form = VoterLoginForm()
-    return render(request, 'authentication/voter_login.html', {'form': form})
+    return render(request, 'authentication/voter_login.html', {'form': form, 'error_message': error_message})
 
 def home(request):
     return render(request, 'Voters/Home.html')
@@ -47,10 +48,11 @@ def home(request):
 def dynamic_form_view(request):
     election_ongoing = Election.objects.filter(is_active=True).exists()
     form_submitted = False  # Add this variable to track form submission
+    error_message = None
 
     if CandidateApplication.objects.filter(user=request.user).exists():
-        messages.error(request, 'You have already submitted an application.')
-        return redirect('candidate_cards_view')
+        error_message = 'You have already submitted an application.'
+        return render(request, 'Voters/Candidate_application.html', {'error_message': error_message})
 
     dynamic_fields_queryset = DynamicField.objects.all()
     form = DynamicForm(dynamic_fields_queryset=dynamic_fields_queryset)
@@ -59,11 +61,12 @@ def dynamic_form_view(request):
         form_submitted = True  # Update the variable when the form is submitted
         if election_ongoing:
             # Only add the message if the form was actually submitted
-            messages.error(request, 'Election is currently ongoing. Candidate application submissions are closed.')
+            error_message = 'Election is currently ongoing. Candidate application submissions are closed.'
             # Render the form with the message
             return render(request, 'Voters/Candidate_application.html', {
                 'form': form,
                 'election_ongoing': election_ongoing,
+                'error_message': error_message,
                 'form_submitted': form_submitted,  # Pass the new variable to the template
             })
         else:
@@ -123,6 +126,7 @@ def dynamic_form_view(request):
         'form': form,
         'election_ongoing': election_ongoing,
         'form_submitted': form_submitted,
+        'error_message': error_message,
     })
 
 User = get_user_model()

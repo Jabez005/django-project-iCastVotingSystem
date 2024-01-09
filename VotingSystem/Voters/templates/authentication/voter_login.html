@@ -1,141 +1,196 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title> Voter Login </title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USER LOGIN</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Sora:wght@100&display=swap" rel="stylesheet">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200&family=Poppins:wght@600&family=Sora:wght@100;200&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
 <style>
-body {font-family: Arial, Helvetica, sans-serif; background-color: #B31312;}
-
-input[type=text], input[type=password] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button {
-	background: #EA906C;
-	cursor: pointer; /* Pointer cursor on hover */
-	padding: 12px 46px;
-	border: none;
-	color: white;
-	margin-left: 295px;
-	font-size: 20px;
-	font-family: 'Poppins', sans-serif;
-	font-family: 'Sora', sans-serif;
-}
-
-button:hover {
-  opacity: 0.8;
-}
-
-.cancelbtn {
-  width: auto;
-  padding: 10px 18px;
-  background-color: #f44336;
-}
-.butAdmin{
-		margin-left: -30px; 
-		margin-top:20px;
-		background: transparent;
-		padding: 10px 20px;
-		border-radius: 20px;
-		cursor: pointer;
-		border: none;
-		color: gray;
-		font-size: 18px;
-	}
-
-
-.container {
-  padding-left: 24px;
-  padding-top: 2px;
-  margin-top: 120px;
-  background-color: #EFEFEF;
-  padding-right: 24px;
-  width: 80%;
-  margin-left: 47px;
-}
-
-span.psw {
-  float: right;
-  padding-top: 16px;
-}
-b{
-font-size: 14px;
-}
-h2{
-font-family: 'Poppins', sans-serif;
-	font-family: 'Sora', sans-serif;
-	font-weight: thick;
-}
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-  span.psw {
-     display: block;
-     float: none;
+* {
+    margin: 0;
+    font-family: 'Sora', sans-serif;
   }
-  .cancelbtn {
-     width: 100%;
+
+  .card {
+    height: 100vh;
+    background-color: #EA906C;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
+
+  .login-container {
+    display: flex;
+    flex: 1;
+    width: 80vw; /* Adjust the width as needed */
+    max-width: 1200px; /* Add a max-width to prevent it from getting too wide */
+    margin: auto;
+  }
+
+  .left-side {
+    background-color: #b31312;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .right-side {
+    background-color: #eee2de;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-box {
+    width: 80%; /* Adjust the width as needed */
+    max-width: 400px; /* Add a max-width to prevent it from getting too wide */
+    background-color: #efefef;
+    padding: 20px;
+    height: auto;
+  }
+
+  .back-button {
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 8%; /* Adjust the width as needed */
+  max-width: 40px; /* Add a max-width to prevent it from getting too large */
+  height: auto;
 }
+
+img.responsive {
+  max-width: 100%;
+  height: auto;
+}
+
+/* This class is applied to the images that need to be responsive */
+.vote-icon img,
+.seamless {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Text below images */
+.allrights {
+  text-align: center; /* Center the text */
+  margin-top: 20px; 
+  color: white;
+  font-size: 1vw; /* Start with a base font size that scales with viewport */
+}
+
+  @media (max-width: 768px) {
+    .login-container {
+      flex-direction: column; /* Stack the elements vertically on small screens */
+    }
+
+    .left-side {
+      height: 10vh;
+    }
+
+    .right-side {
+      width: 100%;
+    }
+/* Text below images */
+.allrights {
+ font-size: 1em; /* Start with a base font size that scales with viewport */
+}
+}
+ 
 </style>
 </head>
 <body>
-        <div style="width: 564px; height: 100%; left: 800px; top: 0px; position: absolute; background: #EEE2DE">
-	<form action="{% url 'login_voter' %}" method="post">
-    {% csrf_token %}
-  <div class="container">
-	<h2>VOTER LOGIN<h2>
-    <label>Username</label>
-    <input type="text" class="form-control" name="username" placeholder="Username">
+<div class="card">
+<div class="login-container">
 
-    <label>Password</label>
-    <input type="password" class="form-control" name="password" placeholder="Password">
-	
-	  <label>Organization Code</label>
-    <input type="text" class="form-control" name="org_code" placeholder="Organization Code">
-	<br>
-	<br>
-        
-    <button type="submit">LOGIN</button><br>
-    <button class="butAdmin" id="votingadmin-login">ADMIN LOGIN</button>
+  
+  <div class="left-side d-flex flex-column  ">
+    <a href="{% url 'User_login' %}" class="back-button">
+      <img style="height: 50px;" src="{% static 'images/back.png' %}" alt="Back" class="responsive">
+    </a>
+
+    <div class="vote-icon">
+      <img src="{% static 'images/picture.png' %}" width="350" height="300" alt="" style="border-radius: 50%;">
+      <br>
+      <img class="seamless" src="{% static 'images/seamless3.JPG' %}" alt="" style="height: 45px; width:350px; margin-top:5px">
+
+    </div>
+    <div class="allrights">
+      © 2023 iCast. All rights reserved.
+
+    </div>
+  
     
   </div>
+  <div class="right-side">
+    <div class="login-box">
+      <form action="{% url 'login_voter' %}" method="post">
+        {% csrf_token %}
+        <h2 class="text-center" style="margin-top: 20px;padding-bottom:50px;text-align: center;">VOTER LOGIN</h2>
 
-</form>
-		</div>
-        <div style="width: 0px; height: 44.17px; left: 159.87px; top: 423.17px; position: absolute"></div>
-        <a href="{% url 'User_login' %}" class="back-button">
-          <img style="height: 50px;" src={% static 'images/back.png' %} alt="Back">
-        </a>
-</button>
-    <img style="width: 300px; height: 290px; left: 240px; top: 117px; position: absolute; background: linear-gradient(0deg, rgba(255, 0, 0, 0.42) 0%, rgba(255, 0, 0, 0.42) 100%); border-radius: 9999px; opacity: 0.5;" src="{% static '/images/imgLog.png' %}"></div>
-    <div style="left: 141px; top: 440px;; position: absolute; color: white; font-size: 22px; font-family: Source Sans Pro;font-family: 'Poppins', sans-serif;
-	font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">Seamless Voting, Powered by <span style = "font-size: 50px; font-weight: 400;"> iCast </span></div>
-    <div style="left: 250px; top: 650px; position: absolute; color: #B1A9A9; font-size: 16px; font-family: 'Inter', sans-serif;
-font-family: 'Poppins', sans-serif; font-family: 'Sora', sans-serif; font-weight: 400; word-wrap: break-word">© 2023 iCast. All rights reserved.</div>
-	</div>
-  <script>
-    document.getElementById('systemadmin-login').onclick = function () {
-        window.location.href = "{% url 'login_superuser' %}";
-    };
-    document.getElementById('votingadmin-login').onclick = function () {
-        window.location.href = "{% url 'Adminlogin' %}";
-    };
-    document.getElementById('voter-login').onclick = function () {
-        window.location.href = "{% url 'login_voter' %}";
-    };
+        {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+        <!-- Username Input -->
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+          </div>
+          {{ form.username }}
+        </div>
+        
+        <!-- Password Input -->
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          </div>
+          {{ form.password }}
+        </div>
+        
+        <!-- Organization Code Input -->
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-building"></i></span>
+          </div>
+          {{ form.org_code }}
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary w-100">LOGIN</button>
+        </div>
+        
+      </form>
+
+    </div>
+  </div>
+  
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+<script>
+  const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
+
+  togglePassword.addEventListener('click', function () {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    togglePassword.classList.toggle('fa-eye-slash');
+  });
 </script>
 </body>
 </html>

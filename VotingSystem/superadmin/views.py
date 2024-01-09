@@ -19,18 +19,20 @@ from .forms import SurveyForm, ChoiceForm
 # Create your views here.
 
 def login_superuser(request):
+    error_message = None
+    
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             return redirect('Superadmin')
         else:
-            messages.success(request, ("Username and Password do not match. Please try again"))
-            return redirect('login_superuser')
-    else:
-        return render(request, 'authentication/adminlogin.html', {})
+            error_message = "Invalid login credentials."
+    
+    return render(request, 'authentication/adminlogin.html', {'error_message': error_message})
 
 @login_required   
 def Superadmin(request):

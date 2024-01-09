@@ -31,6 +31,20 @@ class DynamicFieldForm(ModelForm):
     class Meta:
         model = DynamicField
         fields = ['field_name', 'field_type', 'is_required']
+        widgets = {
+            'field_name': forms.TextInput(attrs={
+                'class': 'my-form-field',
+                'style': 'flex: 1; margin-right: 10px;'
+            }),
+            'field_type': forms.Select(attrs={
+                'class': 'my-form-field',
+                'style': 'flex: 1; margin-right: 10px;'
+            }),
+            'is_required': forms.CheckboxInput(attrs={
+                'class': 'my-form-field',
+                'style': 'flex: 0 0 auto;'
+            })
+        }
 
 DynamicFieldFormset = modelformset_factory(
     DynamicField,

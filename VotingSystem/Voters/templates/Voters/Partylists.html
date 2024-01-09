@@ -26,11 +26,12 @@
     }
     
     .partylist-container {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 20px;
-      max-width: 100%; /* Ensure the container does not exceed viewport width */
-    }
+  display: flex;
+  flex-direction: row; /* Ensure the default flex direction is row */
+  justify-content: center; /* Center flex items horizontally */
+  align-items: center; /* Center flex items vertically */
+  margin-top: 200px; /* Spacing from the top */
+}
     .sidebar {
       flex: 1;
       background-color: #f8f9fa;
@@ -77,6 +78,7 @@
       color: white; /* Adjusted for better visibility */
       margin: auto auto;
       font-size: 24px;
+      margin-bottom: 20px;
     }
     .name{
       background-color: #2B2A4C;
@@ -291,6 +293,10 @@ header .right{
     @media (max-width: 768px) {
       .partylist-container {
         flex-direction: column;
+      }
+      .sidebar, .content {
+      width: 100%; /* Full width for small screens */
+      margin-top: 20px; /* Add space between items when stacked */
       }
 
       .header__menu {

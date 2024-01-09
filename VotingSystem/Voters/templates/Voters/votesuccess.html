@@ -90,6 +90,14 @@
     background-color: maroon;
 
 }
+.hourglass{
+  max-width: 60%;
+  height: auto;
+}
+.paragraph{
+  font-size: 1.5em;
+  color: #000;
+}
 
 /* VARIABLES */
 :root {
@@ -284,9 +292,34 @@ header .right{
   .container {
     padding: 15px;
   }
-  .content-body{
-    width: 400px;
+  
+  .content-body {
+    margin-top: 70px; /* Maintain top margin */
+    max-width: 90%; /* Responsive width */
+    height: auto; /* Height auto for intrinsic aspect ratio */
+    margin-left: auto; /* Center align the content body */
+    margin-right: auto;
+    padding: 20px; /* Padding inside the content body */
   }
+
+  .hourglass {
+    max-width: 100%; /* Full width of its container */
+    height: auto; /* Keep the aspect ratio */
+    display: block; /* Block level for margin auto to work */
+    margin: 20px auto; /* Center the image with margin */
+  }
+
+  .paragraph {
+    font-size: 0.6em; /* Smaller font size */
+    margin-bottom: 0.1em; /* Smaller margin bottom */
+    text-align: center; /* Center text alignment */
+    margin-right: auto; /* Center the text block horizontally */
+    margin-left: auto;
+  }
+.layout{
+  text-align: left;
+  margin-left: 20px;
+}
 
   .container{
     padding: 0 1rem;
@@ -347,7 +380,7 @@ section{
           <nav>
             <ul class="header__menu flex-row">
               <li>
-                <a href="landinglogged.html">Home</a>
+                <a href="{%url 'Home' %}" style="color: #FFC220;">Home</a>
               </li>
               <li>
                 <a href="{%url 'partylist_view' %}">Partylists</a>
@@ -380,7 +413,7 @@ section{
 
         <div class="content-body">
             <center>
-            <img src="Images/done.png" alt="" style="height: 200px;">
+            <img src="{% static 'images/done.png' %}" alt="" style="height: 200px;">
             <p style="color: black; font-size: 28px; margin-bottom: 100px;">Your Vote has been Casted</p>
             <a href="{% url 'Home'%}"><button id="vote" class="btn  btn-lg" type="button">Home</button></a>
             </center>
@@ -394,6 +427,7 @@ section{
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- SCRIPTS -->
         <script src="{% static 'js/app.js' %}"></script>
+        <script src="{% static 'js/fontawesome.min.js' %}"></script>
         <!-- SCRIPTS -->
            <!-- SCRIPTS -->
 

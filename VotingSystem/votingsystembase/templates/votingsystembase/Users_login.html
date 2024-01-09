@@ -14,126 +14,139 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Manrope:wght@600;800&family=Sora:wght@300&display=swap" rel="stylesheet">
 <style>
-  *{
-    margin:0;
+  * {
+    margin: 0;
     font-family: 'Sora', sans-serif;
-
   }
+
+  .card {
+    height: 100vh;
+    background-color: #EA906C;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   .login-container {
     display: flex;
-    height: 80vh;
-    width: 150vh;
+    flex: 1;
+    width: 80vw; /* Adjust the width as needed */
+    max-width: 1200px; /* Add a max-width to prevent it from getting too wide */
     margin: auto;
-    
   }
+
   .left-side {
-    background-color: #b31312; /* Replace with the exact color code */
+    background-color: #b31312;
     flex: 1;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
   }
+
   .right-side {
-    background-color: #eee2de; /* Replace with the exact color code */
+    background-color: #eee2de;
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .login-box {
-    width: 350px;
+    width: 80%; /* Adjust the width as needed */
+    max-width: 400px; /* Add a max-width to prevent it from getting too wide */
     background-color: #efefef;
     padding: 20px;
     height: auto;
-
   }
+
   .back-button {
-    position: absolute; /* Position the back button absolutely */
-    top: 10px; /* Adjust these values to fit your design */
-    left: 10px;
-    width: 50px; /* Adjust if necessary */
-    height: 50px; /* Adjust if necessary */
-  }
-  /* Add additional styles here */
-  .allrights{
-    margin-top: 100px;
-    color: white;
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 8%; /* Adjust the width as needed */
+  max-width: 40px; /* Add a max-width to prevent it from getting too large */
+  height: auto;
+}
 
-  }
-  .card{
-    height: 100vh;
-    background-color: #EA906C;
+img.responsive {
+  max-width: 100%;
+  height: auto;
+}
+
+  .vote-icon img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .seamless {
+      max-width: 100%;
+      height: auto;
+    }
+
+
+  .allrights {
+    margin-top: 20px; /* Adjust the margin */
+    color: white;
   }
 
   @media (max-width: 768px) {
-    .left-side {
-        width: 0;
-        display: none;
+    .login-container {
+      flex-direction: column; /* Stack the elements vertically on small screens */
     }
-.vote-icon{
-  display: none;
-}
-.allrights{
-  display: none;
-}
-.seamless{
-  display: none;
 
-}
-}
+    .left-side {
+      width: 100%;
+    }
 
-
+    .right-side {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
 <div class="card">
-<div class="login-container">
-
-  
-  <div class="left-side d-flex flex-column  ">
-    <a href="{% url 'home' %}" class="back-button">
-      <img style="height: 50px;" src={% static 'images/back.png' %} alt="Back">
-    </a>
-
-    <div class="vote-icon">
-      <img src={% static 'images/picture.png' %} width="350"height="350" alt="" style="border-radius: 50% ;">
-      <br>
-      <img  class="seamless" src={% static 'images/seamless3.JPG' %} alt="" style="height: 45px; width:350px; margin-top:5px" >
-
+  <div class="login-container">
+    <div class="left-side">
+      <a href="{% url 'home' %}" class="back-button">
+        <img style="height: 50px;" src="{% static 'images/back.png' %}" alt="Back" class="responsive">
+      </a>
+      <div class="vote-icon">
+        <img src="{% static 'images/picture.png' %}" width="350" height="350" alt="" style="border-radius: 50%;">
+        <br>
+        <img class="seamless" src="{% static 'images/seamless3.JPG' %}" alt="" style="height: 45px; width:350px; margin-top:5px">
+      </div>
+      <div class="allrights">
+        © 2023 iCast. All rights reserved.
+      </div>
     </div>
-    <div class="allrights">
-      © 2023 iCast. All rights reserved.
+    <div class="right-side">
+      <div class="login-box">
+        <h2 class="text-center" style="margin-top: 20px; padding-bottom:20px; text-align: center;">ICAST LOGIN</h2>
 
-    </div>
-  
-    
-  </div>
-  <div class="right-side">
-    <div class="login-box">
-        <h2 class="text-center"style="margin-top: 20px;padding-bottom:20px;text-align: center;">ICAST LOGIN</h2>
-
-       
         <div style="text-align: right;" class="button">
-        <a href="{% url 'login_voter' %}">
-          <button style="margin-top: 25px; background: #b31312; border: none;" type="submit" class="btn btn-primary w-100">USER LOGIN</button>
-        </a>
+          <a href="{% url 'login_voter' %}">
+            <button style="margin-top: 25px; background: #b31312; border: none;" type="submit" class="btn btn-primary w-100">USER LOGIN</button>
+          </a>
         </div>
 
         <div style="text-align: right;" class="button">
-        <a href="{% url 'Adminlogin' %}">
+          <a href="{% url 'Adminlogin' %}">
             <button style="margin-top: 25px; background: #2B2A4C; border: none;" type="submit" class="btn btn-primary w-100">CLIENT ADMIN</button>
-        </a>
+          </a>
         </div>
 
         <div style="text-align: right;" class="button">
-        <a href="{% url 'login_superuser' %}">
+          <a href="{% url 'login_superuser' %}">
             <button style="margin-top: 25px; background: black; border: none;" type="submit" class="btn btn-primary w-100">SYSTEM ADMIN</button>
-        </a>
+          </a>
         </div>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>

@@ -9,9 +9,9 @@
       <h2> Voting Results Tally</h2>
   </div>
   <div class="button-group">
-      <a href="{% url 'latest_votes' %}"><button id="results-btn">Results</button></a>
-      <a href="{% url 'votes_per_position' %}"><button id="total-votes-btn">Votes per Position</button></a>
-      <button id="print-results-btn">Print Results</button>
+    <a href="{% url 'latest_votes' %}"><button id="results-btn" class="btn btn-primary">Results</button></a>
+    <a href="{% url 'votes_per_position' %}"><button id="total-votes-btn" class="btn btn-primary">Votes per Position</button></a>
+    <a href="{% url 'print_results' %}"><button id="print-results-btn" class="btn btn-primary">Print Results</button></a>
   </div>
   <center>
   <div class="main-cards" style="grid-template-columns: none;">

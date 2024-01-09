@@ -45,14 +45,14 @@
       margin:60px 30px 30px 30px;
       border-bottom-left-radius: 15px;
       border-bottom-right-radius: 15px;
-      height: 500px;
-    
+      height: auto;
 
     }
     .content-header {
       background-color:white;
       padding: 10px;
-     margin: auto ;
+      margin: auto ;
+      margin-top: 20px;
     }
     .partylist-item {
       cursor: pointer;
@@ -386,13 +386,16 @@ section{
 
 
 
-<div style="background-color: white; width: 1300px; margin: auto; margin-top: 200px; height: 650px;" class="container-fluid partylist-container">
+<div style="background-color: white; width: 1300px; margin: auto; margin-top: 200px;" class="container-fluid partylist-container">
   
   <div class="content">
+    <center>
+      <h1> Voting Results</h1>
+    </center>
     {% for result in results_data %}
     <div id="position-{{ result.position_name }}" class="position-content">
         <div class="content-header">
-            <h3>{{ result.position_name }}</h3>
+            <h2>{{ result.position_name }}</h2>
         </div>
         <!-- Candidate list for this position -->
         {% for candidate in result.candidates %}

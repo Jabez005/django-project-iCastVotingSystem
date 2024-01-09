@@ -118,6 +118,7 @@ li {
 
 img {
     max-width: 100%;
+    height: auto;
 }
 
 h1,
@@ -279,16 +280,53 @@ header .right{
     background-color: #ffc220;
     color: #fff;
 }
+.content-body {
+  text-align: center; /* Center the content */
+  padding: 10px;
+  border-radius: 10px;
+  margin: 20px auto; /* Center the content-body */
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
+  align-items: center; /* Center-align children horizontally */
+  justify-content: center; /* Center content vertically */
+  width: 100%; /* Use full width */
+  max-width: 500px; /* Maximum width of the content body */
+}
+
+/* Ensure the image is responsive and maintains aspect ratio */
+.content-body img {
+  max-width: 70%; /* Limit the width to 90% of its container to preserve aspect ratio */
+  max-height: 70vh; /* Limit the height to 90% of the viewport height */
+  width: auto; /* Adjust width automatically */
+  height: auto; /* Adjust height automatically */
+}
+
+/* Responsive paragraph styling */
+.content-body p {
+  color: black;
+  font-size: 1.5rem; /* Adjust font size */
+  margin-top: 20px; /* Add some space between the image and the text */
+  margin-bottom: 20px; /* Add some space below the text */
+}
+
 
 @media (max-width: 768px) {
   .container {
     padding: 15px;
   }
   .content-body{
-    width: 400px;
-    height: 200px;
+    max-width: 90%;
+    max-height: 50%;
+  }
+  .content-body img {
+    max-width: 100%; /* Allow the image to take full width on very small screens */
+    max-height: 40vh; /* Further adjust the max height for very small screens */ /* Adjust image max-width for smaller screens */
   }
 
+  .content-body p {
+    font-size: 1rem; /* Smaller font size for smaller screens */
+  }
+  
   .hourglass{
   height: 150px;
   font-size: 15px;
@@ -391,15 +429,15 @@ section{
   
       <!-- HEADER -->
 
-<div class="container d-flex vh-100 justify-content-center align-items-center">
-  <div class="card  w-50">
+<div class="container d-flex vh-100 justify-content-center align-items-center" style="margin-top: 50px;">
+  <div class="card  w-50" >
     <div class="card-body">
 
         <div class="content-body">
-            <center>
-            <img src="assets/img/iCast Images/ended.png" alt="" style="height: 300px;">
-            <p style="color: black; font-size: 30px; margin-bottom: 100px;">Voting is now Closed</p>
-            </center>
+            
+            <img src="{% static 'images/iCast Images/ended.png' %}" alt="">
+            <p >Voting is now Closed</p>
+           
         </div>
       <div class="d-grid mt-5">
       </div>
@@ -409,6 +447,9 @@ section{
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'js/app.js' %}"></script>
+    <!-- FONTAWESOME -->
+    <script src="{% static 'js/fontawesome.min.js' %}"></script>
+    <!-- FONTAWESOME -->
 <!-- SCRIPTS -->
    <!-- SCRIPTS -->
 

@@ -11,17 +11,44 @@
     <title> iCast </title> 
 
     <link rel="stylesheet" type="text/css" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{%static 'css/style.css'}"> 
 </head>
 
 <h1>Add Position</h1>
 
-<form action="{% url 'add_position' %}" method="post">
+<form id="addPositionForm" action="{% url 'add_position' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="text" name="Pos_name" placeholder="Position Name" required>
     <input type="number" name="max_candidates_elected" placeholder="Max Candidates Elected" required min="1">
     <button type="submit">Submit</button>
 </form>
+
+<script>
+$(document).ready(function() {
+    $('#addPositionForm').on('submit', function(e) {
+        e.preventDefault(); // Stop the form from submitting normally
+        var form = $(this);
+
+        $.ajax({
+            url: form.attr('action'), // Use the action attribute of the form
+            type: form.attr('method'), // Use the method attribute of the form
+            data: form.serialize(), // Serialize the form data
+            success: function(response) {
+                // Show an alert with the message from the server
+                alert(response.message); 
+                // Refresh the page if the status is 'error'
+                if (response.status === 'error') {
+                    window.location.reload();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error('AJAX Error: ', status, error);
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

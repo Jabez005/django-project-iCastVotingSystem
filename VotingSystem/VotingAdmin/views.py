@@ -43,6 +43,8 @@ from django.db.models import F
 # Create your views here.
 
 def Adminlogin(request):
+    error_message = None
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -52,10 +54,9 @@ def Adminlogin(request):
             login(request, user)
             return redirect('Votingadmin')
         else:
-            messages.error(request, 'Invalid login credentials.')
-            return redirect('Adminlogin')
-
-    return render(request, 'authentication/Voting_adminlogin.html', {})
+            error_message = 'Invalid login credentials.'
+    
+    return render(request, 'authentication/Voting_adminlogin.html', {'error_message': error_message})
 
 @login_required
 def Votingadmin(request):
@@ -200,9 +201,7 @@ def add_position_view(request):
                 return JsonResponse({'status': 'ok', 'message': 'Position added successfully.'}, safe=False)
             else:
                 return JsonResponse({'status': 'ok', 'message': 'Position already exists.'}, safe=False)
-# Handle the error case
-            return JsonResponse({'status': 'error', 'message': 'Position name and max candidates are required.'}, safe=False)
-            
+        
         else:
             messages.error(request, 'Position name and max candidates are required.')
 
@@ -236,7 +235,7 @@ def generate_voter_accounts(request):
 
                 # Email subject and message
                 subject = "Your Voter Account Details"
-                message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\nPlease change your password upon first login."
+                message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\n"
 
                 # Send the email
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
@@ -276,7 +275,7 @@ def add_party(request):
 @login_required
 def manage_fields(request):
     # Get all DynamicField objects
-    fields = DynamicField.objects.all()
+    fields = DynamicField.objects.filter(voting_admins=request.user.vote_admins)
     applications = CandidateApplication.objects.select_related('positions', 'partylist')
 
     # Pass fields and applications to the context
@@ -459,7 +458,11 @@ def manage_election(request):
 @login_required
 def stop_election(request, election_id):
     election = get_object_or_404(Election, pk=election_id)
-    election.end_election()
+    if not election.end_date:
+        election.end_election()
+        messages.success(request, "Election has been successfully stopped.")
+    else:
+        messages.warning(request, "Election had already been stopped before.")
     # Redirect to the admin panel or some confirmation page
     return redirect('manage_election')
 

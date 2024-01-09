@@ -11,17 +11,47 @@
     <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ formset.management_form }}
-    <div id="formset-container" style="display: flex; flex-direction: column;">
+    <div id="formset-container">
       {% for form in formset %}
-      <div class="dynamic-form" style="display: flex; margin-bottom: 10px;">
-      {{ form.as_p }}
-      </div>
+          <div class="dynamic-form" style="display: flex; align-items: center; justify-content: flex-start;">
+              <!-- Render the field name input -->
+              <div style="margin-right: 10px;">
+                  {{ form.field_name.errors }}
+                  {{ form.field_name.label_tag }}
+                  {{ form.field_name }}
+              </div>
+
+              <!-- Render the field type select -->
+              <div style="margin-right: 10px;">
+                  {{ form.field_type.errors }}
+                  {{ form.field_type.label_tag }}
+                  {{ form.field_type }}
+              </div>
+
+              <!-- Render the 'is required' checkbox -->
+              <div style="margin-right: 10px;">
+                  {{ form.is_required.errors }}
+                  {{ form.is_required.label_tag }}
+                  {{ form.is_required }}
+              </div>
+
+              <!-- Render the 'delete' checkbox -->
+              <!-- Ensure you have a form field called 'DELETE' in your formset -->
+              <div style="margin-right: 10px;">
+                  {{ form.DELETE.errors }}
+                  {{ form.DELETE.label_tag }}
+                  {{ form.DELETE }}
+              </div>
+          </div>
       {% endfor %}
-    </div>
+  </div>
+  <br>
     <button type="button" id="add-form-button" style="background-color:#44c767; border-radius:28px; border:1px solid #18ab29; display:inline-block; cursor:pointer; color:#ffffff; font-family:Arial; font-size:17px; padding:16px 31px; text-decoration:none; text-shadow:0px 1px 0px #2f6627;">Add More</button>
     <input type="submit" name="save" value="Save" style="background-color:#ffc220; border-radius:28px; border:1px solid #ffc220; display:inline-block; cursor:pointer; color:#ffffff; font-family:Arial; font-size:17px; padding:16px 31px; text-decoration:none; text-shadow:0px 1px 0px #2f6627;">
     </form>
-    <a href="{% url 'manage_fields' %}" style="text-decoration: none; color: black; font-size: 1rem; text-align: right;">Back to field list</a>
+    <div class="addButton" style="text-align: center; margin-top: 90px;">
+    <a href="{% url 'manage_fields' %}" class="btn btn-primary">Back to field list</a>
+    </div>
   </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
