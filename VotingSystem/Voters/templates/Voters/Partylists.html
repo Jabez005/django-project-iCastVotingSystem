@@ -49,8 +49,7 @@
       box-shadow: 6px 6px 11px 0px rgba(0,0,0,0.7);
       -webkit-box-shadow: 6px 6px 11px 0px rgba(0,0,0,0.7);
       -moz-box-shadow: 6px 6px 11px 0px rgba(0,0,0,0.7);
-
-
+      
     }
     .content-header {
       background-color:#B31312;
@@ -67,6 +66,7 @@
     .partylist-item:hover {
       background-color: #eee;
     }
+    
     .logo {
       background-color: #f44336;
       border-radius: 50%;
@@ -383,20 +383,28 @@ header .right{
         </div>
         <div class="container-fluid">
           <div class="row">
-            {% for partylist in partylists %}
-              <div class="col pt-3">
-                <div class="name" id="form{{ forloop.counter }}" style="{{ forloop.first|yesno:",display: none;" }}">
-                  {% for candidate in partylist.candidates %}
-                    <h5>{{ candidate.position }}: {{ candidate.full_name }}</h5>
-                  {% endfor %}
-                </div>
+            <!-- Single column layout for partylist details -->
+            <div class="col pt-3">
+              <!-- All partylist details go here, initially hidden -->
+              {% for partylist in partylists %}
+              <div class="name" id="form{{ forloop.counter }}" style="display: none;">
+                <!-- Partylist details here -->
+                {% for candidate in partylist.candidates %}
+                  <h5>{{ candidate.position }}: {{ candidate.full_name }}</h5>
+                {% endfor %}
               </div>
-              <div class="col pt-5">
-                <div id="logo{{ forloop.counter }}" class="logo" style="{{ forloop.first|yesno:",display: none;" }}">
-                  {{ partylist.Party_name }}.
-                </div>
+              {% endfor %}
+            </div>
+        
+            <!-- Single column layout for partylist logos -->
+            <div class="col pt-5">
+              <!-- All partylist logos go here, initially hidden -->
+              {% for partylist in partylists %}
+              <div id="logo{{ forloop.counter }}" class="logo" style="display: none;">
+                {{ partylist.Party_name }}
               </div>
             {% endfor %}
+            </div>
           </div>
         </div>
       </div>
@@ -404,31 +412,32 @@ header .right{
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
 <script>
-  // This script waits until the DOM is ready before running.
-  document.addEventListener("DOMContentLoaded", function() {
-    // Function to hide all forms and logos
-    function hideAllContent() {
-      document.querySelectorAll('.content .name, .content .logo').forEach(function(element) {
-        element.style.display = 'none';
-      });
-    }
+document.addEventListener("DOMContentLoaded", function() {
+  // Function to hide all content
+  function hideAllContent() {
+    document.querySelectorAll('.name, .logo').forEach(function(element) {
+      element.style.display = 'none';
+    });
+  }
 
-    // Function to show a form and logo with a specific ID
-    window.showContent = function(formId, logoId) {
-      hideAllContent();
-      document.getElementById(formId).style.display = 'block';
-      document.getElementById(logoId).style.display = 'flex'; // assuming logos are flex containers
-    }
-    
-    // Initially hide all content and show the first one if it exists
-    var firstForm = document.querySelector('.content .name');
-    var firstLogo = document.querySelector('.content .logo');
-    if(firstForm && firstLogo) {
-      firstForm.style.display = 'block';
-      firstLogo.style.display = 'flex';
-    }
-  });
+  // Function to show content for the selected partylist
+  window.showContent = function(formId, logoId) {
+    hideAllContent();
+    document.getElementById(formId).style.display = 'block';
+    document.getElementById(logoId).style.display = 'flex';
+  }
 
+  // Initially hide all content
+  hideAllContent();
+
+  // Optionally show the first partylist details if needed
+  var firstForm = document.querySelector('.name');
+  var firstLogo = document.querySelector('.logo');
+  if(firstForm && firstLogo) {
+    firstForm.style.display = 'block';
+    firstLogo.style.display = 'flex';
+  }
+});
 </script>
 <script>
   AOS.init();
