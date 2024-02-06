@@ -239,7 +239,7 @@ def generate_voter_accounts(request):
                     VoterProfile.objects.create(user=user, org_code=org_code, voting_admin=voting_admin)
 
                     subject = "Your Voter Account Details"
-                    message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\n"
+                    message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nOrganization Id: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\n"
                     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
                 else:
                     print(f"Username '{username}' already exists. Skipping creation.")
