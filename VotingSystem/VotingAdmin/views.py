@@ -210,41 +210,44 @@ def add_position_view(request):
 @login_required
 def generate_voter_accounts(request):
     # Get the voting admin associated with the current user
-    voting_admin = get_object_or_404(vote_admins, user=request.user)  # Ensure 'VotingAdmin' is the correct model
+    voting_admin = get_object_or_404(vote_admins, user=request.user)
 
     # Retrieve all CSV uploads for this admin
-    csv_uploads = CSVUpload.objects.filter(voting_admins=voting_admin)  # Ensure 'CSVUpload' model is related to 'VotingAdmin' via 'voting_admin' field
+    csv_uploads = CSVUpload.objects.filter(voting_admins=voting_admin)
 
     for csv_upload in csv_uploads:
-        voters_data = csv_upload.data  # Ensure 'data' is the correct field containing voters' information
+        voters_data = csv_upload.data
 
         for voter in voters_data:
-            email = voter['Email']
-            username = email  # Assuming email is unique and used as username
-            password = User.objects.make_random_password()  # Generate a secure random password
+            voter_id = voter.get('ID', None)  # Ensure voter_id is retrieved safely
+            if voter_id is not None:
+                username = str(voter_id)  # Assuming the ID is unique and can be converted to string for username
+                if not username:
+                    print("Empty username detected. Skipping this entry.")
+                    continue
 
-            # Ensure 'org_code' is retrieved from the 'voting_admin' instance
-            org_code = voting_admin.org_code
+                password = User.objects.make_random_password()
+                org_code = voting_admin.org_code
 
-            if not User.objects.filter(username=username).exists():
-                # Create a new user
-                user = User.objects.create_user(username=username, email=email, password=password)
+                email = voter.get('Email', '')  # Get email from data if available
+                if not email:
+                    print(f"No email found for user '{username}'. Skipping this entry.")
+                    continue
 
-                # Create a VoterProfile for the user
-                VoterProfile.objects.create(user=user, org_code=org_code, voting_admin=voting_admin)
+                if not User.objects.filter(username=username).exists():
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    VoterProfile.objects.create(user=user, org_code=org_code, voting_admin=voting_admin)
 
-                # Email subject and message
-                subject = "Your Voter Account Details"
-                message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\n"
+                    subject = "Your Voter Account Details"
+                    message = f"Dear Voter,\n\nYour account has been created with the following details:\n\nUsername: {username}\nPassword: {password}\nOrganization Code: {org_code}\n\n"
+                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+                else:
+                    print(f"Username '{username}' already exists. Skipping creation.")
+            else:
+                print("Voter ID is None. Skipping this entry.")
 
-                # Send the email
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
-
-    # Display a success message
     messages.success(request, "Voter accounts generated successfully.")
-
-    # Redirect to a success page
-    return HttpResponseRedirect(reverse('Display_data'))  # Replace 'Display_data' with your success URL name
+    return HttpResponseRedirect(reverse('Display_data'))
 
 @login_required
 def ManageParty(request):
